@@ -191,33 +191,45 @@ function Map.scrollTo(self, object)
 	self.dy = math.max(math.min(object.y + 64 - self.screen_height, self.height * self.tile_height - self.screen_height), self.dy) -- higher x bound
 end
 
-function Map.canClimbLadder(self, entity)
-	xmin = math.floor((entity.x - entity.width * 0.5) / self.tile_width)
-	xmax = math.floor((entity.x + entity.width * 0.5 - 1) / self.tile_width)
-	ymin = math.floor((entity.y - entity.height) / self.tile_height)
-	ymax = math.floor((entity.y - 1) / self.tile_height)
-
-	if self.backgroundTiles.tiles[self.backgroundMap[xmin + ymin * self.width]].type == "ladder" or self.backgroundTiles.tiles[self.backgroundMap[xmax + ymin * self.width]].type == "ladder" then
-		return true
-	end
-
-	return false
+function Map:tileType(x, y)
+	return self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].type
 end
 
-function Map.distanceToLadder(self, entity)
-	xmin = math.floor((entity.x - entity.width * 0.5) / self.tile_width)
-	xmax = math.floor((entity.x + entity.width * 0.5 - 1) / self.tile_width)
-	ymin = math.floor((entity.y - entity.height) / self.tile_height)
-	ymax = math.floor(entity.y / self.tile_height)
+-- return distance to center, distance up, distance down
+-- return nil if there's no ladder next to the entity
+function Map:distanceToLadder(entity)
+	local xmin = math.floor((entity.x - entity.width * 0.5) / self.tile_width)
+	local xmax = math.floor((entity.x + entity.width * 0.5-1) / self.tile_width)
+	local ymin = math.floor((entity.y - entity.height) / self.tile_height)
+	local ymax = math.floor(entity.y / self.tile_height)
 
-	if self.backgroundTiles.tiles[self.backgroundMap[xmin + ymin * self.width]].type == "ladder" or self.backgroundTiles.tiles[self.backgroundMap[xmin + ymax * self.width]].type == "ladder" then
-		return (xmin + 0.5) * self.tile_width - entity.x -- distance from center to center
+	for y = ymin, ymax do
+		for x = xmin, xmax do
+			if self:tileType(x, y) == "ladder" then
+				-- we found a valid ladder tile
+				local distanceToCenter = (x + 0.5) * self.tile_width - entity.x
+
+				local distanceToBottom = (y + 1) * self.tile_height - entity.y
+				local _y = y + 1
+				while _y < self.height and self:tileType(x, _y) == "ladder" do
+					_y = _y + 1
+					distanceToBottom = distanceToBottom + self.tile_height
+				end
+
+				local distanceToTop = entity.y - y * self.tile_height
+				_y = y - 1
+				while _y >= 0 and self:tileType(x, _y) == "ladder" do
+					_y = _y - 1
+					distanceToTop = distanceToTop + self.tile_height
+				end
+
+				return distanceToCenter, distanceToTop, distanceToBottom
+			end
+		end
 	end
 
-	if self.backgroundTiles.tiles[self.backgroundMap[xmax + ymin * self.width]].type == "ladder" or self.backgroundTiles.tiles[self.backgroundMap[xmax + ymax * self.width]].type == "ladder" then
-		return (xmax + 0.5) * self.tile_width - entity.x -- distance from center to center
-	end
-
+	-- no ladder tile
+	return nil
 end
 
 -- return the AABB for the tile at x, y
@@ -249,10 +261,6 @@ function Map:AABBForTile(x, y)
 	return nil
 end
 
-function Map:TileType(x, y)
-	return self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].type
-end
-
 -- Cast an AABB in the map along v
 -- type is the type of tile to ignore 
 function Map:AABBCast(aabb, v, tileType)
@@ -282,7 +290,7 @@ function Map:AABBCast(aabb, v, tileType)
 	u = 1.0
 	for y = tile_min[1], tile_max[1] do
 		for x = tile_min[0], tile_max[0] do
-			if tileType == nil or self:TileType(x, y) ~= tileType then
+			if tileType == nil or self:tileType(x, y) ~= tileType then
 				tileAABB = self:AABBForTile(x, y)
 
 				if tileAABB ~= nil and AABBOverlap(tileAABB, tilesAABB) then

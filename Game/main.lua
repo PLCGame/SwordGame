@@ -202,7 +202,7 @@ function fall(self, dt)
   	end
 
   	-- if the user can grab a ladder, do that
-	if PlayerControl.canGoUp() and levelMap:canClimbLadder(self) then
+	if PlayerControl.canGoUp() and levelMap:distanceToLadder(self) ~= nil then
 		self:changeAction(ladder)
 	end
 
@@ -309,8 +309,11 @@ function idle(self, dt)
   	end
 
   	-- if the user can grab a ladder, do that
-	if PlayerControl.canGoUp() and levelMap:canClimbLadder(self) then
-		self:changeAction(ladder)
+	if (PlayerControl.canGoDown() or PlayerControl.canGoUp()) then
+		x, t, b = levelMap:distanceToLadder(self)
+		if x ~= nil and ((PlayerControl.canGoDown() and b > 0) or (PlayerControl.canGoUp() and t > 0))  then
+			self:changeAction(ladder)
+		end
 	end
 
 	-- update position and velocity
@@ -373,7 +376,7 @@ end
 -- ladder state
 function ladder(self, dt)
 	-- move the sprite to the ladder
-	delta = levelMap:distanceToLadder(self) -- return the distance from center to center
+	delta, distanceToTop, distanceToBottom = levelMap:distanceToLadder(self) -- return the distance from center to center
 
 	-- delta == nil means the character is no longer on a ladder tile
 	if delta == nil then
@@ -411,6 +414,13 @@ function ladder(self, dt)
 
 			end
 
+			if disp < -distanceToTop or disp > distanceToBottom then
+				-- clamp
+				disp = math.min(math.max(disp, -distanceToTop), distanceToBottom)
+
+				self:changeAction(idle)
+			end
+
 			self.y = self.y + disp
 
 			-- update animation
@@ -423,7 +433,7 @@ function ladder(self, dt)
 
 		-- jump
 	  	if PlayerControl.canJump() then
-			self.speedY = -100.0
+			self.speedY = -10.0
 			self.action = fall
 
 			self:changeAction(fall)
@@ -483,8 +493,8 @@ function love.draw()
 	-- use scalling, make pixel bigger 
    	love.graphics.scale(4.0, 4.0)
    	love.graphics.setColor(255, 255, 255, 255)
-   	--love.graphics.polygon("fill", 0, 0, 320, 0, 320, 160, 0, 160)
     love.graphics.print("Ahhhhh!!!! 93556", 0, 0)
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 0, 10)
 
     -- draw the world 32 pixel from the top
    	love.graphics.translate(0, 32)
