@@ -484,7 +484,7 @@ function love.draw()
    	love.graphics.scale(4.0, 4.0)
    	love.graphics.setColor(255, 255, 255, 255)
    	--love.graphics.polygon("fill", 0, 0, 320, 0, 320, 160, 0, 160)
-    love.graphics.print("Hello World 93556", 0, 0)
+    love.graphics.print("Ahhhhh!!!! 93556", 0, 0)
 
     -- draw the world 32 pixel from the top
    	love.graphics.translate(0, 32)
