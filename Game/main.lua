@@ -2,12 +2,14 @@
 local joystick
 --
 
-local playerSprites = require "PlayerSprites"
+local playerSprites
+local enemySprites
 
 local playerSprite
 local levelMap
 local font
 
+SpriteFrame = require "SpriteFrame"
 Map = require "Map"
 
 PlayerControl = {}
@@ -442,14 +444,49 @@ function ladder(self, dt)
 	end
 end
 
+function snakeGo(self, dt)
+	local aabb = self:GetAABB()
+
+	if self.speedX < 0 and levelMap:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
+		self.speedX = 32.0
+		self.direction = 1
+	elseif self.speedX > 0 and levelMap:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
+		self.speedX = -32.0
+		self.direction = 0
+	end
+
+
+  	self:MoveAndCollide(dt)
+
+	self:updateAnimation(2, 1.0 / 8.0)
+	self.sprite = enemySprites.frames[7 + self.animationFrame + self.direction * 2]
+end
+
 function love.load()
 	-- change window mode
 	success = love.window.setMode(1280, 768, {resizable=false, vsync=true, fullscreen=false})
 	love.window.setTitle("Sword Game")
 
+	-- load Player sprites
+	local spriteImage = love.graphics.newImage("Player Sprites.png")
+	spriteImage:setFilter("nearest", "nearest")
+	playerSprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Player Mask.png"), love.graphics.newImage("Player Mark.png"))
+	playerSprites.runAnimation = { 10, 11, 10, 12 }
+	playerSprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
+
+	-- load enemy sprites
+	spriteImage = love.graphics.newImage("Enemy Sprites.png")
+	spriteImage:setFilter("nearest", "nearest")
+	enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
+
 	-- create player sprite
 	playerSprite = Entity.new()
 	playerSprite.action = idle
+
+	enemySprite = Entity.new()
+	enemySprite.x = 128
+	enemySprite.speedX = -32.0
+	enemySprite.action = snakeGo
 
 	-- load test level
 	levelMap = Map.new(require "testlevel")
@@ -484,6 +521,9 @@ function love.update(dt)
 		-- update player entity
 		playerSprite:action(timeStep)
 
+		-- update enemy
+		enemySprite:action(timeStep)
+
 		-- update scrolling to show the player
 		levelMap:scrollTo(playerSprite)
 	end
@@ -511,6 +551,9 @@ function love.draw()
 
 	-- draw character
 	playerSprite:draw()
+
+	-- draw enemy
+	enemySprite:draw()
 
 	-- restore state
 	love.graphics.setScissor()
