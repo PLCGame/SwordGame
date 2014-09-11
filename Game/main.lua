@@ -215,6 +215,25 @@ function fall(self, dt)
   	self.sprite = playerSprites.frames[playerSprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
 end
 
+function begin_jump(self)
+	-- init basic 
+	self.speedY = -100.0
+	self:changeAction(jump)
+end
+
+function jump(self, dt)
+	-- update position and velocity, and apply gravity
+  	self:MoveAndCollide(dt)
+
+  	if PlayerControl.canJump() then
+  		self.speedY = self.speedY - 7
+  	end
+
+  	if self.speedY >= 0 then
+  		self:changeAction(fall)
+  	end
+end
+
 function run(self, dt)
 	-- test input
   	if PlayerControl.canGoLeft() then
@@ -244,10 +263,8 @@ function run(self, dt)
   	else
  		-- we're on ground
 	  	if PlayerControl.canJump() then
-
-  			-- so we can jump
-			self.speedY = -200.0
-			self.action = fall
+	  		-- so we can jump
+	  		begin_jump(self)
 	  	end
 
   	end
@@ -304,9 +321,8 @@ function idle(self, dt)
   	else 
   		-- we're on ground
 	  	if PlayerControl.canJump() then
-  			-- so we can jump
-			self.speedY = -200.0
-			self.action = fall
+	  		-- so we can jump
+	  		begin_jump(self)
 	  	end
   	end
 
