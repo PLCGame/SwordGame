@@ -217,7 +217,7 @@ end
 
 function begin_jump(self)
 	-- init basic 
-	self.speedY = -100.0
+	self.speedY = -130.0
 	self:changeAction(jump)
 end
 
@@ -226,8 +226,19 @@ function jump(self, dt)
   	self:MoveAndCollide(dt)
 
   	if PlayerControl.canJump() then
-  		self.speedY = self.speedY - 7
+  		self.speedY = self.speedY - 4
   	end
+
+  	-- we can move left and right
+	if PlayerControl.canGoLeft() then
+		self.speedX = math.max(self.speedX - 16.0, -64.0)
+		self.direction = 1
+	end
+
+	if PlayerControl.canGoRight() then
+		self.speedX = math.min(self.speedX + 16.0, 64.0)
+		self.direction = 0
+	end
 
   	if self.speedY >= 0 then
   		self:changeAction(fall)
@@ -463,12 +474,35 @@ end
 function snakeGo(self, dt)
 	local aabb = self:GetAABB()
 
-	if self.speedX < 0 and levelMap:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
-		self.speedX = 32.0
-		self.direction = 1
-	elseif self.speedX > 0 and levelMap:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
-		self.speedX = -32.0
-		self.direction = 0
+	-- test if we can move left or right
+	if self.speedX < 0 then
+		-- if we can move left
+		if levelMap:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
+			-- change direction
+			self.speedX = 32.0
+			self.direction = 1
+		else
+			aabb.min[0] = aabb.min[0] - 1
+			aabb.max[0] = aabb.max[0] - 1
+
+			if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+				self.speedX = 32.0
+				self.direction = 1
+			end
+		end
+	elseif self.speedX > 0 then
+		if levelMap:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
+			self.speedX = -32.0
+			self.direction = 0
+		else
+			aabb.min[0] = aabb.min[0] + 1
+			aabb.max[0] = aabb.max[0] + 1
+
+			if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+				self.speedX = -32.0
+				self.direction = 0
+			end
+		end
 	end
 
 
