@@ -46,7 +46,7 @@ local Entity = {}
 Entity.__index = Entity
 
 -- create a new entity instance, with default values
-function Entity.new(spriteSheet)
+function Entity.new(width, height)
 	local self = setmetatable({}, Entity)
 
 	-- start position
@@ -72,11 +72,17 @@ function Entity.new(spriteSheet)
 	self.sprite = nil
 
 	-- bounding box
-	self.width = 8
-	self.height = 15
+	self.width = width
+	self.height = height
 
 	-- no action
 	self.action = nil
+
+	-- hit
+	self.hit = false
+	self.hitDirection = 0
+
+	self.health = 100
 
 	return self
 end
@@ -111,7 +117,7 @@ function Entity:changeAction(newAction)
 	self.action = newAction
 end
 
-function Entity:GetAABB()
+function Entity:getAABB()
 	local aabb = { min = {}, max = {} }
 	aabb.min[0] = self.x - self.width * 0.5
 	aabb.max[0] = self.x + self.width * 0.5
@@ -123,13 +129,13 @@ end
 
 function Entity:OnGround()
 	-- just do a cast 1px below
-	local aabb = self:GetAABB()
+	local aabb = self:getAABB()
 	return levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0
 end
 
 -- move the entity according to its speed, and handle collsion with world
 function Entity:MoveAndCollide(dt)
-	local aabb = self:GetAABB()
+	local aabb = self:getAABB()
 
 	-- gravity
 	-- if the entity is not on a solid tile, it's falling
@@ -144,7 +150,7 @@ function Entity:MoveAndCollide(dt)
 
 	local timeLeft = dt
 	while timeLeft > 0.0 do
-		aabb = self:GetAABB()
+		aabb = self:getAABB()
 
 		-- compute displacement
 		local xdisp = self.speedX * timeLeft
@@ -176,6 +182,12 @@ function Entity:MoveAndCollide(dt)
 	end
 
 	--print("new position", self.x, self.y, self.speedX, self.speedY, xdisp, ydisp)
+end
+
+function Entity:Hit(power, direction)
+	self.health = self.health - power
+	self.hit = true
+	self.hitDirection = direction
 end
 
 -- falling state
@@ -355,7 +367,7 @@ end
 -- attack state
 function attack(self, dt)
 	-- we need to slow down in order to stop moving if we are on the ground
-	aabb = self:GetAABB()
+	aabb = self:getAABB()
   	if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0.0 then
 		if self.speedX > 0.0 then
 			self.speedX = math.max(self.speedX - self.acceleration * dt, 0.0)
@@ -372,6 +384,32 @@ function attack(self, dt)
 
 	-- we can still be moving
   	self:MoveAndCollide(dt)
+
+  	if self.animationFrame >= 3 then
+  		-- do we hit something?
+  		local enemyAABB = enemySprite:getAABB()
+  		local swordAABB = { min = {}, max = {}}
+
+  		if self.direction == 0 then
+  			swordAABB.min[0] = self.x + 8
+  			swordAABB.max[0] = self.x + 18
+
+  			swordAABB.min[1] = self.y - 6
+  			swordAABB.max[1] = self.y - 3
+  		else
+  			swordAABB.min[0] = self.x - 18
+  			swordAABB.max[0] = self.x - 8
+
+  			swordAABB.min[1] = self.y - 6
+  			swordAABB.max[1] = self.y - 3  			
+  		end
+
+  		-- does it overlap?
+  		if not enemySprite.hit and AABBOverlap(swordAABB, enemyAABB) then
+  			-- kill the enemy!
+  			enemySprite:Hit(40, self.direction)
+  		end
+  	end
 
   	-- end of the animation, go back to idling state
 	if self.animationFrame == 5 then
@@ -430,7 +468,7 @@ function ladder(self, dt)
 
 		-- if the player is moving on the ladder
 		if disp ~= 0 then
-			local aabb = self:GetAABB()
+			local aabb = self:getAABB()
 			u, n = levelMap:AABBCast(aabb, {[0] = 0, [1] = disp}, "ladder")
 
 			if u < 1.0 then
@@ -471,40 +509,104 @@ function ladder(self, dt)
 	end
 end
 
-function snakeGo(self, dt)
-	local aabb = self:GetAABB()
+function snakeDead(self, hit)
+	-- move it away
+	self.x = -400000000
+	self.y = -400000000
+end
 
-	-- test if we can move left or right
-	if self.speedX < 0 then
-		-- if we can move left
-		if levelMap:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
-			-- change direction
-			self.speedX = 32.0
-			self.direction = 1
+function snakeRecover(self, dt)
+	if self.speedX > 0 then
+		self.speedX = math.max(0, self.speedX - 1024 * dt)
+	else
+		self.speedX = math.min(0, self.speedX + 1024 * dt)
+	end
+
+	if self.speedX == 0 then
+		if self.health <= 0 then
+			self:changeAction(snakeDead)
+			return
 		else
-			aabb.min[0] = aabb.min[0] - 1
-			aabb.max[0] = aabb.max[0] - 1
+			self:changeAction(snakeGo)
+			self.hit = false
+		end
+	end
 
-			if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+	self:MoveAndCollide(dt)
+end
+
+function snakeHit(self, dt)
+
+	-- move in the direction
+	if self.hitDirection == 0 then
+		self.speedX = 256.0
+	else
+		self.speedX = -256.0
+	end
+	self.speedY = -32.0
+
+	self:changeAction(snakeRecover)
+
+	self:MoveAndCollide(dt)
+end
+
+function snakeGo(self, dt)
+	local aabb = self:getAABB()
+
+	if self.direction == 1 then
+		self.speedX = 32.0
+	else
+		self.speedX = -32.0
+	end
+
+	-- fall straight
+	if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) > 0 then
+		self.speedX = 0
+	else
+		-- test if we can move left or right
+		if self.speedX < 0 then
+			-- if we can move left
+			if levelMap:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
+				-- change direction
 				self.speedX = 32.0
 				self.direction = 1
-			end
-		end
-	elseif self.speedX > 0 then
-		if levelMap:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
-			self.speedX = -32.0
-			self.direction = 0
-		else
-			aabb.min[0] = aabb.min[0] + 1
-			aabb.max[0] = aabb.max[0] + 1
+			else
+				-- test the edge of the platform, go as far as half width
+				c = levelMap:AABBCast(aabb, {[0] = -self.width, [1] = 0})
 
-			if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+				local dist = c * self.width
+				aabb.min[0] = aabb.min[0] - dist
+				aabb.max[0] = aabb.max[0] - dist
+
+				-- we will reach the end of the platform
+				if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+					self.speedX = 32.0
+					self.direction = 1
+				end
+			end
+		elseif self.speedX > 0 then
+			if levelMap:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
 				self.speedX = -32.0
 				self.direction = 0
+			else
+				-- test the edge of the platform, go as far as half width
+				c = levelMap:AABBCast(aabb, {[0] = self.width, [1] = 0})
+
+				local dist = c * self.width
+				aabb.min[0] = aabb.min[0] + dist
+				aabb.max[0] = aabb.max[0] + dist
+
+				if levelMap:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+					self.speedX = -32.0
+					self.direction = 0
+				end
 			end
 		end
 	end
 
+	if self.hit then
+		self:changeAction(snakeHit)
+	end
 
   	self:MoveAndCollide(dt)
 
@@ -530,10 +632,10 @@ function love.load()
 	enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 
 	-- create player sprite
-	playerSprite = Entity.new()
+	playerSprite = Entity.new(8, 15)
 	playerSprite.action = idle
 
-	enemySprite = Entity.new()
+	enemySprite = Entity.new(14, 16)
 	enemySprite.x = 128
 	enemySprite.speedX = -32.0
 	enemySprite.action = snakeGo
