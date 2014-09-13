@@ -15,31 +15,31 @@ Map = require "Map"
 PlayerControl = {}
 
 function PlayerControl.canGoLeft()
-	return love.keyboard.isDown("left") or joystick:isGamepadDown("dpleft") or joystick:getGamepadAxis("leftx") < -0.5
+	return love.keyboard.isDown("left") or (joystick ~= nil and (joystick:isGamepadDown("dpleft") or joystick:getGamepadAxis("leftx") < -0.5))
 end
 
 function PlayerControl.canGoRight()
-	return love.keyboard.isDown("right") or joystick:isGamepadDown("dpright") or joystick:getGamepadAxis("leftx") > 0.5
+	return love.keyboard.isDown("right") or (joystick ~= nil and (joystick:isGamepadDown("dpright") or joystick:getGamepadAxis("leftx") > 0.5))
 end
 
 function PlayerControl.canGoUp()
-	return love.keyboard.isDown("up") or joystick:isGamepadDown("dpup") or joystick:getGamepadAxis("lefty") < -0.5
+	return love.keyboard.isDown("up") or (joystick ~= nil and (joystick:isGamepadDown("dpup") or joystick:getGamepadAxis("lefty") < -0.5))
 end
 
 function PlayerControl.canGoDown()
-	return love.keyboard.isDown("down") or joystick:isGamepadDown("dpdown") or joystick:getGamepadAxis("lefty") > 0.5
+	return love.keyboard.isDown("down") or (joystick ~= nil and (joystick:isGamepadDown("dpdown") or joystick:getGamepadAxis("lefty") > 0.5))
 end
 
 function PlayerControl.canJump()
-	return love.keyboard.isDown("z") or joystick:isGamepadDown("a")
+	return love.keyboard.isDown("z") or (joystick ~= nil and joystick:isGamepadDown("a"))
 end
 
 function PlayerControl.canAttack()
-	return love.keyboard.isDown("q") or joystick:isGamepadDown("x")
+	return love.keyboard.isDown("q") or (joystick ~= nil and joystick:isGamepadDown("x"))
 end
 
 function PlayerControl.canDefend()
-	return love.keyboard.isDown("d") or joystick:isGamepadDown("b")
+	return love.keyboard.isDown("d") or (joystick ~= nil and joystick:isGamepadDown("b"))
 end
 
 local Entity = {}
