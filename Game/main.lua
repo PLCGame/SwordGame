@@ -641,7 +641,7 @@ function love.load()
 	enemySprite.action = snakeGo
 
 	-- load test level
-	levelMap = Map.new(require "testlevel")
+	levelMap = Map.new(require "testlevel2")
 	levelMap:setSize(320, 160)
 
 	print("Joystick count :", love.joystick.getJoystickCount())
