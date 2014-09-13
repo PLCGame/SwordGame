@@ -146,7 +146,7 @@ end
 -- x, y position on the screen 
 -- width, height size in pixels
 -- dx, dy scrolling position
-function Map.draw(self)
+function Map:draw()
 	tilex = math.floor(self.dx / self.tile_width)
 	tiley = math.floor(self.dy / self.tile_height)
 	tilew = math.min(self.screen_width / self.tile_width, self.width - 1 - tilex)
@@ -178,12 +178,12 @@ function Map.draw(self)
 
 end
 
-function Map.setSize(self, width, height)
+function Map:setSize(width, height)
 	self.screen_width = width
 	self.screen_height = height
 end
 
-function Map.scrollTo(self, object)
+function Map:scrollTo(object)
 	self.dx = math.min(math.max(object.x + object.width * 0.5 - 64, 0), self.dx) -- lower x bound
 	self.dx = math.max(math.min(object.x + object.width * 0.5 + 64 - self.screen_width, self.width * self.tile_width - self.screen_width), self.dx) -- higher x bound
 

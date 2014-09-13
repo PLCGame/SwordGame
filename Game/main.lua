@@ -641,7 +641,7 @@ function love.load()
 	enemySprite.action = snakeGo
 
 	-- load test level
-	levelMap = Map.new(require "testlevel2")
+	levelMap = Map.new(require "testlevel")
 	levelMap:setSize(320, 160)
 
 	print("Joystick count :", love.joystick.getJoystickCount())
@@ -660,7 +660,7 @@ local time_acc = 0.0
 
 function love.update(dt)
 	-- get elapsed time since last frame
-	dt = love.timer.getDelta()
+	--dt = love.timer.getDelta()
 
 	-- fixed time step
 	timeStep = 1.0 / 60.0
