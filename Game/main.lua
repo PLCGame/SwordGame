@@ -141,7 +141,7 @@ function Entity:MoveAndCollide(dt)
 	-- if the entity is not on a solid tile, it's falling
 	if not self:OnGround() then
 		-- increment speed Y
-  		self.speedY = math.min(self.speedY + 8.0, 256.0)
+  		self.speedY = math.min(self.speedY + 768.0 * dt, 256.0)
   	end
 
 	--print("")
@@ -200,12 +200,12 @@ function fall(self, dt)
 
   	-- we can move left and right
 	if PlayerControl.canGoLeft() then
-		self.speedX = math.max(self.speedX - 16.0, -64.0)
+		self.speedX = math.max(self.speedX - 4.0, -64.0)
 		self.direction = 1
 	end
 
 	if PlayerControl.canGoRight() then
-		self.speedX = math.min(self.speedX + 16.0, 64.0)
+		self.speedX = math.min(self.speedX + 4.0, 64.0)
 		self.direction = 0
 	end
 
@@ -229,7 +229,7 @@ end
 
 function begin_jump(self)
 	-- init basic 
-	self.speedY = -130.0
+	self.speedY = -170.0
 	self:changeAction(jump)
 end
 
@@ -238,7 +238,7 @@ function jump(self, dt)
   	self:MoveAndCollide(dt)
 
   	if PlayerControl.canJump() then
-  		self.speedY = self.speedY - 4
+  		self.speedY = self.speedY - 430.0 * dt
   	end
 
   	-- we can move left and right
@@ -283,14 +283,12 @@ function run(self, dt)
   	if not self:OnGround() then
   		-- no, then go into fall state
   		self.action = fall
-  	else
- 		-- we're on ground
-	  	if PlayerControl.canJump() then
-	  		-- so we can jump
-	  		begin_jump(self)
-	  	end
-
-  	end
+	end
+	-- jump
+	if PlayerControl.canJump() then
+		-- so we can jump
+	  	begin_jump(self)
+	end
 
 	-- update sprite
 	self:updateAnimation(4, 1.0 / 16.0)
