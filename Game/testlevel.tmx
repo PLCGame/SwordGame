@@ -70,7 +70,7 @@
   </data>
  </layer>
  <objectgroup name="Object Layer 1" width="64" height="24">
-  <object name="PlayerSpawn" type="Player" x="112" y="272" width="16" height="16"/>
+  <object name="PlayerSpawn" type="Player" x="464" y="352" width="16" height="16"/>
   <object type="Snake" x="160" y="112" width="16" height="16"/>
   <object type="Snake" x="368" y="112" width="16" height="16"/>
   <object type="Snake" x="496" y="176" width="16" height="16"/>
@@ -78,5 +78,6 @@
   <object type="Snake" x="96" y="352" width="16" height="16"/>
   <object type="Snake" x="336" y="352" width="16" height="16"/>
   <object type="Snake" x="240" y="112" width="16" height="16"/>
+  <object type="Snake" x="112" y="160" width="16" height="16"/>
  </objectgroup>
 </map>

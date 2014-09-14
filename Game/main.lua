@@ -671,7 +671,7 @@ function love.update(dt)
 	--dt = love.timer.getDelta()
 
 	-- fixed time step
-	timeStep = 1.0 / 60.0
+	local timeStep = 1.0 / 60.0
 
 	time_acc = time_acc + dt
 
