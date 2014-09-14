@@ -104,9 +104,10 @@ function loadTileset(data)
 	return tileset
 end
 
-function Map.new(mapData) 
+function Map.new(mapData, entityCreateFunctions) 
 	local self = setmetatable({}, Map)
 
+	-- default values
 	self.screen_width = 256
 	self.screen_height = 192
 
@@ -118,11 +119,13 @@ function Map.new(mapData)
 	self.tile_width = mapData.tilewidth
 	self.tile_height = mapData.tileheight
 
+	self.entities = {} -- empty array
+
 	-- load tile set
 	self.backgroundTiles = loadTileset(mapData.tilesets[1])
 
 	-- create background tile map
-	backgroundLayer = mapData.layers[1]
+	local backgroundLayer = mapData.layers[1]
 	self.backgroundMap = {}
 
 	for i = 0, self.width * self.height - 1 do
@@ -132,11 +135,29 @@ function Map.new(mapData)
 	-- create object map
 	self.objectTiles = loadTileset(mapData.tilesets[2])
 
-	objectLayer = mapData.layers[2]
+	local objectLayer = mapData.layers[2]
 	self.objectsMap = {}
 
 	for i = 0, self.width * self.height - 1 do
 		self.objectsMap[i] = objectLayer.data[1 + i] - mapData.tilesets[2].firstgid
+	end
+
+	-- parse object layers
+	local spawnLayer = mapData.layers[3]
+
+	for i = 1, #spawnLayer.objects do
+		local obj = spawnLayer.objects[i]
+
+		print(obj.type)
+
+		-- create the entity
+		local entity = entityCreateFunctions[obj.type]()
+
+		-- set location
+		entity.x = obj.x + obj.width * 0.5
+		entity.y = obj.y + obj.height
+
+		table.insert(self.entities, entity)
 	end
 
 	return self

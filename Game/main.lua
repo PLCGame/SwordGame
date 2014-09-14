@@ -5,7 +5,6 @@ local joystick
 local playerSprites
 local enemySprites
 
-local playerSprite
 local levelMap
 local font
 
@@ -243,12 +242,12 @@ function jump(self, dt)
 
   	-- we can move left and right
 	if PlayerControl.canGoLeft() then
-		self.speedX = math.max(self.speedX - 16.0, -64.0)
+		self.speedX = math.max(self.speedX - 16.0, -self.maxSpeed)
 		self.direction = 1
 	end
 
 	if PlayerControl.canGoRight() then
-		self.speedX = math.min(self.speedX + 16.0, 64.0)
+		self.speedX = math.min(self.speedX + 16.0, self.maxSpeed)
 		self.direction = 0
 	end
 
@@ -384,28 +383,34 @@ function attack(self, dt)
   	self:MoveAndCollide(dt)
 
   	if self.animationFrame >= 3 then
-  		-- do we hit something?
-  		local enemyAABB = enemySprite:getAABB()
-  		local swordAABB = { min = {}, max = {}}
+  		for i = 1, #levelMap.entities do
+  			local enemy = levelMap.entities[i]
 
-  		if self.direction == 0 then
-  			swordAABB.min[0] = self.x + 8
-  			swordAABB.max[0] = self.x + 18
+  			if enemy ~= self then
+  				-- do we hit something?
+  				local enemyAABB = enemy:getAABB()
+  				local swordAABB = { min = {}, max = {}}
 
-  			swordAABB.min[1] = self.y - 6
-  			swordAABB.max[1] = self.y - 3
-  		else
-  			swordAABB.min[0] = self.x - 18
-  			swordAABB.max[0] = self.x - 8
+  				if self.direction == 0 then
+  					swordAABB.min[0] = self.x + 8
+  					swordAABB.max[0] = self.x + 18
 
-  			swordAABB.min[1] = self.y - 6
-  			swordAABB.max[1] = self.y - 3  			
-  		end
+  					swordAABB.min[1] = self.y - 6
+  					swordAABB.max[1] = self.y - 3
+  				else
+  					swordAABB.min[0] = self.x - 18
+  					swordAABB.max[0] = self.x - 8
 
-  		-- does it overlap?
-  		if not enemySprite.hit and AABBOverlap(swordAABB, enemyAABB) then
-  			-- kill the enemy!
-  			enemySprite:Hit(40, self.direction)
+  					swordAABB.min[1] = self.y - 6
+  					swordAABB.max[1] = self.y - 3  			
+  				end
+
+  				-- does it overlap?
+  				if not enemy.hit and AABBOverlap(swordAABB, enemyAABB) then
+  					-- kill the enemy!
+  					enemy:Hit(40, self.direction)
+  				end
+  			end
   		end
   	end
 
@@ -612,6 +617,20 @@ function snakeGo(self, dt)
 	self.sprite = enemySprites.frames[7 + self.animationFrame + self.direction * 2]
 end
 
+function createPlayerEntity()
+	local playerEntity = Entity.new(8, 15)
+	playerEntity.action = idle
+
+	return playerEntity
+end
+
+function createSnakeEntity()
+	local snakeEntity = Entity.new(14, 16)
+	snakeEntity.action = snakeGo
+
+	return snakeEntity
+end
+
 function love.load()
 	-- change window mode
 	success = love.window.setMode(1280, 768, {resizable=false, vsync=true, fullscreen=false})
@@ -629,17 +648,8 @@ function love.load()
 	spriteImage:setFilter("nearest", "nearest")
 	enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 
-	-- create player sprite
-	playerSprite = Entity.new(8, 15)
-	playerSprite.action = idle
-
-	enemySprite = Entity.new(14, 16)
-	enemySprite.x = 128
-	enemySprite.speedX = -32.0
-	enemySprite.action = snakeGo
-
 	-- load test level
-	levelMap = Map.new(require "testlevel2")
+	levelMap = Map.new(require "testlevel", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
 	levelMap:setSize(320, 160)
 
 	print("Joystick count :", love.joystick.getJoystickCount())
@@ -668,14 +678,18 @@ function love.update(dt)
 	while time_acc > timeStep do
 		time_acc = time_acc - timeStep
 		
-		-- update player entity
-		playerSprite:action(timeStep)
+		-- update entity
+		for i = 1, #levelMap.entities do
+			local entity = levelMap.entities[i]
 
-		-- update enemy
-		enemySprite:action(timeStep)
+			-- update player entity
+			entity:action(timeStep)
+		end
 
 		-- update scrolling to show the player
-		levelMap:scrollTo(playerSprite)
+		if levelMap.entities[1] ~= nil then
+			levelMap:scrollTo(levelMap.entities[1])
+		end
 	end
 end
 
@@ -699,11 +713,13 @@ function love.draw()
    	-- translate according to current world scrolling
   	love.graphics.translate(-levelMap.dx, -levelMap.dy)
 
-	-- draw character
-	playerSprite:draw()
+	for i = 1, #levelMap.entities do
+		local entity = levelMap.entities[i]
 
-	-- draw enemy
-	enemySprite:draw()
+		-- update player entity
+		entity:draw()
+
+	end
 
 	-- restore state
 	love.graphics.setScissor()
