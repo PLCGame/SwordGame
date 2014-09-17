@@ -1,3 +1,5 @@
+require("list")
+
 local Map = {}
 Map.__index = Map
 
@@ -119,7 +121,7 @@ function Map.new(mapData, entityCreateFunctions)
 	self.tile_width = mapData.tilewidth
 	self.tile_height = mapData.tileheight
 
-	self.entities = {} -- empty array
+	self.entities = list() -- empty array
 
 	-- load tile set
 	self.backgroundTiles = loadTileset(mapData.tilesets[1])
@@ -157,7 +159,7 @@ function Map.new(mapData, entityCreateFunctions)
 		entity.x = obj.x + obj.width * 0.5
 		entity.y = obj.y + obj.height
 
-		table.insert(self.entities, entity)
+		self.entities:push(entity)
 	end
 
 	return self

@@ -383,9 +383,7 @@ function attack(self, dt)
   	self:MoveAndCollide(dt)
 
   	if self.animationFrame >= 3 then
-  		for i = 1, #levelMap.entities do
-  			local enemy = levelMap.entities[i]
-
+		for enemy in levelMap.entities:iterate() do
   			if enemy ~= self then
   				-- do we hit something?
   				local enemyAABB = enemy:getAABB()
@@ -679,16 +677,15 @@ function love.update(dt)
 		time_acc = time_acc - timeStep
 		
 		-- update entity
-		for i = 1, #levelMap.entities do
-			local entity = levelMap.entities[i]
-
-			-- update player entity
+		for entity in levelMap.entities:iterate() do
+			-- update entity
 			entity:action(timeStep)
 		end
 
+
 		-- update scrolling to show the player
-		if levelMap.entities[1] ~= nil then
-			levelMap:scrollTo(levelMap.entities[1])
+		if levelMap.entities.first then
+			levelMap:scrollTo(levelMap.entities.first)
 		end
 	end
 end
@@ -713,12 +710,9 @@ function love.draw()
    	-- translate according to current world scrolling
   	love.graphics.translate(-levelMap.dx, -levelMap.dy)
 
-	for i = 1, #levelMap.entities do
-		local entity = levelMap.entities[i]
-
-		-- update player entity
+	for entity in levelMap.entities:iterate() do
+		-- update entity
 		entity:draw()
-
 	end
 
 	-- restore state
