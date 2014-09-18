@@ -648,7 +648,7 @@ function love.load()
 
 	-- load test level
 	levelMap = Map.new(require "testlevel", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
-	levelMap:setSize(320, 160)
+	levelMap:setSize(320, 192)
 
 	print("Joystick count :", love.joystick.getJoystickCount())
 
@@ -698,10 +698,10 @@ function love.draw()
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 0, 10)
 
     -- draw the world 32 pixel from the top
-   	love.graphics.translate(0, 32)
+   	--love.graphics.translate(0, 32)
 
 	-- set scissor 
-	love.graphics.setScissor(0, 32 * 4, 320 * 4, 160 * 4)
+	--love.graphics.setScissor(0, 32 * 4, 320 * 4, 160 * 4)
 
 	-- draw the world
    	levelMap:draw()
@@ -716,5 +716,5 @@ function love.draw()
 	end
 
 	-- restore state
-	love.graphics.setScissor()
+	--love.graphics.setScissor()
 end
