@@ -1,7 +1,3 @@
--- garbage
-local joystick
---
-
 local playerSprites
 local enemySprites
 
@@ -12,33 +8,74 @@ SpriteFrame = require "SpriteFrame"
 Map = require "Map"
 
 PlayerControl = {}
+PlayerControl.__index = PlayerControl
+
+function PlayerControl.new() 
+	local self = setmetatable({}, PlayerControl)
+
+	self.event = { 	left 	= 	{"left", 	"dpleft", 	"leftx", 	true},
+					right 	=	{"right", 	"dpright", 	"leftx", 	false},
+					up	 	= 	{"up", 		"dpup", 	"lefty", 	true},
+					down	= 	{"down", 	"dpdown", 	"lefty", 	false},
+					jump	= 	{"z", 		"a", 		nil, 		nil},
+					attack 	= 	{"q", 		"x", 		nil,		nil},
+					defend 	= 	{"d", 		"b", 		nil, 		nil}}
+
+	return self
+end
+
+function PlayerControl:testInput(event)
+	local res = false
+
+	eventArray = self.event[event]
+
+	if eventArray[1] ~= nil then
+		res = res or love.keyboard.isDown(eventArray[1])
+	end
+
+	if self.joystick ~= nil then
+		if eventArray[2] ~= nil then
+			res = res or self.joystick:isGamepadDown(eventArray[2])
+		end
+
+		if eventArray[3] ~= nil then
+			if eventArray[4] then
+				res = res or (self.joystick:getGamepadAxis(eventArray[3]) < -0.5)
+			else
+				res = res or (self.joystick:getGamepadAxis(eventArray[3]) > 0.5)
+			end
+		end
+	end
+
+	return res	
+end
 
 function PlayerControl:canGoLeft()
-	return love.keyboard.isDown("left") or (joystick ~= nil and (joystick:isGamepadDown("dpleft") or joystick:getGamepadAxis("leftx") < -0.5))
+	return self:testInput("left")
 end
 
 function PlayerControl:canGoRight()
-	return love.keyboard.isDown("right") or (joystick ~= nil and (joystick:isGamepadDown("dpright") or joystick:getGamepadAxis("leftx") > 0.5))
+	return self:testInput("right")
 end
 
 function PlayerControl:canGoUp()
-	return love.keyboard.isDown("up") or (joystick ~= nil and (joystick:isGamepadDown("dpup") or joystick:getGamepadAxis("lefty") < -0.5))
+	return self:testInput("up")
 end
 
 function PlayerControl:canGoDown()
-	return love.keyboard.isDown("down") or (joystick ~= nil and (joystick:isGamepadDown("dpdown") or joystick:getGamepadAxis("lefty") > 0.5))
+	return self:testInput("down")
 end
 
 function PlayerControl:canJump()
-	return love.keyboard.isDown("z") or (joystick ~= nil and joystick:isGamepadDown("a"))
+	return self:testInput("jump")
 end
 
 function PlayerControl:canAttack()
-	return love.keyboard.isDown("q") or (joystick ~= nil and joystick:isGamepadDown("x"))
+	return self:testInput("attack")
 end
 
 function PlayerControl:canDefend()
-	return love.keyboard.isDown("d") or (joystick ~= nil and joystick:isGamepadDown("b"))
+	return self:testInput("defend")
 end
 
 local Entity = {}
@@ -192,18 +229,18 @@ end
 -- falling state
 function fall(self, dt)
 	-- we can attach will in air
-  	if PlayerControl.canAttack() then
+  	if self.playerControl:canAttack() then
   		-- change state
   		self:changeAction(attack)
   	end
 
   	-- we can move left and right
-	if PlayerControl.canGoLeft() then
+	if self.playerControl:canGoLeft() then
 		self.speedX = math.max(self.speedX - 4.0, -64.0)
 		self.direction = 1
 	end
 
-	if PlayerControl.canGoRight() then
+	if self.playerControl:canGoRight() then
 		self.speedX = math.min(self.speedX + 4.0, 64.0)
 		self.direction = 0
 	end
@@ -215,7 +252,7 @@ function fall(self, dt)
   	end
 
   	-- if the user can grab a ladder, do that
-	if PlayerControl.canGoUp() and levelMap:distanceToLadder(self) ~= nil then
+	if self.playerControl:canGoUp() and levelMap:distanceToLadder(self) ~= nil then
 		self:changeAction(ladder)
 	end
 
@@ -236,17 +273,17 @@ function jump(self, dt)
 	-- update position and velocity, and apply gravity
   	self:MoveAndCollide(dt)
 
-  	if PlayerControl.canJump() then
+  	if self.playerControl:canJump() then
   		self.speedY = self.speedY - 430.0 * dt
   	end
 
   	-- we can move left and right
-	if PlayerControl.canGoLeft() then
+	if self.playerControl:canGoLeft() then
 		self.speedX = math.max(self.speedX - 16.0, -self.maxSpeed)
 		self.direction = 1
 	end
 
-	if PlayerControl.canGoRight() then
+	if self.playerControl:canGoRight() then
 		self.speedX = math.min(self.speedX + 16.0, self.maxSpeed)
 		self.direction = 0
 	end
@@ -258,13 +295,13 @@ end
 
 function run(self, dt)
 	-- test input
-  	if PlayerControl.canGoLeft() then
+  	if self.playerControl:canGoLeft() then
   		-- accelerate to the left
   		self.speedX = math.max(self.speedX - self.acceleration * dt, -self.maxSpeed)
 
   		-- character look to the left
 		self.direction = 1
-  	elseif PlayerControl.canGoRight() then
+  	elseif self.playerControl:canGoRight() then
   		-- accelerate to the right
   		self.speedX = math.min(self.speedX + self.acceleration * dt, self.maxSpeed)
 
@@ -284,7 +321,7 @@ function run(self, dt)
   		self.action = fall
 	end
 	-- jump
-	if PlayerControl.canJump() then
+	if self.playerControl:canJump() then
 		-- so we can jump
 	  	begin_jump(self)
 	end
@@ -294,14 +331,14 @@ function run(self, dt)
 	self.sprite = playerSprites.frames[playerSprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
 
 	-- we can attack while moving
-  	if PlayerControl.canAttack() then
+  	if self.playerControl:canAttack() then
   		-- change state
   		self.speedX = 0
   		self:changeAction(attack)
   	end
 
   	-- and defend
-	if PlayerControl.canDefend() then
+	if self.playerControl:canDefend() then
   		-- change state
 	  	self:changeAction(defend)
 	end
@@ -319,18 +356,18 @@ function idle(self, dt)
 	end
 
 	-- if the players wants to move, change to run state
-  	if PlayerControl.canGoLeft() or PlayerControl.canGoRight() then
+  	if self.playerControl:canGoLeft() or self.playerControl:canGoRight() then
 		self.action = run
   	end
 
   	-- attack
-  	if PlayerControl.canAttack() then
+  	if self.playerControl:canAttack() then
   		-- change state
   		self:changeAction(attack)
   	end
 
   	-- defend
-	if PlayerControl.canDefend() then
+	if self.playerControl:canDefend() then
   		-- change state
 	  	self:changeAction(defend)
 	end
@@ -340,16 +377,16 @@ function idle(self, dt)
   		self.action = fall
   	else 
   		-- we're on ground
-	  	if PlayerControl.canJump() then
+	  	if self.playerControl:canJump() then
 	  		-- so we can jump
 	  		begin_jump(self)
 	  	end
   	end
 
   	-- if the user can grab a ladder, do that
-	if (PlayerControl.canGoDown() or PlayerControl.canGoUp()) then
+	if (self.playerControl:canGoDown() or self.playerControl:canGoUp()) then
 		x, t, b = levelMap:distanceToLadder(self)
-		if x ~= nil and ((PlayerControl.canGoDown() and b > 0) or (PlayerControl.canGoUp() and t > 0))  then
+		if x ~= nil and ((self.playerControl:canGoDown() and b > 0) or (self.playerControl:canGoUp() and t > 0))  then
 			self:changeAction(ladder)
 		end
 	end
@@ -430,7 +467,7 @@ function defend(self, dt)
 	end
 
 	-- no longer in defense
-	if not PlayerControl.canDefend() then
+	if not self.playerControl:canDefend() then
 		self:changeAction(idle)
 	end
 
@@ -461,9 +498,9 @@ function ladder(self, dt)
 		local disp = 0.0
 
 
-		if PlayerControl.canGoUp() then
+		if self.playerControl:canGoUp() then
 			disp = -48 * dt
-		elseif PlayerControl.canGoDown() then
+		elseif self.playerControl:canGoDown() then
 			disp = 48 * dt
 		end
 
@@ -500,7 +537,7 @@ function ladder(self, dt)
 		end
 
 		-- jump
-	  	if PlayerControl.canJump() then
+	  	if self.playerControl:canJump() then
 			self.speedY = -10.0
 			self.action = fall
 
@@ -619,6 +656,16 @@ function createPlayerEntity()
 	local playerEntity = Entity.new(8, 15)
 	playerEntity.action = idle
 
+	local playerControl = PlayerControl.new()
+
+	-- if there's a connected joystick
+	if love.joystick.getJoystickCount() > 0 then
+		local joysticks = love.joystick.getJoysticks()
+		playerControl.joystick = joysticks[1]
+	end
+
+	playerEntity.playerControl = playerControl
+
 	return playerEntity
 end
 
@@ -649,12 +696,6 @@ function love.load()
 	-- load test level
 	levelMap = Map.new(require "testlevel", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
 	levelMap:setSize(320, 192)
-
-	print("Joystick count :", love.joystick.getJoystickCount())
-
-	-- use joystick (for testing puprose)
-	joysticks = love.joystick.getJoysticks()
-	joystick = joysticks[1]
 
 	font = love.graphics.newImageFont("test_font.png",
     " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{:}" )
@@ -693,10 +734,6 @@ end
 function love.draw()
 	-- use scalling, make pixel bigger 
    	love.graphics.scale(4.0, 4.0)
-   	love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.print("Ahhhhh!!!! 93556", 0, 0)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 0, 10)
-
     -- draw the world 32 pixel from the top
    	--love.graphics.translate(0, 32)
 
@@ -714,6 +751,12 @@ function love.draw()
 		-- update entity
 		entity:draw()
 	end
+
+	-- restore transform
+  	love.graphics.translate(levelMap.dx, levelMap.dy)
+
+   	love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 0, 10)
 
 	-- restore state
 	--love.graphics.setScissor()
