@@ -147,19 +147,21 @@ function Map.new(mapData, entityCreateFunctions)
 	-- parse object layers
 	local spawnLayer = mapData.layers[3]
 
-	for i = 1, #spawnLayer.objects do
-		local obj = spawnLayer.objects[i]
+	if spawnLayer ~= nil then
+		for i = 1, #spawnLayer.objects do
+			local obj = spawnLayer.objects[i]
 
-		print(obj.type)
+			print(obj.type)
 
-		-- create the entity
-		local entity = entityCreateFunctions[obj.type]()
+			-- create the entity
+			local entity = entityCreateFunctions[obj.type]()
 
-		-- set location
-		entity.x = obj.x + obj.width * 0.5
-		entity.y = obj.y + obj.height
+			-- set location
+			entity.x = obj.x + obj.width * 0.5
+			entity.y = obj.y + obj.height
 
-		self.entities:push(entity)
+			self.entities:push(entity)
+		end
 	end
 
 	return self

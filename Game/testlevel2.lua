@@ -146,7 +146,7 @@ return {
       y = 0,
       width = 64,
       height = 24,
-      visible = true,
+      visible = false,
       opacity = 1,
       properties = {},
       encoding = "lua",
@@ -175,6 +175,59 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 0
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Object Layer 1",
+      visible = true,
+      opacity = 1,
+      properties = {},
+      objects = {
+        {
+          name = "Player",
+          type = "Player",
+          shape = "rectangle",
+          x = 48,
+          y = 80,
+          width = 16,
+          height = 16,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "Snake",
+          shape = "rectangle",
+          x = 224,
+          y = 144,
+          width = 16,
+          height = 16,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "Snake",
+          shape = "rectangle",
+          x = 144,
+          y = 144,
+          width = 16,
+          height = 16,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "Snake",
+          shape = "rectangle",
+          x = 160,
+          y = 208,
+          width = 16,
+          height = 16,
+          visible = true,
+          properties = {}
+        }
       }
     }
   }
