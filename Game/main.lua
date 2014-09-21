@@ -13,31 +13,31 @@ Map = require "Map"
 
 PlayerControl = {}
 
-function PlayerControl.canGoLeft()
+function PlayerControl:canGoLeft()
 	return love.keyboard.isDown("left") or (joystick ~= nil and (joystick:isGamepadDown("dpleft") or joystick:getGamepadAxis("leftx") < -0.5))
 end
 
-function PlayerControl.canGoRight()
+function PlayerControl:canGoRight()
 	return love.keyboard.isDown("right") or (joystick ~= nil and (joystick:isGamepadDown("dpright") or joystick:getGamepadAxis("leftx") > 0.5))
 end
 
-function PlayerControl.canGoUp()
+function PlayerControl:canGoUp()
 	return love.keyboard.isDown("up") or (joystick ~= nil and (joystick:isGamepadDown("dpup") or joystick:getGamepadAxis("lefty") < -0.5))
 end
 
-function PlayerControl.canGoDown()
+function PlayerControl:canGoDown()
 	return love.keyboard.isDown("down") or (joystick ~= nil and (joystick:isGamepadDown("dpdown") or joystick:getGamepadAxis("lefty") > 0.5))
 end
 
-function PlayerControl.canJump()
+function PlayerControl:canJump()
 	return love.keyboard.isDown("z") or (joystick ~= nil and joystick:isGamepadDown("a"))
 end
 
-function PlayerControl.canAttack()
+function PlayerControl:canAttack()
 	return love.keyboard.isDown("q") or (joystick ~= nil and joystick:isGamepadDown("x"))
 end
 
-function PlayerControl.canDefend()
+function PlayerControl:canDefend()
 	return love.keyboard.isDown("d") or (joystick ~= nil and joystick:isGamepadDown("b"))
 end
 
