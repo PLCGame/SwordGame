@@ -697,8 +697,8 @@ function love.load()
 	levelMap = Map.new(require "testlevel2", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
 	levelMap:setSize(320, 192)
 
-	font = love.graphics.newImageFont("test_font.png",
-    " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{:}" )
+	font = love.graphics.newImageFont("rotunda.png",
+    " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}" )
     font:setFilter("nearest", "nearest")
     love.graphics.setFont(font)
 end
