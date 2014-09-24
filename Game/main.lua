@@ -547,30 +547,37 @@ function ladder(self, dt)
 	end
 end
 
-function snakeDead(self, hit)
+function snakeDead(self, dt)
 	-- move it away
 	self.x = -400000000
 	self.y = -400000000
 end
 
 function snakeRecover(self, dt)
-	if self.speedX > 0 then
-		self.speedX = math.max(0, self.speedX - 1024 * dt)
-	else
-		self.speedX = math.min(0, self.speedX + 1024 * dt)
-	end
+	-- death animation
+	if self.health <= 0 then
+		self:updateAnimation(3, 1.0 / 8.0)
 
-	if self.speedX == 0 then
-		if self.health <= 0 then
+		if self.animationFrame == 2 then
 			self:changeAction(snakeDead)
 			return
+		end
+
+		self.sprite = enemySprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
+	else
+		if self.speedX > 0 then
+			self.speedX = math.max(0, self.speedX - 1024 * dt)
 		else
+			self.speedX = math.min(0, self.speedX + 1024 * dt)
+		end
+
+		if self.speedX == 0 then
 			self:changeAction(snakeGo)
 			self.hit = false
 		end
-	end
 
-	self:MoveAndCollide(dt)
+		self:MoveAndCollide(dt)		
+	end
 end
 
 function snakeHit(self, dt)
@@ -584,6 +591,8 @@ function snakeHit(self, dt)
 	self.speedY = -32.0
 
 	self:changeAction(snakeRecover)
+
+	self.sprite = enemySprites.frames[7 + 2 + self.direction * 5]
 
 	self:MoveAndCollide(dt)
 end
@@ -649,7 +658,7 @@ function snakeGo(self, dt)
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)
-	self.sprite = enemySprites.frames[7 + self.animationFrame + self.direction * 2]
+	self.sprite = enemySprites.frames[7 + self.animationFrame + self.direction * 5]
 end
 
 function createPlayerEntity()
