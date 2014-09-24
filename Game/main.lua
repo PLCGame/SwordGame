@@ -703,7 +703,7 @@ function love.load()
 	enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 
 	-- load test level
-	levelMap = Map.new(require "testlevel2", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
+	levelMap = Map.new(require "testlevel3", {["Player"] = createPlayerEntity, ["Snake"] = createSnakeEntity})
 	levelMap:setSize(320, 192)
 
 	font = love.graphics.newImageFont("rotunda.png",
