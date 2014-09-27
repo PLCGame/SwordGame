@@ -282,6 +282,30 @@ return {
           height = 16,
           visible = true,
           properties = {}
+        },
+        {
+          name = "",
+          type = "Player",
+          shape = "rectangle",
+          x = 304,
+          y = 240,
+          width = 0,
+          height = 0,
+          gid = 27,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 336,
+          y = 240,
+          width = 0,
+          height = 0,
+          gid = 26,
+          visible = true,
+          properties = {}
         }
       }
     }

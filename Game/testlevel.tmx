@@ -79,5 +79,7 @@
   <object type="Snake" x="336" y="352" width="16" height="16"/>
   <object type="Snake" x="240" y="112" width="16" height="16"/>
   <object type="Snake" x="112" y="160" width="16" height="16"/>
+  <object type="Player" gid="27" x="304" y="240"/>
+  <object gid="26" x="336" y="240"/>
  </objectgroup>
 </map>
