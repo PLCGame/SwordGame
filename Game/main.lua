@@ -11,6 +11,17 @@ Entity = require "Entity"
 PlayerStates = require "PlayerStates"
 EnemyStates = require "EnemyStates"
 
+local Level = {}
+Level.__index = Level
+
+function Level:update(dt)
+	
+end
+
+function Level:draw()
+
+end
+
 function createPlayerEntity()
 	local playerEntity = Entity.new(8, 15, level)
 	playerEntity.sprites = playerSprites
