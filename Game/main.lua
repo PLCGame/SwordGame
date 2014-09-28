@@ -160,21 +160,28 @@ function love.update(dt)
 	end
 end
 
+function printOutline(str, x, y)
+	love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.print(str, x-1, y-1)
+    love.graphics.print(str, x, y-1)
+	love.graphics.print(str, x+1, y-1)
+    love.graphics.print(str, x-1, y)
+	love.graphics.print(str, x+1, y)
+    love.graphics.print(str, x-1, y+1)
+    love.graphics.print(str, x, y+1)
+	love.graphics.print(str, x+1, y+1)
+
+	love.graphics.setColor(255, 255, 255, 255)	
+    love.graphics.print(str, x, y)
+end
+
 function love.draw()
 	-- use scalling, make pixel bigger 
    	love.graphics.scale(4.0, 4.0)
-    -- draw the world 32 pixel from the top
-   	--love.graphics.translate(0, 32)
-
-	-- set scissor 
-	--love.graphics.setScissor(0, 32 * 4, 320 * 4, 160 * 4)
 
 	-- draw the world
 	level:draw()
 
-   	love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 0, 10)
-
-	-- restore state
-	--love.graphics.setScissor()
+   	printOutline("Current Level : "..Levels[currentLevel + 1], 5, 5)
+   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 end
