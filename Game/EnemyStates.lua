@@ -60,43 +60,43 @@ function EnemyStates.snakeGo(self, dt)
 	end
 
 	-- fall straight
-	if self.level.Map:AABBCast(aabb, {[0] = 0, [1] = 1}) > 0 then
+	if self.level.map:AABBCast(aabb, {[0] = 0, [1] = 1}) > 0 then
 		self.speedX = 0
 	else
 		-- test if we can move left or right
 		if self.speedX < 0 then
 			-- if we can move left
-			if self.level.Map:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
+			if self.level.map:AABBCast(aabb, {[0] = -1, [1] = 0}) < 1 then
 				-- change direction
 				self.speedX = 32.0
 				self.direction = 1
 			else
 				-- test the edge of the platform, go as far as half width
-				c = self.level.Map:AABBCast(aabb, {[0] = -self.width, [1] = 0})
+				c = self.level.map:AABBCast(aabb, {[0] = -self.width, [1] = 0})
 
 				local dist = c * self.width
 				aabb.min[0] = aabb.min[0] - dist
 				aabb.max[0] = aabb.max[0] - dist
 
 				-- we will reach the end of the platform
-				if self.level.Map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+				if self.level.map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
 					self.speedX = 32.0
 					self.direction = 1
 				end
 			end
 		elseif self.speedX > 0 then
-			if self.level.Map:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
+			if self.level.map:AABBCast(aabb, {[0] = 1, [1] = 0}) < 1 then
 				self.speedX = -32.0
 				self.direction = 0
 			else
 				-- test the edge of the platform, go as far as half width
-				c = self.level.Map:AABBCast(aabb, {[0] = self.width, [1] = 0})
+				c = self.level.map:AABBCast(aabb, {[0] = self.width, [1] = 0})
 
 				local dist = c * self.width
 				aabb.min[0] = aabb.min[0] + dist
 				aabb.max[0] = aabb.max[0] + dist
 
-				if self.level.Map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
+				if self.level.map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 1 then
 					self.speedX = -32.0
 					self.direction = 0
 				end

@@ -25,7 +25,7 @@ function PlayerStates.fall(self, dt)
   	end
 
   	-- if the user can grab a ladder, do that
-	if self.playerControl:canGoUp() and self.level.Map:distanceToLadder(self) ~= nil then
+	if self.playerControl:canGoUp() and self.level.map:distanceToLadder(self) ~= nil then
 		self:changeAction(PlayerStates.ladder)
 	end
 
@@ -158,7 +158,7 @@ function PlayerStates.idle(self, dt)
 
   	-- if the user can grab a ladder, do that
 	if (self.playerControl:canGoDown() or self.playerControl:canGoUp()) then
-		x, t, b = self.level.Map:distanceToLadder(self)
+		x, t, b = self.level.map:distanceToLadder(self)
 		if x ~= nil and ((self.playerControl:canGoDown() and b > 0) or (self.playerControl:canGoUp() and t > 0))  then
 			self:changeAction(PlayerStates.ladder)
 		end
@@ -175,7 +175,7 @@ end
 function PlayerStates.attack(self, dt)
 	-- we need to slow down in order to stop moving if we are on the ground
 	aabb = self:getAABB()
-  	if self.level.Map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0.0 then
+  	if self.level.map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0.0 then
 		if self.speedX > 0.0 then
 			self.speedX = math.max(self.speedX - self.acceleration * dt, 0.0)
 		end
@@ -193,7 +193,7 @@ function PlayerStates.attack(self, dt)
   	self:MoveAndCollide(dt)
 
   	if self.animationFrame >= 3 then
-		for enemy in self.level.Map.entities:iterate() do
+		for enemy in self.level.enemies:iterate() do
   			if enemy ~= self then
   				-- do we hit something?
   				local enemyAABB = enemy:getAABB()
@@ -254,7 +254,7 @@ end
 -- ladder state
 function PlayerStates.ladder(self, dt)
 	-- move the sprite to the ladder
-	delta, distanceToTop, distanceToBottom = self.level.Map:distanceToLadder(self) -- return the distance from center to center
+	delta, distanceToTop, distanceToBottom = self.level.map:distanceToLadder(self) -- return the distance from center to center
 
 	-- delta == nil means the character is no longer on a ladder tile
 	if delta == nil then
@@ -280,7 +280,7 @@ function PlayerStates.ladder(self, dt)
 		-- if the player is moving on the ladder
 		if disp ~= 0 then
 			local aabb = self:getAABB()
-			u, n = self.level.Map:AABBCast(aabb, {[0] = 0, [1] = disp}, "ladder")
+			u, n = self.level.map:AABBCast(aabb, {[0] = 0, [1] = disp}, "ladder")
 
 			if u < 1.0 then
 				-- we can't go lower, go back to idle state

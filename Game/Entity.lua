@@ -90,7 +90,7 @@ end
 function Entity:OnGround()
 	-- just do a cast 1px below
 	local aabb = self:getAABB()
-	return self.level.Map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0
+	return self.level.map:AABBCast(aabb, {[0] = 0, [1] = 1}) == 0
 end
 
 -- move the entity according to its speed, and handle collsion with world
@@ -120,7 +120,7 @@ function Entity:MoveAndCollide(dt)
 		v[0] = xdisp
 		v[1] = ydisp
 
-		u, n = self.level.Map:AABBCast(aabb, v)
+		u, n = self.level.map:AABBCast(aabb, v)
 
 		if u < 1.0 then
 			xdisp = xdisp * u

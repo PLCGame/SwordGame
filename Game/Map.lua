@@ -1,5 +1,3 @@
-require("list")
-
 local Map = {}
 Map.__index = Map
 
@@ -106,7 +104,7 @@ function loadTileset(data)
 	return tileset
 end
 
-function Map.new(mapData, entityCreateFunctions) 
+function Map.new(mapData, entityFactory) 
 	local self = setmetatable({}, Map)
 
 	-- default values
@@ -120,8 +118,6 @@ function Map.new(mapData, entityCreateFunctions)
 	self.height = mapData.height
 	self.tile_width = mapData.tilewidth
 	self.tile_height = mapData.tileheight
-
-	self.entities = list() -- empty array
 
 	-- load tile set
 	self.backgroundTiles = loadTileset(mapData.tilesets[1])
@@ -154,13 +150,9 @@ function Map.new(mapData, entityCreateFunctions)
 			print(obj.type)
 
 			-- create the entity
-			local entity = entityCreateFunctions[obj.type]()
-
-			-- set location
-			entity.x = obj.x + obj.width * 0.5
-			entity.y = obj.y + obj.height
-
-			self.entities:push(entity)
+			local x = obj.x + obj.width * 0.5
+			local y = obj.y + obj.height
+			entityFactory:spawnEntity(obj.type, x, y)
 		end
 	end
 
