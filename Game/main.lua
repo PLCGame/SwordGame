@@ -116,23 +116,30 @@ mainMenu = {}
 
 function mainMenu:load()
 	self.choice = 0
-	self.inputTimer = 0
 end
 
 function mainMenu:update(dt)
-	if self.inputTimer > 0.1 then
-		if player1Control:menuUp() then
-			self.choice = math.max(0, self.choice - 1)
-			self.inputTimer = 0
-		end
-
-		if player1Control:menuDown() then
-			self.choice = math.min(3, self.choice + 1)
-			self.inputTimer = 0
-		end
+	if player1Control:testTrigger("up") then
+		self.choice = math.max(0, self.choice - 1)
 	end
 
-	self.inputTimer = self.inputTimer + dt
+	if player1Control:testTrigger("down") then
+		self.choice = math.min(3, self.choice + 1)
+	end
+
+	if player1Control:testTrigger("attack") then
+		if self.choice == 0 then
+			level = Level.new(Levels[1])
+		end
+
+		if self.choice == 2 then
+			
+		end
+
+		if self.choice == 3 then
+			love.event.quit()
+		end
+	end
 end
 
 function mainMenu:draw() 
@@ -150,12 +157,6 @@ function warpLevel()
 
 	-- load new level
 	level = Level.new(Levels[currentLevel + 1])
-end
-
-function love.keypressed(key, isrepeat)
-	if key == "a" and not isrepeat then
-		warpLevel()
-	end
 end
 
 function love.load()
@@ -202,13 +203,16 @@ function love.update(dt)
 
 	while time_acc > timeStep do
 		time_acc = time_acc - timeStep
+
+		player1Control:update()
 		
 		if level ~= nil then
 			level:update(timeStep)
 		end
+
+		mainMenu:update(dt)
 	end
 
-	mainMenu:update(dt)
 end
 
 function love.draw()

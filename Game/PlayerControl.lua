@@ -22,10 +22,38 @@ function PlayerControl.new(eventTable)
 		self.joystick = joysticks[1]
 	end
 
+	self.eventValue = {}
+	self.eventTrigger = {}
 
 	return self
 end
 
+function PlayerControl:update()
+	-- test each event
+	for key, value in pairs(self.event) do
+		local value = self:testInput(key)
+		local oldValue = self.eventValue[key]
+
+		if oldValue == nil then
+			oldValue = false
+		end
+
+		if value ~= oldValue then
+			if value == true then
+				self.eventTrigger[key] = true
+			else
+				self.eventTrigger[key] = false
+			end
+		else
+			-- no change
+			self.eventTrigger[key] = false
+		end
+
+		self.eventValue[key] = value
+	end
+end
+
+-- return the current status of an event
 function PlayerControl:testInput(event)
 	local res = false
 
@@ -50,6 +78,17 @@ function PlayerControl:testInput(event)
 	end
 
 	return res	
+end
+
+function PlayerControl:testTrigger(event)
+	local value = self.eventTrigger[event]
+
+	if value == nil then
+		return false
+	end
+
+	-- else
+	return value
 end
 
 function PlayerControl:canGoLeft()

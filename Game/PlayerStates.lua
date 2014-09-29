@@ -94,7 +94,7 @@ function PlayerStates.run(self, dt)
   		self:changeAction(PlayerStates.fall)
 	end
 	-- jump
-	if self.playerControl:canJump() then
+	if self.playerControl:testTrigger("jump") then
 		-- so we can jump
 	  	PlayerStates.begin_jump(self)
 	end
@@ -148,12 +148,12 @@ function PlayerStates.idle(self, dt)
 	-- if we can fall, switch to fall state
   	if not self:OnGround() then
   		self:changeAction(PlayerStates.fall)
-  	else 
-  		-- we're on ground
-	  	if self.playerControl:canJump() then
-	  		-- so we can jump
-	  		PlayerStates.begin_jump(self)
-	  	end
+  	end
+  	
+  	-- jump
+	if self.playerControl:testTrigger("jump") then
+  		-- so we can jump
+  		PlayerStates.begin_jump(self)
   	end
 
   	-- if the user can grab a ladder, do that
