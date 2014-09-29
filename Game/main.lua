@@ -1,8 +1,10 @@
 local playerSprites
 local enemySprites
 
-local level
+local level = nil
 local font
+
+local player1Control = nil
 
 require("list")
 
@@ -25,7 +27,8 @@ function Level.new(mapName)
 	self.enemies = list()
 
 	self.map = Map.new(require(mapName), self)
-	self.map:setSize(320, 192)
+	ww, wh = love.window.getDimensions()
+	self.map:setSize(ww / 4, wh / 4)
 
 	return self
 end
@@ -39,15 +42,7 @@ function Level:spawnEntity(entityType, x, y)
 		self.playerEntity.y = y
 		self.playerEntity.level = self
 
-		local playerControl = PlayerControl.new()
-
-		-- if there's a connected joystick
-		if love.joystick.getJoystickCount() > 0 then
-			local joysticks = love.joystick.getJoysticks()
-			playerControl.joystick = joysticks[1]
-		end
-
-		self.playerEntity.playerControl = playerControl
+		self.playerEntity.playerControl = player1Control
 	end
 
 	if entityType == "Snake" then
@@ -102,6 +97,53 @@ function Level:draw()
 
 end
 
+function printOutline(str, x, y)
+	love.graphics.setColor(0, 0, 0, 255)
+    love.graphics.print(str, x-1, y-1)
+    love.graphics.print(str, x, y-1)
+	love.graphics.print(str, x+1, y-1)
+    love.graphics.print(str, x-1, y)
+	love.graphics.print(str, x+1, y)
+    love.graphics.print(str, x-1, y+1)
+    love.graphics.print(str, x, y+1)
+	love.graphics.print(str, x+1, y+1)
+
+	love.graphics.setColor(255, 255, 255, 255)	
+    love.graphics.print(str, x, y)
+end
+
+mainMenu = {}
+
+function mainMenu:load()
+	self.choice = 0
+	self.inputTimer = 0
+end
+
+function mainMenu:update(dt)
+	if self.inputTimer > 0.1 then
+		if player1Control:menuUp() then
+			self.choice = math.max(0, self.choice - 1)
+			self.inputTimer = 0
+		end
+
+		if player1Control:menuDown() then
+			self.choice = math.min(3, self.choice + 1)
+			self.inputTimer = 0
+		end
+	end
+
+	self.inputTimer = self.inputTimer + dt
+end
+
+function mainMenu:draw() 
+	printOutline("New Game", 100, 100)
+	printOutline("Load Game", 100, 112)
+	printOutline("Options", 100, 124)
+	printOutline("Quit", 100, 136)
+
+	printOutline("#", 90, 100 + self.choice * 12)
+end
+
 currentLevel = 0
 function warpLevel()
 	currentLevel = (currentLevel + 1) % #Levels
@@ -121,6 +163,9 @@ function love.load()
 	success = love.window.setMode(1280, 768, {resizable=false, vsync=true, fullscreen=false})
 	love.window.setTitle("Sword Game")
 
+    -- default controller
+    player1Control = PlayerControl.new()
+
 	-- load Player sprites
 	local spriteImage = love.graphics.newImage("Player Sprites.png")
 	spriteImage:setFilter("nearest", "nearest")
@@ -134,12 +179,14 @@ function love.load()
 	enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 
 	-- load test level
-	level = Level.new(Levels[1])
+	-- level = Level.new(Levels[1])
 
 	font = love.graphics.newImageFont("rotunda.png",
     " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}" )
     font:setFilter("nearest", "nearest")
     love.graphics.setFont(font)
+
+    mainMenu:load()
 end
 
 local time_acc = 0.0
@@ -156,23 +203,12 @@ function love.update(dt)
 	while time_acc > timeStep do
 		time_acc = time_acc - timeStep
 		
-		level:update(timeStep)
+		if level ~= nil then
+			level:update(timeStep)
+		end
 	end
-end
 
-function printOutline(str, x, y)
-	love.graphics.setColor(0, 0, 0, 255)
-    love.graphics.print(str, x-1, y-1)
-    love.graphics.print(str, x, y-1)
-	love.graphics.print(str, x+1, y-1)
-    love.graphics.print(str, x-1, y)
-	love.graphics.print(str, x+1, y)
-    love.graphics.print(str, x-1, y+1)
-    love.graphics.print(str, x, y+1)
-	love.graphics.print(str, x+1, y+1)
-
-	love.graphics.setColor(255, 255, 255, 255)	
-    love.graphics.print(str, x, y)
+	mainMenu:update(dt)
 end
 
 function love.draw()
@@ -180,8 +216,12 @@ function love.draw()
    	love.graphics.scale(4.0, 4.0)
 
 	-- draw the world
-	level:draw()
+	if level ~= nil then
+		level:draw()
+	
+	   	printOutline("Current Level : "..Levels[currentLevel + 1], 5, 5)
+	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	end
 
-   	printOutline("Current Level : "..Levels[currentLevel + 1], 5, 5)
-   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	mainMenu:draw()
 end

@@ -16,6 +16,13 @@ function PlayerControl.new(eventTable)
 		self.event = eventTable
 	end
 
+	-- if there's a connected joystick
+	if love.joystick.getJoystickCount() > 0 then
+		local joysticks = love.joystick.getJoysticks()
+		self.joystick = joysticks[1]
+	end
+
+
 	return self
 end
 
@@ -71,6 +78,31 @@ end
 
 function PlayerControl:canDefend()
 	return self:testInput("defend")
+end
+
+-- used for navigating menu
+function PlayerControl:menuUp()
+	return love.keyboard.isDown("up") or self:testInput("up")
+end
+
+function PlayerControl:menuDown()
+	return love.keyboard.isDown("down") or self:testInput("down")
+end
+
+function PlayerControl:menuLeft()
+	return love.keyboard.isDown("left") or self:testInput("left")
+end
+
+function PlayerControl:menuRight()
+	return love.keyboard.isDown("right") or self:testInput("right")
+end
+
+function PlayerControl:menuValidate()
+	return love.keyboard.isDown("enter") or self:testInput("jump")
+end
+
+function PlayerControl:menuCancel()
+	return love.keyboard.isDown("escape") or self:testInput("defend")
 end
 
 return PlayerControl

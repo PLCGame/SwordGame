@@ -259,7 +259,7 @@ function PlayerStates.ladder(self, dt)
 	-- delta == nil means the character is no longer on a ladder tile
 	if delta == nil then
 		-- so switch back to idling state
-		self:changeAction(idle)
+		self:changeAction(PlayerStates.idle)
 	else
 		-- reset speed
 		self.speedX = 0
