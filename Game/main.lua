@@ -112,8 +112,9 @@ function printOutline(str, x, y)
     love.graphics.print(str, x, y)
 end
 
-mainMenu = {}
+currentMenu = nil
 
+mainMenu = {}
 function mainMenu:load()
 	self.choice = 0
 end
@@ -133,7 +134,7 @@ function mainMenu:update(dt)
 		end
 
 		if self.choice == 2 then
-			
+			currentMenu = optionMenu
 		end
 
 		if self.choice == 3 then
@@ -147,6 +148,71 @@ function mainMenu:draw()
 	printOutline("Load Game", 100, 112)
 	printOutline("Options", 100, 124)
 	printOutline("Quit", 100, 136)
+
+	printOutline("#", 90, 100 + self.choice * 12)
+end
+
+controlMenu = {choice = 0} 
+function controlMenu:update(dt) 
+end
+
+function controlMenu:draw()
+	printOutline("Controls", 50, 40)
+
+
+	-- draw event
+	local line = 0
+	for key,value in pairs(player1Control.event) do
+		-- print event
+		printOutline(key, 50, 60 + line * 12)
+
+		-- print key
+		if value[1] ~= nil then
+			printOutline(value[1], 110, 60 + line * 12)
+		end
+
+		if value[2] ~= nil then
+			printOutline(value[2], 170, 60 + line * 12)
+		end
+
+		if value[3] ~= nil then
+			printOutline(value[3], 230, 60 + line * 12)
+		end
+
+
+		line = line + 1
+	end
+end
+
+optionMenu = { choice = 0}
+function optionMenu:update(dt) 
+	if player1Control:testTrigger("up") then
+		self.choice = math.max(0, self.choice - 1)
+	end
+
+	if player1Control:testTrigger("down") then
+		self.choice = math.min(5, self.choice + 1)
+	end
+
+	if player1Control:testTrigger("attack") then
+		if self.choice == 0 then
+			currentMenu = controlMenu
+		end
+
+		if self.choice == 5 then
+			currentMenu = mainMenu
+		end
+	end
+
+end
+
+function optionMenu:draw()
+	printOutline("Controls", 100, 100)
+	printOutline("Resolution", 100, 112)
+	printOutline("Fullscreen", 100, 124)
+	printOutline("Music Volume", 100, 136)
+	printOutline("FX Volume", 100, 148)
+	printOutline("Back", 100, 160)
 
 	printOutline("#", 90, 100 + self.choice * 12)
 end
@@ -188,6 +254,7 @@ function love.load()
     love.graphics.setFont(font)
 
     mainMenu:load()
+    currentMenu = mainMenu
 end
 
 local time_acc = 0.0
@@ -209,8 +276,10 @@ function love.update(dt)
 		if level ~= nil then
 			level:update(timeStep)
 		end
-
-		mainMenu:update(dt)
+	
+		if currentMenu ~= nil then
+			currentMenu:update(dt)
+		end
 	end
 
 end
@@ -227,5 +296,7 @@ function love.draw()
 	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	end
 
-	mainMenu:draw()
+	if currentMenu ~= nil then
+		currentMenu:draw()
+	end
 end
