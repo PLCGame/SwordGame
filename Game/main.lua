@@ -1,8 +1,8 @@
-local playerSprites
-local enemySprites
+local playerSprites = nil
+local enemySprites = nil
 
 local level = nil
-local font
+local font = nil
 
 local player1Control = nil
 
@@ -15,7 +15,7 @@ Entity = require "Entity"
 PlayerStates = require "PlayerStates"
 EnemyStates = require "EnemyStates"
 
-Levels = {"testlevel", "testlevel2", "testlevel3"}
+local Levels = {"testlevel", "testlevel2", "testlevel3"}
 
 local Level = {}
 Level.__index = Level
@@ -258,6 +258,8 @@ function love.load()
 end
 
 local time_acc = 0.0
+local total_time = 0.0
+local total_frame = 0
 
 function love.update(dt)
 	-- get elapsed time since last frame
@@ -269,8 +271,6 @@ function love.update(dt)
 	time_acc = time_acc + dt
 
 	while time_acc > timeStep do
-		time_acc = time_acc - timeStep
-
 		player1Control:update()
 		
 		if level ~= nil then
@@ -280,6 +280,10 @@ function love.update(dt)
 		if currentMenu ~= nil then
 			currentMenu:update(dt)
 		end
+
+		time_acc = time_acc - timeStep
+		total_time = total_time + timeStep
+		total_frame = total_frame + 1
 	end
 
 end
