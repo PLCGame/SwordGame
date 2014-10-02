@@ -147,7 +147,7 @@ function Map.new(mapData, entityFactory)
 		for i = 1, #spawnLayer.objects do
 			local obj = spawnLayer.objects[i]
 
-			print(obj.type)
+			--print(obj.type)
 
 			-- create the entity
 			local x = obj.x + obj.width * 0.5
