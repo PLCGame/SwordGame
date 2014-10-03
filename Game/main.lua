@@ -110,6 +110,42 @@ function Level:draw()
 
 end
 
+titleScreenState = { textAlpha = 0}
+function titleScreenState.update(game, dt)
+	titleScreenState.textAlpha = math.min(titleScreenState.textAlpha + dt * 512, 255)
+end
+
+function titleScreenState.draw(game)
+	love.graphics.setColor(255, 255, 255, titleScreenState.textAlpha)	
+	love.graphics.print("Blabla", 50, 50)
+end
+
+function titleScreenState.load(game)
+end
+
+levelState = {}
+function levelState.update(game, dt)
+	if game.level ~= nil then
+		game.level:update(dt)
+	end
+end
+
+function levelState.draw(game)
+	-- draw the world
+	if game.level ~= nil then
+		game.level:draw()
+	
+	   	printOutline("Current Level : "..game.levelNames[game.currentLevel + 1], 5, 5)
+	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	end
+end
+
+function levelState.load(game)
+	-- load test level
+	game.level = Level.new(game.levelNames[1])
+end
+
+
 -- main game class
 local Game = { 
 	playerSprites = nil,
@@ -122,7 +158,7 @@ local Game = {
 	levelNames = {"testlevel", "testlevel2", "testlevel3"},
 	currentLevel = 0,
 
-	currentMenu = nil
+	currentState = nil
 }
 
 -- load the game
@@ -153,38 +189,29 @@ function Game:load()
 	self.enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 	SnakeEntity.sprites = self.enemySprites
 
-	-- load test level
-	self.level = Level.new(self.levelNames[1])
 
     --mainMenu:load()
     --currentMenu = mainMenu
 
+    self.currentState = titleScreenState
+    self.currentState.load(self)
 end
 
 function Game:update(dt) 
+	-- we always have to update this (maybe it should be done somewhere else?)
 	self.player1Control:update()
 	
-	if self.level ~= nil then
-		self.level:update(dt)
+	if self.currentState ~= nil then
+		self.currentState.update(self, dt)
 	end
 	
-	if self.currentMenu ~= nil then
-		self.currentMenu:update(dt)
-	end
 end
 
 function Game:draw(dt)
-	-- draw the world
-	if self.level ~= nil then
-		self.level:draw()
-	
-	   	printOutline("Current Level : "..self.levelNames[self.currentLevel + 1], 5, 5)
-	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	if self.currentState ~= nil then
+		self.currentState.draw(self)
 	end
 
-	if self.currentMenu ~= nil then
-		self.currentMenu:draw()
-	end
 end
 
 
@@ -216,9 +243,6 @@ local total_time = 0.0
 local total_frame = 0
 
 function love.update(dt)
-	-- get elapsed time since last frame
-	--dt = love.timer.getDelta()
-
 	-- fixed time step
 	local timeStep = 1.0 / 60.0
 
