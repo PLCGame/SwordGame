@@ -124,10 +124,6 @@ function textElement.new(label, x, y)
 	return self
 end
 
-function textElement:update()
-
-end
-
 function textElement:draw()
 	love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4])	
 	love.graphics.print(self.text, self.x, self.y)
@@ -163,6 +159,12 @@ end
 
 function titleScreenState:update(game, dt)
 	self:thread(dt)
+
+	for animator in self.animators:iterate() do
+		-- update entity
+		animator:update(dt)
+	end
+
 end
 
 function titleScreenState:draw(game)
@@ -179,6 +181,7 @@ function titleScreenState:load(game)
 	self.textAlpha = 0
 
 	self.elements = list()
+	self.animators = list()
 
 	self.text1 = textElement.new("This is a test text", 20, 100)
 	self.text1.color[4] = 0
