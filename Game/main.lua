@@ -110,17 +110,79 @@ function Level:draw()
 
 end
 
-titleScreenState = { textAlpha = 0}
-function titleScreenState.update(game, dt)
-	titleScreenState.textAlpha = math.min(titleScreenState.textAlpha + dt * 512, 255)
+textElement = {}
+textElement.__index = textElement
+
+function textElement.new(label, x, y)
+	local self = setmetatable({}, textElement)
+	self.text = label
+	self.color = {255, 255, 255, 255}
+
+	self.x = x
+	self.y = y
+
+	return self
 end
 
-function titleScreenState.draw(game)
-	love.graphics.setColor(255, 255, 255, titleScreenState.textAlpha)	
-	love.graphics.print("Blabla", 50, 50)
+function textElement:update()
+
 end
 
-function titleScreenState.load(game)
+function textElement:draw()
+	love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4])	
+	love.graphics.print(self.text, self.x, self.y)
+end
+
+titleScreenState = { thread = nil, game = nil }
+
+function wait(time)
+	while time > 0 do
+		self, dt = coroutine.yield(true)
+		time = time - dt
+	end
+end
+
+function titleScreenState:updateThread(dt)
+	-- fade text it
+	while self.text1.color[4] < 255 do
+		self, dt = coroutine.yield(true)
+		self.text1.color[4] = math.min(self.text1.color[4] + dt * 1024, 255)
+	end
+
+	-- display for 2s
+	wait(2)
+
+	-- fade out
+	while self.text1.color[4] > 0 do
+		self, dt = coroutine.yield(true)
+		self.text1.color[4] = math.max(self.text1.color[4] - dt * 1024, 0)
+	end
+
+	wait(500)
+end
+
+function titleScreenState:update(game, dt)
+	self:thread(dt)
+end
+
+function titleScreenState:draw(game)
+	for element in self.elements:iterate() do
+		-- update entity
+		element:draw()
+	end
+
+end
+
+function titleScreenState:load(game)
+	self.game = game
+	self.thread = coroutine.wrap(self.updateThread)
+	self.textAlpha = 0
+
+	self.elements = list()
+
+	self.text1 = textElement.new("This is a test text", 20, 100)
+	self.text1.color[4] = 0
+	self.elements:push(self.text1)
 end
 
 levelState = {}
@@ -194,7 +256,7 @@ function Game:load()
     --currentMenu = mainMenu
 
     self.currentState = titleScreenState
-    self.currentState.load(self)
+    self.currentState:load(self)
 end
 
 function Game:update(dt) 
@@ -202,14 +264,14 @@ function Game:update(dt)
 	self.player1Control:update()
 	
 	if self.currentState ~= nil then
-		self.currentState.update(self, dt)
+		self.currentState:update(self, dt)
 	end
 	
 end
 
 function Game:draw(dt)
 	if self.currentState ~= nil then
-		self.currentState.draw(self)
+		self.currentState:draw(self)
 	end
 
 end
