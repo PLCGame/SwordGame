@@ -87,23 +87,23 @@ function list:remove(t)
 			t._next._prev = t._prev
 			t._prev._next = t._next
 		else
--- this was the first node
-t._next._prev = nil
-self._first = t._next
-end
-elseif t._prev then
--- this was the last node
-t._prev._next = nil
-self._last = t._prev
-else
--- this was the only node
-self._first = nil
-self._last = nil
-end
+			-- this was the first node
+			t._next._prev = nil
+			self.first = t._next
+		end
+	elseif t._prev then
+		-- this was the last node
+		t._prev._next = nil
+		self.last = t._prev
+	else
+		-- this was the only node
+		self.first = nil
+		self.last = nil
+	end
 
-t._next = nil
-t._prev = nil
-self.length = self.length - 1
+	t._next = nil
+	t._prev = nil
+	self.length = self.length - 1
 end
 
 local function iterate(self, current)

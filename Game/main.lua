@@ -110,6 +110,38 @@ function Level:draw()
 
 end
 
+function fadeInAlpha(self, elem, dt, inc)
+	elem.color[4] = math.min(elem.color[4] + inc * dt, 255)
+	return elem.color[4] == 255
+end
+
+function fadeOutAlpha(self,elem, dt, inc)
+	elem.color[4] = math.max(elem.color[4] - inc * dt, 0)
+	return elem.color[4] == 0
+end
+
+function typeWritter(self, elem, dt, text)
+	self.timer = self.timer + dt
+
+	if self.timer > 0.05 then
+		-- increment ptr
+		self.current = self.current + 1
+
+		-- if it's space, continue to increment
+		while text:sub(self.current, self.current) == " " do
+			self.current = self.current + 1
+		end
+
+		-- copy to current character
+		elem.text = text:sub(1, self.current)
+
+		self.timer = self.timer - 0.05
+	end
+
+	return self.current == text:len()
+end
+
+
 textElement = {}
 textElement.__index = textElement
 
@@ -121,13 +153,48 @@ function textElement.new(label, x, y)
 	self.x = x
 	self.y = y
 
+	self.animators = list()
+
 	return self
+end
+
+function textElement:update(dt)
+	-- enumerate animators
+	local animator = self.animators.first
+
+	while animator do
+		local _next = animator._next
+
+		-- execute
+		local res = animator:execute(self, dt, animator.param)
+		if res then
+			self.animators:remove(animator)
+		end
+
+		animator = _next
+	end
 end
 
 function textElement:draw()
 	love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4])	
 	love.graphics.print(self.text, self.x, self.y)
 end
+
+function textElement:fadeIn(speed)
+	animator = { execute = fadeInAlpha, param = speed }
+	self.animators:push(animator)
+end
+
+function textElement:fadeOut(speed)
+	animator = { execute = fadeOutAlpha, param = speed }
+	self.animators:push(animator)
+end
+
+function textElement:typeWrite(text)
+	animator = { execute = typeWritter, param = text, timer = 0, current = 0 }
+	self.animators:push(animator)
+end
+
 
 titleScreenState = { thread = nil, game = nil }
 
@@ -139,30 +206,23 @@ function wait(time)
 end
 
 function titleScreenState:updateThread(dt)
+	wait(1)
 	-- fade text it
-	while self.text1.color[4] < 255 do
-		self, dt = coroutine.yield(true)
-		self.text1.color[4] = math.min(self.text1.color[4] + dt * 1024, 255)
-	end
+	self.text1:fadeIn(1024)
 
-	-- display for 2s
-	wait(2)
+	self.text2:typeWrite("Hello! This a super text!")
 
-	-- fade out
-	while self.text1.color[4] > 0 do
-		self, dt = coroutine.yield(true)
-		self.text1.color[4] = math.max(self.text1.color[4] - dt * 1024, 0)
-	end
-
+	wait(1)
+	self.text1:fadeOut(1024)
 	wait(500)
 end
 
 function titleScreenState:update(game, dt)
 	self:thread(dt)
 
-	for animator in self.animators:iterate() do
+	for elem in self.elements:iterate() do
 		-- update entity
-		animator:update(dt)
+		elem:update(dt)
 	end
 
 end
@@ -178,14 +238,16 @@ end
 function titleScreenState:load(game)
 	self.game = game
 	self.thread = coroutine.wrap(self.updateThread)
-	self.textAlpha = 0
 
 	self.elements = list()
-	self.animators = list()
 
 	self.text1 = textElement.new("This is a test text", 20, 100)
 	self.text1.color[4] = 0
 	self.elements:push(self.text1)
+
+	self.text2 = textElement.new("", 20, 150)
+	self.elements:push(self.text2)
+
 end
 
 levelState = {}
