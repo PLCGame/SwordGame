@@ -1,10 +1,28 @@
 local PlayerStates = {}
+
+PlayerStates.swordSound = love.audio.newSource("Sword.wav", "static")
+PlayerStates.jumpSound = love.audio.newSource("Jump.wav", "static")
+
+function PlayerStates.begin_jump(self)
+	-- init basic 
+	PlayerStates.jumpSound:play()
+	self.speedY = -170.0
+	self:changeAction(PlayerStates.jump)
+end
+
+function PlayerStates.begin_attack(self)
+	PlayerStates.swordSound:stop()
+	PlayerStates.swordSound:play()
+	self:changeAction(PlayerStates.attack)
+end
+
+
 -- falling state
 function PlayerStates.fall(self, dt)
 	-- we can attach will in air
   	if self.playerControl:canAttack() then
   		-- change state
-  		self:changeAction(PlayerStates.attack)
+  		PlayerStates.begin_attack(self)
   	end
 
   	-- we can move left and right
@@ -34,12 +52,6 @@ function PlayerStates.fall(self, dt)
 
   	-- use an idling sprite
   	self.sprite = self.sprites.frames[self.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
-end
-
-function PlayerStates.begin_jump(self)
-	-- init basic 
-	self.speedY = -170.0
-	self:changeAction(PlayerStates.jump)
 end
 
 function PlayerStates.jump(self, dt)
@@ -106,8 +118,7 @@ function PlayerStates.run(self, dt)
 	-- we can attack while moving
   	if self.playerControl:canAttack() then
   		-- change state
-  		self.speedX = 0
-  		self:changeAction(PlayerStates.attack)
+  		PlayerStates.begin_attack(self)
   	end
 
   	-- and defend
@@ -136,7 +147,7 @@ function PlayerStates.idle(self, dt)
   	-- attack
   	if self.playerControl:canAttack() then
   		-- change state
-  		self:changeAction(PlayerStates.attack)
+  		PlayerStates.begin_attack(self)
   	end
 
   	-- defend

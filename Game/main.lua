@@ -251,13 +251,13 @@ function titleScreenState:load(game)
 end
 
 levelState = {}
-function levelState.update(game, dt)
+function levelState:update(game, dt)
 	if game.level ~= nil then
 		game.level:update(dt)
 	end
 end
 
-function levelState.draw(game)
+function levelState:draw(game)
 	-- draw the world
 	if game.level ~= nil then
 		game.level:draw()
@@ -267,8 +267,9 @@ function levelState.draw(game)
 	end
 end
 
-function levelState.load(game)
+function levelState:load(game)
 	-- load test level
+	self.game = game
 	game.level = Level.new(game.levelNames[1])
 end
 
@@ -320,7 +321,7 @@ function Game:load()
     --mainMenu:load()
     --currentMenu = mainMenu
 
-    self.currentState = titleScreenState
+    self.currentState = levelState
     self.currentState:load(self)
 end
 
