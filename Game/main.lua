@@ -271,6 +271,10 @@ function levelState:load(game)
 	-- load test level
 	self.game = game
 	game.level = Level.new(game.levelNames[1])
+	game.musicSource = love.audio.newSource("nooe.xm")
+	game.musicSource:setLooping(true)
+	game.musicSource:setVolume(1.0)
+	game.musicSource:play()
 end
 
 
@@ -286,7 +290,9 @@ local Game = {
 	levelNames = {"testlevel", "testlevel2", "testlevel3"},
 	currentLevel = 0,
 
-	currentState = nil
+	currentState = nil,
+
+	musicSource = nil
 }
 
 -- load the game
