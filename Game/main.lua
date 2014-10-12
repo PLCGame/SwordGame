@@ -287,7 +287,7 @@ local Game = {
 	player1Control = nil,
 
 	level = nil,
-	levelNames = {"testlevel", "testlevel2", "testlevel3"},
+	levelNames = {"testlevel4", "testlevel2", "testlevel3", "testlevel"},
 	currentLevel = 0,
 
 	currentState = nil,
