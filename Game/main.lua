@@ -253,7 +253,17 @@ function titleScreenState:load(game)
 
 end
 
-inGameMenuState = { index = 1}
+inGameMenuState = {}
+inGameMenuState.__index = inGameMenuState
+
+function inGameMenuState.new()
+	local self = setmetatable({}, inGameMenuState)
+
+	self.index = 1
+
+	return self
+end
+
 function inGameMenuState:update(game, dt)
 	if game.player1Control:testTrigger("down") then
 		self.index = math.min(self.index + 1, #game.levelNames)
@@ -262,6 +272,12 @@ function inGameMenuState:update(game, dt)
 	if game.player1Control:testTrigger("up") then
 		self.index = math.max(self.index - 1, 1)		
 	end
+
+	if game.player1Control:testTrigger("back") then
+		-- go back
+		game.states:pop()
+	end
+
 
 	if game.player1Control:testTrigger("attack") then
 		-- change state
@@ -276,8 +292,10 @@ function inGameMenuState:update(game, dt)
 end
 
 function inGameMenuState:draw(game)
-	-- draw level name
-	
+	love.graphics.setColor(255, 255, 255, 255)	
+	love.graphics.print("Select Level", 100, 80)
+
+	-- draw level name	
 	i = 0
 	for key, levelName in pairs(game.levelNames) do
 		if key == self.index then
@@ -302,7 +320,7 @@ function levelState:update(game, dt)
 	end
 
 	if game.player1Control:testTrigger("start") then
-		game.states:push(inGameMenuState)
+		game.states:push(inGameMenuState.new())
 		game.states.last:load(game)
 	end
 end
