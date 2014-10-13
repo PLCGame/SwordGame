@@ -11,7 +11,9 @@ function PlayerControl.new(eventTable)
 						down	= 	{"down", 	"dpdown", 	"lefty", 	false},
 						jump	= 	{"z", 		"a", 		nil, 		nil},
 						attack 	= 	{"q", 		"x", 		nil,		nil},
-						defend 	= 	{"d", 		"b", 		nil, 		nil}}
+						defend 	= 	{"d", 		"b", 		nil, 		nil},
+						back 	=	{"escape",	"back",		nil, 		nil},
+						start 	=	{"return",	"start", 	nil, 		nil}}
 	else
 		self.event = eventTable
 	end

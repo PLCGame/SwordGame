@@ -58,12 +58,12 @@ function list:pop()
 		self.last = ret._prev
 		ret._prev = nil
 	else
--- this was the only node
-self.first = nil
-self.last = nil
-end
-self.length = self.length - 1
-return ret
+		-- this was the only node
+		self.first = nil
+		self.last = nil
+	end
+	self.length = self.length - 1
+	return ret
 end
 
 function list:shift()

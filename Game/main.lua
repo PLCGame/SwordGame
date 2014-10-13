@@ -88,6 +88,9 @@ end
 
 -- draw the level
 function Level:draw()
+	-- use white color
+	love.graphics.setColor(255, 255, 255, 255)	
+
 	-- draw the map
    	self.map:draw()
    	
@@ -250,10 +253,57 @@ function titleScreenState:load(game)
 
 end
 
-levelState = {}
+inGameMenuState = { index = 1}
+function inGameMenuState:update(game, dt)
+	if game.player1Control:testTrigger("down") then
+		self.index = math.min(self.index + 1, #game.levelNames)
+	end
+
+	if game.player1Control:testTrigger("up") then
+		self.index = math.max(self.index - 1, 1)		
+	end
+
+	if game.player1Control:testTrigger("attack") then
+		-- change state
+		game.states:pop()
+		game.states:pop()
+
+		levelState.levelIndex = self.index
+	    game.states:push(levelState)
+	    game.states.last:load(game)
+	end
+
+end
+
+function inGameMenuState:draw(game)
+	-- draw level name
+	
+	i = 0
+	for key, levelName in pairs(game.levelNames) do
+		if key == self.index then
+			love.graphics.setColor(255, 0, 0, 255)	
+		else
+			love.graphics.setColor(255, 255, 255, 255)	
+		end
+
+		love.graphics.print(levelName, 100, 100 + i)
+		i = i + 12
+	end
+end
+
+function inGameMenuState:load(game)
+
+end
+
+levelState = { levelIndex = 1}
 function levelState:update(game, dt)
 	if game.level ~= nil then
 		game.level:update(dt)
+	end
+
+	if game.player1Control:testTrigger("start") then
+		game.states:push(inGameMenuState)
+		game.states.last:load(game)
 	end
 end
 
@@ -270,8 +320,13 @@ end
 function levelState:load(game)
 	-- load test level
 	self.game = game
-	game.level = Level.new(game.levelNames[1])
-	game.musicSource = love.audio.newSource("nooe.xm")
+	game.level = Level.new(game.levelNames[self.levelIndex])
+
+	if game.musicSource ~= nil then
+		game.musicSource:stop()
+	end
+	
+	game.musicSource = love.audio.newSource("nooe_remake.xm")
 	game.musicSource:setLooping(true)
 	game.musicSource:setVolume(1.0)
 	game.musicSource:play()
@@ -290,9 +345,8 @@ local Game = {
 	levelNames = {"testlevel6", "testlevel2", "testlevel3", "testlevel"},
 	currentLevel = 0,
 
-	currentState = nil,
-
-	musicSource = nil
+	musicSource = nil,
+	states = list()
 }
 
 -- load the game
@@ -324,28 +378,26 @@ function Game:load()
 	SnakeEntity.sprites = self.enemySprites
 
 
-    --mainMenu:load()
-    --currentMenu = mainMenu
+    self.states:push(levelState)
+    self.states.last:load(self)
 
-    self.currentState = levelState
-    self.currentState:load(self)
 end
 
 function Game:update(dt) 
 	-- we always have to update this (maybe it should be done somewhere else?)
 	self.player1Control:update()
 	
-	if self.currentState ~= nil then
-		self.currentState:update(self, dt)
+	if self.states.last ~= nil then
+		self.states.last:update(self, dt)
 	end
 	
 end
 
 function Game:draw(dt)
-	if self.currentState ~= nil then
-		self.currentState:draw(self)
+	-- draw every states!
+	for state in self.states:iterate() do
+		state:draw(self)
 	end
-
 end
 
 
