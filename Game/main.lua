@@ -330,7 +330,7 @@ function levelState:draw(game)
 	if game.level ~= nil then
 		game.level:draw()
 	
-	   	printOutline("Current Level : "..game.levelNames[game.currentLevel + 1], 5, 5)
+	   	printOutline("Current Level : "..game.levelNames[self.levelIndex], 5, 5)
 	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	end
 end
