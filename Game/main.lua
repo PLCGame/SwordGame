@@ -360,7 +360,7 @@ local Game = {
 	player1Control = nil,
 
 	level = nil,
-	levelNames = {"testlevel6", "testlevel2", "testlevel3", "testlevel", "testlevel4", "testlevel5", "testlevel7"},
+	levelNames = {"testlevel6", "testlevel2", "testlevel3", "testlevel", "testlevel4", "testlevel5", "testlevel7", "testlevel8"},
 	currentLevel = 0,
 
 	musicSource = nil,
