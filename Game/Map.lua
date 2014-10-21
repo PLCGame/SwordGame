@@ -201,8 +201,8 @@ function Map:setSize(width, height)
 end
 
 function Map:scrollTo(object)
-	self.dx = math.min(math.max(object.x + object.width * 0.5 - 64, 0), self.dx) -- lower x bound
-	self.dx = math.max(math.min(object.x + object.width * 0.5 + 64 - self.screen_width, self.width * self.tile_width - self.screen_width), self.dx) -- higher x bound
+	self.dx = math.min(math.max(object.x + object.width * 0.5 - 128, 0), self.dx) -- lower x bound
+	self.dx = math.max(math.min(object.x + object.width * 0.5 + 128 - self.screen_width, self.width * self.tile_width - self.screen_width), self.dx) -- higher x bound
 
 	self.dy = math.min(math.max(object.y - object.height - 64, 0), self.dy) -- lower y bound
 	self.dy = math.max(math.min(object.y + 64 - self.screen_height, self.height * self.tile_height - self.screen_height), self.dy) -- higher x bound
