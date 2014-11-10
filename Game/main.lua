@@ -113,6 +113,7 @@ function Level:draw()
 
 end
 
+-- UI element animator
 function fadeInAlpha(self, elem, dt, inc)
 	elem.color[4] = math.min(elem.color[4] + inc * dt, 255)
 	return elem.color[4] == 255
@@ -266,7 +267,7 @@ end
 
 function inGameMenuState:update(game, dt)
 	if game.player1Control:testTrigger("down") then
-		self.index = math.min(self.index + 1, #game.levelNames)
+		self.index = math.min(self.index + 1, #game.levels)
 	end
 
 	if game.player1Control:testTrigger("up") then
@@ -279,7 +280,7 @@ function inGameMenuState:update(game, dt)
 	end
 
 
-	if game.player1Control:testTrigger("attack") then
+	if game.player1Control:testTrigger("attack") or game.player1Control:testTrigger("start") then
 		-- change state
 		game.states:pop()
 		game.states:pop()
@@ -297,14 +298,14 @@ function inGameMenuState:draw(game)
 
 	-- draw level name	
 	i = 0
-	for key, levelName in pairs(game.levelNames) do
+	for key, level in pairs(game.levels) do
 		if key == self.index then
 			love.graphics.setColor(255, 0, 0, 255)	
 		else
 			love.graphics.setColor(255, 255, 255, 255)	
 		end
 
-		love.graphics.print(levelName, 100, 100 + i)
+		love.graphics.print(level.map, 100, 100 + i)
 		i = i + 12
 	end
 end
@@ -319,7 +320,7 @@ function levelState:update(game, dt)
 		game.level:update(dt)
 	end
 
-	if game.player1Control:testTrigger("start") then
+	if game.player1Control:testTrigger("back") then
 		game.states:push(inGameMenuState.new())
 		game.states.last:load(game)
 	end
@@ -328,9 +329,11 @@ end
 function levelState:draw(game)
 	-- draw the world
 	if game.level ~= nil then
+		-- Draw the Level
 		game.level:draw()
 	
-	   	printOutline("Current Level : "..game.levelNames[self.levelIndex], 5, 5)
+		-- draw the UI
+	   	printOutline("Current Level : "..game.levels[self.levelIndex].map, 5, 5)
 	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	end
 end
@@ -338,13 +341,13 @@ end
 function levelState:load(game)
 	-- load test level
 	self.game = game
-	game.level = Level.new(game.levelNames[self.levelIndex])
+	game.level = Level.new(game.levels[self.levelIndex].map)
 
 	if game.musicSource ~= nil then
 		game.musicSource:stop()
 	end
 	
-	game.musicSource = love.audio.newSource("nooe_remake.xm")
+	game.musicSource = love.audio.newSource("Music/" .. game.levels[self.levelIndex].music)
 	game.musicSource:setLooping(true)
 	game.musicSource:setVolume(1.0)
 	game.musicSource:play()
@@ -360,7 +363,13 @@ local Game = {
 	player1Control = nil,
 
 	level = nil,
-	levelNames = {"testlevel6", "testlevel2", "testlevel3", "testlevel", "testlevel4", "testlevel5", "testlevel9"},
+	levels = {  { map = "testlevel6", 	music = "main_title.xm"},
+				{ map = "testlevel2", 	music = "title1.xm"},
+				{ map = "testlevel3", 	music = "title2.xm"},
+				{ map = "testlevel", 	music = "title3.xm"},
+				{ map = "testlevel4", 	music = "title4.xm"},
+				{ map = "testlevel5",	music = "title1.xm"},
+				{ map = "testlevel9",	music = "title4.xm"} },
 	currentLevel = 0,
 
 	musicSource = nil,
