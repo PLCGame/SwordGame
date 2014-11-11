@@ -1,7 +1,14 @@
 local EnemyStates = {}
 
+-- Sounds
 EnemyStates.killSound = love.audio.newSource("Explosion.wav", "static")
 EnemyStates.slideSound = love.audio.newSource("Slide.wav", "static")
+
+-- Sprites
+local spriteImage = love.graphics.newImage("Enemy Sprites.png")
+spriteImage:setFilter("nearest", "nearest")
+EnemyStates.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
+
 
 function EnemyStates.snakeDead(self, dt)
 	-- move it away
@@ -22,7 +29,7 @@ function EnemyStates.snakeDying(self, dt)
 		return
 	end
 
-	self.sprite = self.sprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
+	self.sprite = EnemyStates.sprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
 end
 
 function EnemyStates.snakeRecover(self, dt)
@@ -57,7 +64,7 @@ function EnemyStates.snakeHit(self, dt)
 		self:changeAction(EnemyStates.snakeDying)
 	end
 
-	self.sprite = self.sprites.frames[7 + 2 + self.direction * 5]
+	self.sprite = EnemyStates.sprites.frames[7 + 2 + self.direction * 5]
 
 	self:MoveAndCollide(dt)
 end
@@ -123,7 +130,7 @@ function EnemyStates.snakeGo(self, dt)
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)
-	self.sprite = self.sprites.frames[7 + self.animationFrame + self.direction * 5]
+	self.sprite = EnemyStates.sprites.frames[7 + self.animationFrame + self.direction * 5]
 end
 
 return EnemyStates

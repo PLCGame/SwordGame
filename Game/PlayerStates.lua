@@ -1,7 +1,17 @@
 local PlayerStates = {}
 
+-- Sounds
 PlayerStates.swordSound = love.audio.newSource("Sword.wav", "static")
 PlayerStates.jumpSound = love.audio.newSource("Jump.wav", "static")
+
+-- Sprites
+local spriteImage = love.graphics.newImage("Player Sprites.png")
+spriteImage:setFilter("nearest", "nearest")
+
+PlayerStates.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Player Mask.png"), love.graphics.newImage("Player Mark.png"))
+PlayerStates.sprites.runAnimation = { 10, 11, 10, 12 }
+PlayerStates.sprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
+
 
 function PlayerStates.begin_jump(self)
 	-- init basic 
@@ -51,7 +61,7 @@ function PlayerStates.fall(self, dt)
   	self:MoveAndCollide(dt)
 
   	-- use an idling sprite
-  	self.sprite = self.sprites.frames[self.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
+  	self.sprite = PlayerStates.sprites.frames[PlayerStates.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
 end
 
 function PlayerStates.jump(self, dt)
@@ -113,7 +123,7 @@ function PlayerStates.run(self, dt)
 
 	-- update sprite
 	self:updateAnimation(4, 1.0 / 16.0)
-	self.sprite = self.sprites.frames[self.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
+	self.sprite = PlayerStates.sprites.frames[PlayerStates.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
 
 	-- we can attack while moving
   	if self.playerControl:canAttack() then
@@ -179,7 +189,7 @@ function PlayerStates.idle(self, dt)
   	self:MoveAndCollide(dt)
 
   	-- show idling sprite
-	self.sprite = self.sprites.frames[self.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
+	self.sprite = PlayerStates.sprites.frames[PlayerStates.sprites.runAnimation[self.animationFrame + 1] + self.direction * 10]
 end
 
 -- attack state
@@ -198,7 +208,7 @@ function PlayerStates.attack(self, dt)
 
   	-- update animation
   	self:updateAnimation(6, 1.0 / 30.0)
-	self.sprite = self.sprites.frames[self.sprites.attackAnimation[self.animationFrame + 1] + self.direction * 10]
+	self.sprite = PlayerStates.sprites.frames[PlayerStates.sprites.attackAnimation[self.animationFrame + 1] + self.direction * 10]
 
 	-- we can still be moving
   	self:MoveAndCollide(dt)
@@ -256,7 +266,7 @@ function PlayerStates.defend(self, dt)
 	end
 
 	-- use shield sprite
-	self.sprite = self.sprites.frames[13 + self.direction * 10]
+	self.sprite = PlayerStates.sprites.frames[13 + self.direction * 10]
 
 	-- update position and velocity
 	self:MoveAndCollide(dt)
@@ -314,10 +324,10 @@ function PlayerStates.ladder(self, dt)
 
 			-- update animation
 			self:updateAnimation(2, 1.0 / 8.0)
-			self.sprite = self.sprites.frames[31 + self.animationFrame]
+			self.sprite = PlayerStates.sprites.frames[31 + self.animationFrame]
 		else
 			-- state idling on the ladder, use idling sprite
-			self.sprite = self.sprites.frames[30]
+			self.sprite = PlayerStates.sprites.frames[30]
 		end
 
 		-- jump

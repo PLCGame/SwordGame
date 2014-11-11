@@ -10,8 +10,7 @@ PlayerEntity = {
 	width = 8,
 	height = 15,
 	action = PlayerStates.idle,
-	sprites = nil, -- to be set!
-	control = nil -- to be set!
+	control = nil -- to be set! used by action
 }
 
 SnakeEntity = {
@@ -45,10 +44,7 @@ function Level:spawnEntity(entityType, x, y)
 	local entityData = Entities[entityType]
 
 	if entityType == "Player" then
-		assert(entityData.sprites ~= nil)
-
 		self.playerEntity = Entity.new(entityData.width, entityData.height, self)
-		self.playerEntity.sprites = entityData.sprites
 		self.playerEntity:changeAction(entityData.action)
 		self.playerEntity.x = x
 		self.playerEntity.y = y
@@ -57,10 +53,8 @@ function Level:spawnEntity(entityType, x, y)
 	end
 
 	if entityType == "Snake" then
-		assert(entityData.sprites ~= nil)
 		local snakeEntity = Entity.new(entityData.width, entityData.height, self)
 		snakeEntity:changeAction(entityData.action)
-		snakeEntity.sprites = entityData.sprites
 
 		snakeEntity.x = x
 		snakeEntity.y = y
@@ -397,22 +391,8 @@ function Game:load()
     love.graphics.setFont(self.font)
 
     -- entity
-	-- load Player sprites
-	local spriteImage = love.graphics.newImage("Player Sprites.png")
-	spriteImage:setFilter("nearest", "nearest")
-	self.playerSprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Player Mask.png"), love.graphics.newImage("Player Mark.png"))
-	self.playerSprites.runAnimation = { 10, 11, 10, 12 }
-	self.playerSprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
-
+    -- set controller
     PlayerEntity.control = self.player1Control
-    PlayerEntity.sprites = self.playerSprites
-
-	-- load enemy sprites
-	spriteImage = love.graphics.newImage("Enemy Sprites.png")
-	spriteImage:setFilter("nearest", "nearest")
-	self.enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
-	SnakeEntity.sprites = self.enemySprites
-
 
     self.states:push(levelState)
     self.states.last:load(self)
