@@ -28,7 +28,7 @@ Level.__index = Level
 
 -- create a new level from a map
 function Level.new(mapName)
-	local self = setmetatable({}, Level)
+	local self = setmetatable({score = 0}, Level)
 
 	self.playerEntity = nil
 	self.enemies = list()
@@ -72,11 +72,18 @@ end
 -- update the level
 function Level:update(dt)
 	-- update enemies
-	for entity in self.enemies:iterate() do
-		-- update entity
-		entity:action(dt)
+	-- they can be removed on their action function, 
+	-- so keep track of the next one in the list
+	local enemy = self.enemies.first
+	while enemy ~= nil do
+		local nextEnemy = enemy._next
+
+		enemy:action(dt)
+		
+		enemy = nextEnemy
 	end
 
+	-- update the player entity
 	if self.playerEntity ~= nil then
 		-- update player
 		self.playerEntity:action(dt)
@@ -119,7 +126,7 @@ function fadeInAlpha(self, elem, dt, inc)
 	return elem.color[4] == 255
 end
 
-function fadeOutAlpha(self,elem, dt, inc)
+function fadeOutAlpha(self, elem, dt, inc)
 	elem.color[4] = math.max(elem.color[4] - inc * dt, 0)
 	return elem.color[4] == 0
 end
@@ -333,8 +340,10 @@ function levelState:draw(game)
 		game.level:draw()
 	
 		-- draw the UI
-	   	printOutline("Current Level : "..game.levels[self.levelIndex].map, 5, 5)
-	   	printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	   	--printOutline("Current Level : "..game.levels[self.levelIndex].map, 5, 5)
+	   	--printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
+	   	printOutline("Score: ".. game.level.score, 5, 5)
+
 	end
 end
 
@@ -462,7 +471,7 @@ function love.update(dt)
 	time_acc = time_acc + dt
 
 	while time_acc > timeStep do
-		Game:update(dt)
+		Game:update(timeStep)
 
 		time_acc = time_acc - timeStep
 		total_time = total_time + timeStep

@@ -14,7 +14,11 @@ function EnemyStates.snakeDying(self, dt)
 	self:updateAnimation(3, 1.0 / 8.0)
 
 	if self.animationFrame == 2 then
-		self:changeAction(EnemyStates.snakeDead)
+		-- remove the snake from the game
+		self.level.enemies:remove(self)
+
+		-- increment score
+		self.level.score = self.level.score + 20
 		return
 	end
 
