@@ -13,11 +13,11 @@ function list:push(t)
 		t._prev = self.last
 		self.last = t
 	else
--- this is the first node
-self.first = t
-self.last = t
-end
-self.length = self.length + 1
+		-- this is the first node
+		self.first = t
+		self.last = t
+	end
+	self.length = self.length + 1
 end
 
 function list:unshift(t)
@@ -44,10 +44,10 @@ function list:insert(t, after)
 		after._next = t
 		self.length = self.length + 1
 		elseif not self.first then
--- this is the first node
-self.first = t
-self.last = t
-end
+			-- this is the first node
+			self.first = t
+			self.last = t
+		end
 end
 
 function list:pop()
