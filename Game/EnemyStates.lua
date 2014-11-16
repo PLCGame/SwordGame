@@ -10,12 +10,6 @@ spriteImage:setFilter("nearest", "nearest")
 EnemyStates.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
 
 
-function EnemyStates.snakeDead(self, dt)
-	-- move it away
-	self.x = -400000000
-	self.y = -400000000
-end
-
 function EnemyStates.snakeDying(self, dt)
 	-- death animation
 	self:updateAnimation(3, 1.0 / 8.0)
