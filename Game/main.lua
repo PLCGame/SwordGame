@@ -372,7 +372,7 @@ local Game = {
 				{ map = "testlevel", 	music = "title3.xm"},
 				{ map = "testlevel4", 	music = "title4.xm"},
 				{ map = "testlevel5",	music = "title1.xm"},
-				{ map = "testlevel9",	music = "title4.xm"} },
+				{ map = "testlevel8",	music = "title4.xm"} },
 	currentLevel = 0,
 
 	musicSource = nil,
