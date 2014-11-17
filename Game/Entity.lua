@@ -50,7 +50,7 @@ function Entity:draw()
 	--love.graphics.polygon("fill", self.x - self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y, self.x - self.width * 0.5, self.y)
 
 	if self.sprite ~= nil then
-		love.graphics.draw(self.sprite.image, self.sprite.quad, self.x, self.y, 0, 1.0, 1.0, -self.sprite.xoffset, -self.sprite.yoffset + 1) -- +1 because the character positin is at the bottom (and the mark on the sprite is on the last row)
+		love.graphics.draw(self.sprite.image, self.sprite.quad, self.x, self.y, 0, 1.0, 1.0, -self.sprite.xoffset, -self.sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)
 	end
 end
 

@@ -366,13 +366,13 @@ local Game = {
 	player1Control = nil,
 
 	level = nil,
-	levels = {  { map = "testlevel6", 	music = "main_title.xm"},
+	levels = {  { map = "testlevel8",	music = "title5.xm"},
+				{ map = "testlevel6", 	music = "main_title.xm"},
 				{ map = "testlevel2", 	music = "title1.xm"},
 				{ map = "testlevel3", 	music = "title2.xm"},
 				{ map = "testlevel", 	music = "title3.xm"},
 				{ map = "testlevel4", 	music = "title4.xm"},
-				{ map = "testlevel5",	music = "title1.xm"},
-				{ map = "testlevel8",	music = "title4.xm"} },
+				{ map = "testlevel5",	music = "title1.xm"} }, 
 	currentLevel = 0,
 
 	musicSource = nil,
@@ -432,12 +432,59 @@ function printOutline(str, x, y)
     love.graphics.print(str, x, y)
 end
 
+local mainCanvas;
+
 function love.load()
 	-- change window mode
 	success = love.window.setMode(1280, 768, {resizable=false, vsync=true, fullscreen=false})
 	love.window.setTitle("Sword Game")
 
 	Game:load()
+
+	mainCanvas = love.graphics.newCanvas(320, 192)
+
+	local pixelcode = [[
+        vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords )
+        {
+            int x = int(mod(screen_coords.x, 4));
+            int y = int(mod(screen_coords.y, 4));
+
+            vec4 texcolor = Texel(texture, texture_coords);
+
+            float a = 0.6;
+
+            if(x == 0 || x == 3) {
+            	color = vec4(1, a, a, 1);
+            } else if(x == 1) {
+            	color = vec4(a, 1.0, a, 1);
+        	} else {
+        		color = vec4(a, a, 1.0, 1);
+        	}
+
+        	// scanline
+        	if(y == 0) {
+        		color *= 0.9;
+           	} else if(y == 1) {
+	       		color *= 0.97;
+        	} else if(y == 2) {
+        		color *= 1.0;
+        	} else if(y == 3) {
+        		color *= 0.97;
+        	}
+
+
+            return texcolor * color;
+        }
+    ]]
+
+    local vertexcode = [[
+        vec4 position( mat4 transform_projection, vec4 vertex_position )
+        {
+            return transform_projection * vertex_position;
+        }
+    ]]
+
+    shader = love.graphics.newShader(pixelcode, vertexcode)
 end
 
 local time_acc = 0.0
@@ -460,9 +507,20 @@ function love.update(dt)
 
 end
 
-function love.draw()
-	-- use scalling, make pixel bigger 
-   	love.graphics.scale(4.0, 4.0)
+crt_emulation = false
 
-   	Game:draw()
+function love.draw()
+	-- use scalling, make pixel bigger
+	if not crt_emulation then
+   		love.graphics.scale(4.0, 4.0)
+		Game:draw()
+	else
+		love.graphics.setShader()
+   		love.graphics.setCanvas(mainCanvas)
+   		Game:draw()
+
+   		love.graphics.setShader(shader)
+   		love.graphics.setCanvas()
+   		love.graphics.draw(mainCanvas, 0, 0, 0, 4, 4)
+   	end
 end
