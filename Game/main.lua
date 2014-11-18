@@ -507,7 +507,7 @@ function love.update(dt)
 
 end
 
-crt_emulation = true
+crt_emulation = false
 
 function love.draw()
 	-- use scalling, make pixel bigger
