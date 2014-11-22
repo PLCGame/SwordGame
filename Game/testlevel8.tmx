@@ -1,133 +1,304 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="200" height="120" tilewidth="16" tileheight="16">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="120" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="dirt4" tilewidth="16" tileheight="16">
   <image source="Dirt4.png" trans="ff00ff" width="80" height="230"/>
   <tile id="0">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="1">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="2">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="3">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="4">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="5">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="6">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="7">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="8">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="9">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="10">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="11">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="12">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="13">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="14">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="15">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="16">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="17">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="18">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="19">
    <properties>
     <property name="collision" value="7"/>
     <property name="type" value="ladder"/>
    </properties>
+   <objectgroup draworder="index"/>
   </tile>
   <tile id="20">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="21">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="22">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="23">
    <properties>
     <property name="collision" value="15"/>
    </properties>
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
   <tile id="24">
    <properties>
     <property name="collision" value="0"/>
     <property name="type" value="ladder"/>
    </properties>
+   <objectgroup draworder="index"/>
+  </tile>
+  <tile id="25">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="26">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="27">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="28">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="29">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="30">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="31">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="33">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="34">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="35">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="36">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="37">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="38">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="39">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="40">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="41">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="42">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="43">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="44">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="46">
+   <objectgroup draworder="index">
+    <object x="0" y="0" width="16" height="16"/>
+   </objectgroup>
   </tile>
  </tileset>
  <tileset firstgid="71" name="testlevel_obj" tilewidth="16" tileheight="16">
@@ -48141,7 +48312,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="Calque d'objets 1" width="200" height="120">
+ <objectgroup name="Calque d'objets 1">
   <object type="Player" x="304" y="384" width="16" height="16"/>
   <object type="Snake" x="576" y="416" width="16" height="16"/>
   <object type="Snake" x="1040" y="384" width="16" height="16"/>

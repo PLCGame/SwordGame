@@ -96,9 +96,26 @@ function loadTileset(data)
 
 	-- loop trough properties
 	for i, tile in ipairs(data.tiles) do
-		tileset.tiles[tile.id].collision = tonumber(tile.properties["collision"])
+		--tileset.tiles[tile.id].collision = tonumber(tile.properties["collision"])
 
-		tileset.tiles[tile.id].type = tile.properties["type"]
+		if tile.properties ~= nil then
+			tileset.tiles[tile.id].type = tile.properties["type"]
+		end
+
+		-- use Tiled tile editor
+		-- start with nil, no collision
+		tileset.tiles[tile.id].collision = nil
+
+		-- just use one object per tile by now
+		if tile.objectGroup ~= nil and #tile.objectGroup.objects > 0 and tile.objectGroup.objects[1].shape == "rectangle" then
+			local aabb = { min = {}, max = {} }
+			aabb.min[0] = tile.objectGroup.objects[1].x
+			aabb.max[0] = tile.objectGroup.objects[1].x + tile.objectGroup.objects[1].width
+			aabb.min[1] = tile.objectGroup.objects[1].y
+			aabb.max[1] = tile.objectGroup.objects[1].y + tile.objectGroup.objects[1].height
+
+			tileset.tiles[tile.id].collision = aabb
+		end
 	end
 
 	return tileset
@@ -251,25 +268,14 @@ end
 
 -- return the AABB for the tile at x, y
 function Map:AABBForTile(x, y)
-	local kind = self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].collision
+	local col_aabb = self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].collision
 	local aabb = { min = {}, max = {} }
 
-	if kind == 15 then
-		aabb.min[0] = x * self.tile_width
-		aabb.max[0] = (x + 1) * self.tile_width
-
-		aabb.min[1] = y * self.tile_height
-		aabb.max[1] = (y + 1) * self.tile_height
-
-		return aabb
-	end
-
-	if kind == 7 then
-		aabb.min[0] = x * self.tile_width
-		aabb.max[0] = (x + 1) * self.tile_width
-
-		aabb.min[1] = y * self.tile_height
-		aabb.max[1] = (y + 0.5) * self.tile_height
+	if col_aabb ~= nil then
+		aabb.min[0] = x * self.tile_width + col_aabb.min[0]
+		aabb.max[0] = x * self.tile_width + col_aabb.max[0]
+		aabb.min[1] = y * self.tile_height + col_aabb.min[1]
+		aabb.max[1] = y * self.tile_height + col_aabb.max[1]
 
 		return aabb
 	end
