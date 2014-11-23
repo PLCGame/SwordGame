@@ -18,12 +18,37 @@ return {
       image = "Level 1 Tileset.png",
       imagewidth = 80,
       imageheight = 80,
+      tileoffset = {
+        x = 0,
+        y = 0
+      },
       properties = {},
       tiles = {
         {
           id = 0,
           properties = {
             ["collision"] = "15"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 16,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         },
         {
@@ -36,6 +61,27 @@ return {
           id = 2,
           properties = {
             ["collision"] = "7"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 8,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         },
         {
@@ -55,6 +101,27 @@ return {
           id = 5,
           properties = {
             ["collision"] = "15"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 12,
+                width = 16,
+                height = 4,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         },
         {
@@ -62,18 +129,81 @@ return {
           properties = {
             ["collision"] = "7",
             ["type"] = "ladder"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 8,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         },
         {
           id = 10,
           properties = {
             ["collision"] = "15"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 16,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         },
         {
           id = 11,
           properties = {
             ["collision"] = "15"
+          },
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 16,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
           }
         }
       }
@@ -88,6 +218,10 @@ return {
       image = "testlevel_obj.png",
       imagewidth = 128,
       imageheight = 128,
+      tileoffset = {
+        x = 0,
+        y = 0
+      },
       properties = {},
       tiles = {
         {
@@ -192,6 +326,7 @@ return {
           y = 80,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -203,6 +338,7 @@ return {
           y = 144,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -214,6 +350,7 @@ return {
           y = 144,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -225,6 +362,7 @@ return {
           y = 208,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -236,6 +374,7 @@ return {
           y = 78,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -247,6 +386,7 @@ return {
           y = 141,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -258,6 +398,7 @@ return {
           y = 205,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -269,6 +410,7 @@ return {
           y = 333,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -280,6 +422,7 @@ return {
           y = 271,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         },
@@ -291,6 +434,7 @@ return {
           y = 349,
           width = 16,
           height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         }
