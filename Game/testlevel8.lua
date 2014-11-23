@@ -1140,20 +1140,51 @@ return {
             visible = true,
             opacity = 1,
             properties = {},
-            objects = {
-              {
-                name = "",
-                type = "",
-                shape = "rectangle",
-                x = 0,
-                y = 0,
-                width = 16,
-                height = 16,
-                rotation = 0,
-                visible = true,
-                properties = {}
-              }
-            }
+            objects = {}
+          }
+        },
+        {
+          id = 56,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {}
+          }
+        },
+        {
+          id = 57,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {}
+          }
+        },
+        {
+          id = 61,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {}
+          }
+        },
+        {
+          id = 66,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {}
           }
         }
       }
