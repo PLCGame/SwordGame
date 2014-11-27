@@ -3,24 +3,10 @@ SpriteFrame = require "SpriteFrame"
 Map = require "Map"
 PlayerControl = require "PlayerControl"
 Entity = require "Entity"
-PlayerStates = require "PlayerStates"
-EnemyStates = require "EnemyStates"
+require "PlayerEntity"
+require "Enemies"
 
-PlayerEntity = {
-	width = 8,
-	height = 15,
-	action = PlayerStates.idle,
-	control = nil -- to be set! used by action
-}
-
-SnakeEntity = {
-	width = 14,
-	height = 16,
-	action = EnemyStates.snakeGo
-}
-
-Entities = { Player = PlayerEntity, Snake = SnakeEntity }
-
+mainPlayerControl = nil
 
 local Level = {}
 Level.__index = Level
@@ -41,24 +27,13 @@ end
 
 -- crappy function use as an entity factory
 function Level:spawnEntity(entityType, x, y) 
-	local entityData = Entities[entityType]
-
 	if entityType == "Player" then
-		self.playerEntity = Entity.new(entityData.width, entityData.height, self)
-		self.playerEntity:changeAction(entityData.action)
-		self.playerEntity.x = x
-		self.playerEntity.y = y
-
-		self.playerEntity.playerControl = entityData.control
+		self.playerEntity = PlayerEntity.new(self, x, y)
+		self.playerEntity.playerControl = mainPlayerControl
 	end
 
 	if entityType == "Snake" then
-		local snakeEntity = Entity.new(entityData.width, entityData.height, self)
-		snakeEntity:changeAction(entityData.action)
-
-		snakeEntity.x = x
-		snakeEntity.y = y
-
+		local snakeEntity = SnakeEntity.new(self, x, y)
 		self.enemies:push(snakeEntity)
 	end
 end
@@ -359,8 +334,6 @@ end
 
 -- main game class
 local Game = { 
-	playerSprites = nil,
-	enemySprites = nil,
 	font = nil,
 
 	player1Control = nil,
@@ -392,7 +365,7 @@ function Game:load()
 
     -- entity
     -- set controller
-    PlayerEntity.control = self.player1Control
+    mainPlayerControl = self.player1Control
 
     self.states:push(levelState)
     self.states.last:load(self)

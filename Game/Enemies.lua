@@ -1,16 +1,26 @@
-local EnemyStates = {}
-
--- Sounds
-EnemyStates.killSound = love.audio.newSource("Explosion.wav", "static")
-EnemyStates.slideSound = love.audio.newSource("Slide.wav", "static")
-
 -- Sprites
 local spriteImage = love.graphics.newImage("Enemy Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
-EnemyStates.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
+enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
+
+-- define class
+SnakeEntity = { sprites = enemySprites }
+
+-- Sounds
+SnakeEntity.killSound = love.audio.newSource("Explosion.wav", "static")
+SnakeEntity.slideSound = love.audio.newSource("Slide.wav", "static")
 
 
-function EnemyStates.snakeDying(self, dt)
+function SnakeEntity.new(level, x, y)
+	local self = Entity.new(8, 15, level)
+	self.x = x
+	self.y = y
+	self:changeAction(SnakeEntity.snakeGo)
+
+	return self
+end
+
+function SnakeEntity.snakeDying(self, dt)
 	-- death animation
 	self:updateAnimation(3, 1.0 / 8.0)
 
@@ -23,10 +33,10 @@ function EnemyStates.snakeDying(self, dt)
 		return
 	end
 
-	self.sprite = EnemyStates.sprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
 end
 
-function EnemyStates.snakeRecover(self, dt)
+function SnakeEntity.snakeRecover(self, dt)
 	if self.speedX > 0 then
 		self.speedX = math.max(0, self.speedX - 1024 * dt)
 	else
@@ -34,14 +44,14 @@ function EnemyStates.snakeRecover(self, dt)
 	end
 
 	if self.speedX == 0 then
-		self:changeAction(EnemyStates.snakeGo)
+		self:changeAction(SnakeEntity.snakeGo)
 		self.hit = false
 	end
 
 	self:MoveAndCollide(dt)		
 end
 
-function EnemyStates.snakeHit(self, dt)
+function SnakeEntity.snakeHit(self, dt)
 	-- move in the direction
 	if self.hitDirection == 0 then
 		self.speedX = 256.0
@@ -51,19 +61,19 @@ function EnemyStates.snakeHit(self, dt)
 	self.speedY = -32.0
 
 	if self.health > 0 then
-		EnemyStates.slideSound:play()
-		self:changeAction(EnemyStates.snakeRecover)
+		SnakeEntity.slideSound:play()
+		self:changeAction(SnakeEntity.snakeRecover)
 	else
-		EnemyStates.killSound:play()
-		self:changeAction(EnemyStates.snakeDying)
+		SnakeEntity.killSound:play()
+		self:changeAction(SnakeEntity.snakeDying)
 	end
 
-	self.sprite = EnemyStates.sprites.frames[7 + 2 + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[7 + 2 + self.direction * 5]
 
 	self:MoveAndCollide(dt)
 end
 
-function EnemyStates.snakeGo(self, dt)
+function SnakeEntity.snakeGo(self, dt)
 	local aabb = self:getAABB()
 
 	if self.direction == 1 then
@@ -118,13 +128,13 @@ function EnemyStates.snakeGo(self, dt)
 	end
 
 	if self.hit then
-		self:changeAction(EnemyStates.snakeHit)
+		self:changeAction(SnakeEntity.snakeHit)
 	end
 
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)
-	self.sprite = EnemyStates.sprites.frames[7 + self.animationFrame + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[7 + self.animationFrame + self.direction * 5]
 end
 
-return EnemyStates
+--return SnakeEntity
