@@ -328,7 +328,7 @@ function levelState:load(game)
 	game.musicSource = love.audio.newSource("Music/" .. game.levels[self.levelIndex].music)
 	game.musicSource:setLooping(true)
 	game.musicSource:setVolume(1.0)
-	game.musicSource:play()
+	--game.musicSource:play()
 end
 
 
@@ -339,7 +339,8 @@ local Game = {
 	player1Control = nil,
 
 	level = nil,
-	levels = {  { map = "testlevel8",	music = "title5.xm"},
+	levels = {  { map = "testSegment1",	music = "title5.xm"},
+				{ map = "testlevel8",	music = "title5.xm"},
 				{ map = "testlevel6", 	music = "main_title.xm"},
 				{ map = "testlevel2", 	music = "title1.xm"},
 				{ map = "testlevel3", 	music = "title2.xm"},
