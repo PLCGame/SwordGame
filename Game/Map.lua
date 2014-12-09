@@ -225,8 +225,12 @@ function Map:scrollTo(object)
 	self.dy = math.max(math.min(object.y + 64 - self.screen_height, self.height * self.tile_height - self.screen_height), self.dy) -- higher x bound
 end
 
+-- return the type of tile (ladder, etc)
 function Map:tileType(x, y)
-	return self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].type
+	local clampX = math.max(0, math.min(self.width - 1, x))
+	local clampY = math.max(0, math.min(self.height - 1, y))
+
+	return self.backgroundTiles.tiles[self.backgroundMap[clampX + clampY * self.width]].type
 end
 
 -- return distance to center, distance up, distance down
@@ -268,7 +272,10 @@ end
 
 -- return the AABB for the tile at x, y
 function Map:AABBForTile(x, y)
-	local col_aabb = self.backgroundTiles.tiles[self.backgroundMap[x + y * self.width]].collision
+	local clampX = math.max(0, math.min(self.width - 1, x))
+	local clampY = math.max(0, math.min(self.height - 1, y))
+
+	local col_aabb = self.backgroundTiles.tiles[self.backgroundMap[clampX + clampY * self.width]].collision
 	local aabb = { min = {}, max = {} }
 
 	if col_aabb ~= nil then
