@@ -180,25 +180,41 @@ titleScreenState = { thread = nil, game = nil }
 
 function wait(time)
 	while time > 0 do
-		self, dt = coroutine.yield(true)
+		self, game, dt = coroutine.yield(true)
 		time = time - dt
 	end
 end
 
-function titleScreenState:updateThread(dt)
+function titleScreenState:updateThread(game, dt)
 	wait(1)
 	-- fade text it
-	self.text1:fadeIn(1024)
+	local text1 = textElement.new("Get ready!", 20, 100)
+	self.elements:push(text1)
+	text1.color[4] = 0
+	text1:fadeIn(1024)
 
-	self.text2:typeWrite("Hello! This a super text!")
+	text2 = textElement.new("", 20, 150)
+	self.elements:push(text2)
+	text2:typeWrite("It will start soon :)")
 
+	wait(2)
+	text1:fadeOut(1024)
+	wait(0.5)
+	text2:fadeOut(1024)
 	wait(1)
-	self.text1:fadeOut(1024)
-	wait(500)
+
+	-- start a levek
+	-- change state
+	game.states:pop()
+
+	-- set level state
+	levelState.levelIndex = 1
+	game.states:push(levelState)
+	game.states.last:load(game)
 end
 
 function titleScreenState:update(game, dt)
-	self:thread(dt)
+	self:thread(game, dt)
 
 	for elem in self.elements:iterate() do
 		-- update entity
@@ -220,14 +236,6 @@ function titleScreenState:load(game)
 	self.thread = coroutine.wrap(self.updateThread)
 
 	self.elements = list()
-
-	self.text1 = textElement.new("This is a test text", 20, 100)
-	self.text1.color[4] = 0
-	self.elements:push(self.text1)
-
-	self.text2 = textElement.new("", 20, 150)
-	self.elements:push(self.text2)
-
 end
 
 inGameMenuState = {}
@@ -368,7 +376,8 @@ function Game:load()
     -- set controller
     mainPlayerControl = self.player1Control
 
-    self.states:push(levelState)
+    --self.states:push(levelState)
+    self.states:push(titleScreenState)
     self.states.last:load(self)
 
 end
