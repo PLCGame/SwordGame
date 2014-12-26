@@ -93,7 +93,6 @@ end
 
 -- --------------------------------------
 -- UI element animator
-BasicAnimation = {}
 
 function fadeInAlpha(self, elem, dt, inc)
 	elem.color[4] = math.min(elem.color[4] + inc * dt, 255)
@@ -193,19 +192,19 @@ end
 function titleScreenState:updateThread(game, dt)
 	wait(1)
 	-- fade text it
-	local text1 = textElement.new("Get ready!", 20, 100)
+	local text1 = TextElement("Get ready!", Vector(20, 100))
+	text1:addAnimation(BasicAnimation("opacity", 0, 255, 1.0), "fade")
+	text1:addAnimation(BasicAnimation("position", Vector(0, -1), Vector(0, 1), 0.2, true, true), "move")
 	self.elements:push(text1)
-	text1.color[4] = 0
-	text1:fadeIn(1024)
 
-	text2 = textElement.new("", 20, 150)
+
+	local text2 = TextElement("It will start soon :)", Vector(20, 150))
 	self.elements:push(text2)
-	text2:typeWrite("It will start soon :)")
 
 	wait(2)
-	text1:fadeOut(1024)
+	text1:addAnimation(BasicAnimation("opacity", 255, 0, 1.0), "fade")
 	wait(0.5)
-	text2:fadeOut(1024)
+	text2:addAnimation(BasicAnimation("opacity", 255, 0, 1.0), "fade")
 	wait(1)
 
 	-- start a levek
@@ -381,8 +380,8 @@ function Game:load()
     -- set controller
     mainPlayerControl = self.player1Control
 
-    self.states:push(levelState)
-    --self.states:push(titleScreenState)
+    --self.states:push(levelState)
+    self.states:push(titleScreenState)
     self.states.last:load(self)
 
 end
