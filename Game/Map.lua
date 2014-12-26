@@ -1,4 +1,4 @@
-local Map = {}
+Map = {}
 Map.__index = Map
 
 function AABBOverlap(A, B)
@@ -343,6 +343,3 @@ function Map:AABBCast(aabb, v, tileType)
 
 	return u, normal
 end
-
-
-return Map

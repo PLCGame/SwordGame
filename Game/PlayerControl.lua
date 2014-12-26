@@ -1,4 +1,4 @@
-local PlayerControl = {}
+PlayerControl = {}
 PlayerControl.__index = PlayerControl
 
 function PlayerControl.new(eventTable) 
@@ -145,5 +145,3 @@ end
 function PlayerControl:menuCancel()
 	return love.keyboard.isDown("escape") or self:testInput("defend")
 end
-
-return PlayerControl

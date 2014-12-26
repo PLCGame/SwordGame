@@ -1,4 +1,4 @@
-local SpriteFrame = {}
+SpriteFrame = {}
 SpriteFrame.__index = SpriteFrame
 
 function extractFrameFromImage(data, startX, startY)
@@ -139,4 +139,3 @@ function SpriteFrame.new(spriteImage, maskImage, markImage)
 	return self
 end
 
-return SpriteFrame

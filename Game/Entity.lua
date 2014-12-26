@@ -1,4 +1,4 @@
-local Entity = {}
+Entity = {}
 Entity.__index = Entity
 
 -- create a new entity instance, with default values
@@ -149,5 +149,3 @@ function Entity:Hit(power, direction)
 	self.hit = true
 	self.hitDirection = direction
 end
-
-return Entity

@@ -1,10 +1,12 @@
 require("list")
-SpriteFrame = require "SpriteFrame"
-Map = require "Map"
-PlayerControl = require "PlayerControl"
-Entity = require "Entity"
+require "SpriteFrame"
+require "Map"
+require "PlayerControl"
+require "Entity"
 require "PlayerEntity"
 require "Enemies"
+require "Vector"
+require "UIElement"
 
 mainPlayerControl = nil
 
@@ -89,7 +91,10 @@ function Level:draw()
 
 end
 
+-- --------------------------------------
 -- UI element animator
+BasicAnimation = {}
+
 function fadeInAlpha(self, elem, dt, inc)
 	elem.color[4] = math.min(elem.color[4] + inc * dt, 255)
 	return elem.color[4] == 255
@@ -376,8 +381,8 @@ function Game:load()
     -- set controller
     mainPlayerControl = self.player1Control
 
-    --self.states:push(levelState)
-    self.states:push(titleScreenState)
+    self.states:push(levelState)
+    --self.states:push(titleScreenState)
     self.states.last:load(self)
 
 end
@@ -468,6 +473,10 @@ function love.load()
     ]]
 
     shader = love.graphics.newShader(pixelcode, vertexcode)
+
+    -- test code
+    e = TextElement.new()
+    print(e.foo())
 end
 
 local time_acc = 0.0
