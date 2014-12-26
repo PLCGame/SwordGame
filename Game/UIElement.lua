@@ -17,6 +17,19 @@ end
 
 function UIElement:update(dt)
 	-- update animation
+	self:updateAnimations(dt)
+
+end
+
+function UIElement:draw()
+end
+
+-- animation handling
+function UIElement:addAnimation(animation, animationKey)
+	self.animations[animationKey] = animation
+end
+
+function UIElement:updateAnimations(dt)
 	for key,animation in pairs(self.animations) do 
 		newValue, complete = animation:update(dt)
 
@@ -32,15 +45,7 @@ function UIElement:update(dt)
 		if complete then
 			self.animations[key] = nil
 		end
-	end
-end
-
-function UIElement:draw()
-end
-
--- animation handling
-function UIElement:addAnimation(animation, animationKey)
-	self.animations[animationKey] = animation
+	end	
 end
 
 TextElement = {}

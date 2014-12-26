@@ -91,121 +91,38 @@ function Level:draw()
 
 end
 
--- --------------------------------------
--- UI element animator
-
-function fadeInAlpha(self, elem, dt, inc)
-	elem.color[4] = math.min(elem.color[4] + inc * dt, 255)
-	return elem.color[4] == 255
-end
-
-function fadeOutAlpha(self, elem, dt, inc)
-	elem.color[4] = math.max(elem.color[4] - inc * dt, 0)
-	return elem.color[4] == 0
-end
-
-function typeWritter(self, elem, dt, text)
-	self.timer = self.timer + dt
-
-	if self.timer > 0.05 then
-		-- increment ptr
-		self.current = self.current + 1
-
-		-- if it's space, continue to increment
-		while text:sub(self.current, self.current) == " " do
-			self.current = self.current + 1
-		end
-
-		-- copy to current character
-		elem.text = text:sub(1, self.current)
-
-		self.timer = self.timer - 0.05
-	end
-
-	return self.current == text:len()
-end
-
-
-textElement = {}
-textElement.__index = textElement
-
-function textElement.new(label, x, y)
-	local self = setmetatable({}, textElement)
-	self.text = label
-	self.color = {255, 255, 255, 255}
-
-	self.x = x
-	self.y = y
-
-	self.animators = list()
-
-	return self
-end
-
-function textElement:update(dt)
-	-- enumerate animators
-	local animator = self.animators.first
-
-	while animator do
-		local _next = animator._next
-
-		-- execute
-		local res = animator:execute(self, dt, animator.param)
-		if res then
-			self.animators:remove(animator)
-		end
-
-		animator = _next
-	end
-end
-
-function textElement:draw()
-	love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4])	
-	love.graphics.print(self.text, self.x, self.y)
-end
-
-function textElement:fadeIn(speed)
-	animator = { execute = fadeInAlpha, param = speed }
-	self.animators:push(animator)
-end
-
-function textElement:fadeOut(speed)
-	animator = { execute = fadeOutAlpha, param = speed }
-	self.animators:push(animator)
-end
-
-function textElement:typeWrite(text)
-	animator = { execute = typeWritter, param = text, timer = 0, current = 0 }
-	self.animators:push(animator)
-end
-
-
 titleScreenState = { thread = nil, game = nil }
 
-function wait(time)
+function wait(game, time)
 	while time > 0 do
 		self, game, dt = coroutine.yield(true)
 		time = time - dt
 	end
 end
 
+function waitInput(game, input)
+	while not game.player1Control:testTrigger(input) do
+		self, game, dt = coroutine.yield(true)
+	end
+end
+
 function titleScreenState:updateThread(game, dt)
-	wait(1)
 	-- fade text it
-	local text1 = TextElement("Get ready!", Vector(20, 100))
+	local text1 = TextElement("Press Start!", Vector(20, 100))
 	text1:addAnimation(BasicAnimation("opacity", 0, 255, 1.0), "fade")
-	text1:addAnimation(BasicAnimation("position", Vector(0, -1), Vector(0, 1), 0.2, true, true), "move")
+	text1:addAnimation(BasicAnimation("position", Vector(20, 95), Vector(20, 105), 0.2, true), "move")
 	self.elements:push(text1)
 
 
 	local text2 = TextElement("It will start soon :)", Vector(20, 150))
 	self.elements:push(text2)
 
-	wait(2)
-	text1:addAnimation(BasicAnimation("opacity", 255, 0, 1.0), "fade")
-	wait(0.5)
-	text2:addAnimation(BasicAnimation("opacity", 255, 0, 1.0), "fade")
-	wait(1)
+	waitInput(game, "start")
+
+	text1:addAnimation(BasicAnimation("opacity", 255, 0, 0.1), "fade")
+	wait(game, 0.2)
+	text2:addAnimation(BasicAnimation("opacity", 255, 0, 0.1), "fade")
+	wait(game, 0.5)
 
 	-- start a levek
 	-- change state
