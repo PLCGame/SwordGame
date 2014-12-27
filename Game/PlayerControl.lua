@@ -1,10 +1,11 @@
 PlayerControl = {}
 PlayerControl.__index = PlayerControl
 
-function PlayerControl.new(eventTable) 
+function PlayerControl.new(joystick, eventTable) 
 	local self = setmetatable({}, PlayerControl)
 
 	if eventTable == nil then
+		--							keyboard 	DPad        Axis     Invert Axis
 		self.event = { 	left 	= 	{"left", 	"dpleft", 	"leftx", 	true},
 						right 	=	{"right", 	"dpright", 	"leftx", 	false},
 						up	 	= 	{"up", 		"dpup", 	"lefty", 	true},
@@ -21,7 +22,7 @@ function PlayerControl.new(eventTable)
 	-- if there's a connected joystick
 	if love.joystick.getJoystickCount() > 0 then
 		local joysticks = love.joystick.getJoysticks()
-		self.joystick = joysticks[1]
+		self.joystick = joysticks[joystick or 1]
 	end
 
 	self.eventValue = {}
@@ -145,3 +146,7 @@ end
 function PlayerControl:menuCancel()
 	return love.keyboard.isDown("escape") or self:testInput("defend")
 end
+
+-- initialize default PlayerControl
+PlayerControl.player1Control = PlayerControl.new(1)
+PlayerControl.player2Control = PlayerControl.new(2)
