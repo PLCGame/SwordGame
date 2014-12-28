@@ -109,7 +109,7 @@ end
 function titleScreenState:updateThread(game, dt)
 	-- fade text it
 	local text1 = TextElement("Press Start!", Vector(20, 100))
-	text1:addAnimation(BasicAnimation("opacity", 0, 255, 1.0), "fade")
+	text1:addAnimation(BasicAnimation("opacity", 0, 255, 0.1, true), "fade")
 	text1:addAnimation(BasicAnimation("position", Vector(20, 95), Vector(20, 105), 0.2, true), "move")
 	self.elements:push(text1)
 
