@@ -1,4 +1,4 @@
-require("list")
+require "list"
 require "SpriteFrame"
 require "Map"
 require "PlayerControl"
@@ -7,8 +7,6 @@ require "PlayerEntity"
 require "Enemies"
 require "Vector"
 require "UIElement"
-
-mainPlayerControl = nil
 
 local Level = {}
 Level.__index = Level
@@ -31,7 +29,7 @@ end
 function Level:spawnEntity(entityType, x, y) 
 	if entityType == "Player" then
 		self.playerEntity = PlayerEntity.new(self, x, y)
-		self.playerEntity.playerControl = mainPlayerControl
+		self.playerEntity.playerControl = PlayerControl.player1Control
 	end
 
 	if entityType == "Snake" then
@@ -101,7 +99,7 @@ function wait(game, time)
 end
 
 function waitInput(game, input)
-	while not game.player1Control:testTrigger(input) do
+	while not PlayerControl.player1Control:testTrigger(input) do
 		self, game, dt = coroutine.yield(true)
 	end
 end
@@ -124,7 +122,7 @@ function titleScreenState:updateThread(game, dt)
 	text2:addAnimation(BasicAnimation("opacity", 255, 0, 0.1), "fade")
 	wait(game, 0.5)
 
-	-- start a levek
+	-- start a level
 	-- change state
 	game.states:pop()
 
@@ -171,21 +169,21 @@ function inGameMenuState.new()
 end
 
 function inGameMenuState:update(game, dt)
-	if game.player1Control:testTrigger("down") then
+	if PlayerControl.player1Control:testTrigger("down") then
 		self.index = math.min(self.index + 1, #game.levels)
 	end
 
-	if game.player1Control:testTrigger("up") then
+	if PlayerControl.player1Control:testTrigger("up") then
 		self.index = math.max(self.index - 1, 1)		
 	end
 
-	if game.player1Control:testTrigger("back") then
+	if PlayerControl.player1Control:testTrigger("back") then
 		-- go back
 		game.states:pop()
 	end
 
 
-	if game.player1Control:testTrigger("attack") or game.player1Control:testTrigger("start") then
+	if PlayerControl.player1Control:testTrigger("attack") or PlayerControl.player1Control:testTrigger("start") then
 		-- change state
 		game.states:pop()
 		game.states:pop()
@@ -225,7 +223,7 @@ function levelState:update(game, dt)
 		game.level:update(dt)
 	end
 
-	if game.player1Control:testTrigger("back") then
+	if PlayerControl.player1Control:testTrigger("back") then
 		game.states:push(inGameMenuState.new())
 		game.states.last:load(game)
 	end
@@ -265,8 +263,6 @@ end
 local Game = { 
 	font = nil,
 
-	player1Control = nil,
-
 	level = nil,
 	levels = {  { map = "testSegment1",	music = "title5.xm"},
 				{ map = "testlevel8",	music = "title5.xm"},
@@ -284,18 +280,11 @@ local Game = {
 
 -- load the game
 function Game:load()
-    -- default controller
-    self.player1Control = PlayerControl.new()
-
     -- load the default font
 	self.font = love.graphics.newImageFont("rotunda.png",
     " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}" )
     self.font:setFilter("nearest", "nearest")
     love.graphics.setFont(self.font)
-
-    -- entity
-    -- set controller
-    mainPlayerControl = self.player1Control
 
     --self.states:push(levelState)
     self.states:push(titleScreenState)
@@ -303,10 +292,7 @@ function Game:load()
 
 end
 
-function Game:update(dt) 
-	-- we always have to update this (maybe it should be done somewhere else?)
-	self.player1Control:update()
-	
+function Game:update(dt) 	
 	if self.states.last ~= nil then
 		self.states.last:update(self, dt)
 	end
@@ -413,6 +399,10 @@ function love.update(dt)
 		total_frame = total_frame + 1
 	end
 
+	-- update input
+	-- we always have to update this (maybe it should be done somewhere else?)
+	PlayerControl.player1Control:update()
+	PlayerControl.player2Control:update()
 end
 
 crt_emulation = false
