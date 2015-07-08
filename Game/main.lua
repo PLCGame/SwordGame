@@ -405,7 +405,7 @@ function love.update(dt)
 	PlayerControl.player2Control:update()
 end
 
-crt_emulation = true
+crt_emulation = false
 
 function love.draw()
 	-- use scalling, make pixel bigger
