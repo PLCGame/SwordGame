@@ -255,7 +255,7 @@ function levelState:load(game)
 	game.musicSource = love.audio.newSource("Music/" .. game.levels[self.levelIndex].music)
 	game.musicSource:setLooping(true)
 	game.musicSource:setVolume(1.0)
-	--game.musicSource:play()
+	game.musicSource:play()
 end
 
 
@@ -405,7 +405,7 @@ function love.update(dt)
 	PlayerControl.player2Control:update()
 end
 
-crt_emulation = false
+crt_emulation = true
 
 function love.draw()
 	-- use scalling, make pixel bigger
