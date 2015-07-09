@@ -102,7 +102,7 @@ function Entity:MoveAndCollide(dt)
 	-- if the entity is not on a solid tile, it's falling
 	if not self:OnGround() then
 		-- increment speed Y
-  		self.speedY = math.min(self.speedY + 768.0 * dt, 256.0)
+  		self.speedY = math.min(self.speedY + 768.0 * dt, 192.0)
   	end
 
 	--print("")
