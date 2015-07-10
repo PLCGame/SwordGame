@@ -253,7 +253,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -277,7 +277,7 @@
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 4474.0,
+						"translation.y": 4591.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -321,8 +321,8 @@
 						"selection":
 						[
 							[
-								1811,
-								1811
+								615,
+								615
 							]
 						],
 						"settings":
@@ -331,7 +331,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 156.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
