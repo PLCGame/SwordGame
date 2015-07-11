@@ -17,6 +17,8 @@ function PlayerEntity.new(level, x, y)
 	self:changeAction(PlayerEntity.idle)
 	self.x = x
 	self.y = y
+	self.maxSpeed = 128
+	self.acceleration = 1024
 
 	return self
 end
