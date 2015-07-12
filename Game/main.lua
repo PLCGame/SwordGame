@@ -101,7 +101,7 @@ local Game = {
 -- load the game
 function Game:load()
     -- load the default font
-	self.font = love.graphics.newImageFont("rotunda.png",
+	self.font = love.graphics.newImageFont("classic_font.png",
     " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}" )
     self.font:setFilter("nearest", "nearest")
     love.graphics.setFont(self.font)
@@ -204,7 +204,7 @@ function love.load()
         }
     ]]
 
-    shader = love.graphics.newShader(pixelcode, vertexcode)
+    crtShader = love.graphics.newShader(pixelcode, vertexcode)
 
     -- test code
     e = TextElement.new()
@@ -235,20 +235,20 @@ function love.update(dt)
 	PlayerControl.player2Control:update()
 end
 
-crt_emulation = false
+crtEmulation = false
 
 function love.draw()
-	-- use scalling, make pixel bigger
-	if not crt_emulation then
-   		love.graphics.scale(4.0, 4.0)
-		Game:draw()
-	else
-		love.graphics.setShader()
-   		love.graphics.setCanvas(mainCanvas)
-   		Game:draw()
+	love.graphics.setCanvas(mainCanvas)
+	love.graphics.setShader()		
+   	Game:draw()
 
-   		love.graphics.setShader(shader)
-   		love.graphics.setCanvas()
-   		love.graphics.draw(mainCanvas, 0, 0, 0, 4, 4)
+   	if crtEmulation then
+   		mainCanvas:setFilter("linear", "linear")
+   		love.graphics.setShader(crtShader)
+   	else
+   		mainCanvas:setFilter("nearest", "nearest")   		
    	end
+
+   	love.graphics.setCanvas()
+   	love.graphics.draw(mainCanvas, 0, 0, 0, 4, 4)
 end
