@@ -8,9 +8,11 @@ inputConfigState.pad_img:setFilter("nearest", "nearest")
 
 function inputConfigState:load(game)
 	self.selectedEvent = 1
+
+	game:playMusic("Music/main_title.xm")
 end
 
-function inputConfigState:actiontriggered(action)
+function inputConfigState:actiontriggered(game, action)
 	if action == "down" and self.selectedEvent < 7 then
 		self.selectedEvent = self.selectedEvent + 1
 		sound.menu_select:play()
@@ -25,6 +27,10 @@ function inputConfigState:actiontriggered(action)
 		sound.menu_valid:play()
 	end
 
+	if action == "back" then
+		game:popState()
+		game:pushState(levelState)
+	end
 end
 
 function inputConfigState:update(game, dt)

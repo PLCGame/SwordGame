@@ -81,43 +81,66 @@ function Level:draw()
 
 end
 
-inGameMenuState = {}
-inGameMenuState.__index = inGameMenuState
+levelLoadState = {timer = 0}
+function levelLoadState:load(game)
+	game:playMusic(nil)
+	self.timer = 0
+end
 
-function inGameMenuState.new()
-	local self = setmetatable({}, inGameMenuState)
+function levelLoadState:update(game, dt)
+	self.timer = self.timer + dt
 
-	self.index = 1
+	if self.timer > 1 then
+		game:popState()
+		game:pushState(levelState)
+	end
+end
 
-	return self
+function levelLoadState:actiontriggered(game, action)
+end
+
+
+function levelLoadState:draw(game)
+	local alpha = math.min((1.0 - self.timer) * 4.0, 1.0)
+	love.graphics.setColor(255, 255, 255, 255 * alpha)	
+	love.graphics.print("Loading level", 100, 80)
+end
+
+inGameMenuState = {index = 1}
+function inGameMenuState:load(game)
 end
 
 function inGameMenuState:update(game, dt)
-	if PlayerControl.player1Control:testTrigger("down") then
-		self.index = math.min(self.index + 1, #game.levels)
+end
+
+function inGameMenuState:actiontriggered(game, action)
+	if action == "back" then
+		game:popState()
 	end
 
-	if PlayerControl.player1Control:testTrigger("up") then
-		self.index = math.max(self.index - 1, 1)		
+	if action == "up" and self.index > 1 then
+		self.index = self.index - 1
+		sound.menu_select:play()
 	end
 
-	if PlayerControl.player1Control:testTrigger("back") then
-		-- go back
-		game.states:pop()
+	if action == "down" and self.index < #game.levels then
+		self.index = self.index + 1
+		sound.menu_select:play()
 	end
 
-
-	if PlayerControl.player1Control:testTrigger("attack") or PlayerControl.player1Control:testTrigger("start") then
+	if action =="attack" or action == "start" then
 		-- change state
-		game.states:pop()
-		game.states:pop()
+		game:popState() -- pop ingame menu
+		game:popState() -- pop level state
 
 		levelState.levelIndex = self.index
-	    game.states:push(levelState)
-	    game.states.last:load(game)
-	end
 
+		game:pushState(levelLoadState)
+
+		sound.menu_valid:play()
+	end
 end
+
 
 function inGameMenuState:draw(game)
 	love.graphics.setColor(255, 255, 255, 255)	
@@ -137,19 +160,16 @@ function inGameMenuState:draw(game)
 	end
 end
 
-function inGameMenuState:load(game)
-
-end
-
 levelState = { levelIndex = 1}
 function levelState:update(game, dt)
 	if game.level ~= nil then
 		game.level:update(dt)
 	end
+end
 
-	if PlayerControl.player1Control:testTrigger("back") then
-		game.states:push(inGameMenuState.new())
-		game.states.last:load(game)
+function levelState:actiontriggered(game, action)
+	if action == "back" then
+		game:pushState(inGameMenuState)
 	end
 end
 
@@ -172,12 +192,6 @@ function levelState:load(game)
 	self.game = game
 	game.level = Level.new(game.levels[self.levelIndex].map)
 
-	if game.musicSource ~= nil then
-		game.musicSource:stop()
-	end
-	
-	game.musicSource = love.audio.newSource("Music/" .. game.levels[self.levelIndex].music)
-	game.musicSource:setLooping(true)
-	game.musicSource:setVolume(1.0)
-	game.musicSource:play()
+	-- start the music	
+	game:playMusic("Music/" .. game.levels[self.levelIndex].music)
 end

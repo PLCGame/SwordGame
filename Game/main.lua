@@ -111,6 +111,21 @@ function Game:load()
 
 end
 
+function Game:playMusic(musicFilename)
+	if self.musicSource ~= nil then
+		self.musicSource:stop()
+	end
+
+	if musicFilename ~= nil then
+		self.musicSource = love.audio.newSource(musicFilename)
+		self.musicSource:setLooping(true)
+		self.musicSource:setVolume(1.0)
+		self.musicSource:play()
+	else
+		self.musicSource = nil
+	end
+end
+
 function Game:pushState(state)
 	-- push the state on the stack
 	self.states:push(state)
@@ -139,7 +154,7 @@ end
 
 function Game:actiontriggered(action)
 	if self.states.last.actiontriggered then
-		self.states.last:actiontriggered(action)
+		self.states.last:actiontriggered(self, action)
 	end
 end
 
@@ -249,6 +264,7 @@ crtEmulation = false
 
 function love.draw()
 	love.graphics.setCanvas(mainCanvas)
+	mainCanvas:clear()
 	love.graphics.setShader()		
    	Game:draw()
 

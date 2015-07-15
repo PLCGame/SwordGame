@@ -17,7 +17,7 @@ function PlayerEntity.new(level, x, y)
 	self:changeAction(PlayerEntity.idle)
 	self.x = x
 	self.y = y
-	self.maxSpeed = 128
+	self.maxSpeed = 96
 	self.acceleration = 1024
 
 	return self
@@ -47,12 +47,12 @@ function PlayerEntity.fall(self, dt)
 
   	-- we can move left and right
 	if self.playerControl:canGoLeft() then
-		self.speedX = math.max(self.speedX - 4.0, -64.0)
+		self.speedX = math.max(self.speedX - 4.0, -self.maxSpeed)
 		self.direction = 1
 	end
 
 	if self.playerControl:canGoRight() then
-		self.speedX = math.min(self.speedX + 4.0, 64.0)
+		self.speedX = math.min(self.speedX + 4.0, self.maxSpeed)
 		self.direction = 0
 	end
 
