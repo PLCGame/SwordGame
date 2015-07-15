@@ -6,29 +6,28 @@ inputConfigState.keyboard_img:setFilter("nearest", "nearest")
 inputConfigState.pad_img = love.graphics.newImage("xpad.png")
 inputConfigState.pad_img:setFilter("nearest", "nearest")
 
--- Sounds
-inputConfigState.menuChangeSound = love.audio.newSource("Menu Select.wav", "static")
-inputConfigState.menuValidSound = love.audio.newSource("Menu Valid.wav", "static")
-
-
 function inputConfigState:load(game)
 	self.selectedEvent = 1
 end
 
-function inputConfigState:update(game, dt)
-	if PlayerControl.player1Control:testTrigger("down") and self.selectedEvent < 7 then
+function inputConfigState:actiontriggered(action)
+	if action == "down" and self.selectedEvent < 7 then
 		self.selectedEvent = self.selectedEvent + 1
-		inputConfigState.menuChangeSound:play()
-	end
+		sound.menu_select:play()
+	end		
 
-	if PlayerControl.player1Control:testTrigger("up") and self.selectedEvent > 1 then
+	if action == "up" and self.selectedEvent > 1 then
 		self.selectedEvent = self.selectedEvent - 1
-		inputConfigState.menuChangeSound:play()
+		sound.menu_select:play()
 	end
 
-	if PlayerControl.player1Control:testTrigger("start") or PlayerControl.player1Control:testTrigger("attack") then
-		inputConfigState.menuValidSound:play()
+	if action == "start" or action == "attack" then
+		sound.menu_valid:play()
 	end
+
+end
+
+function inputConfigState:update(game, dt)
 end
 
 function inputConfigState:drawKeyboard()

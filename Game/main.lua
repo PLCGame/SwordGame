@@ -1,4 +1,5 @@
 require "list"
+require "sound"
 require "SpriteFrame"
 require "Map"
 require "PlayerControl"
@@ -136,6 +137,11 @@ function Game:draw(dt)
 	end
 end
 
+function Game:actiontriggered(action)
+	if self.states.last.actiontriggered then
+		self.states.last:actiontriggered(action)
+	end
+end
 
 function printOutline(str, x, y)
 	love.graphics.setColor(0, 0, 0, 255)
@@ -231,7 +237,11 @@ function love.update(dt)
 
 	-- update input
 	-- we always have to update this (maybe it should be done somewhere else?)
-	PlayerControl.player1Control:update()
+	actions = PlayerControl.player1Control:update()
+	for i, action in ipairs(actions) do
+		Game:actiontriggered(action)
+	end
+
 	PlayerControl.player2Control:update()
 end
 

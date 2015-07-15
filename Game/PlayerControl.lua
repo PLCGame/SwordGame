@@ -31,7 +31,10 @@ function PlayerControl.new(joystick, eventTable)
 	return self
 end
 
+-- return the new actions triggered
 function PlayerControl:update()
+	local actions = {}
+
 	-- test each event
 	for key, value in pairs(self.event) do
 		local value = self:testInput(key)
@@ -44,6 +47,7 @@ function PlayerControl:update()
 		if value ~= oldValue then
 			if value == true then
 				self.eventTrigger[key] = true
+				table.insert(actions, key)
 			else
 				self.eventTrigger[key] = false
 			end
@@ -54,6 +58,8 @@ function PlayerControl:update()
 
 		self.eventValue[key] = value
 	end
+
+	return actions
 end
 
 -- return the current status of an event
