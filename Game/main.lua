@@ -243,12 +243,14 @@ function love.update(dt)
 	time_acc = time_acc + dt
 
 	while time_acc > timeStep do
-		Game:update(timeStep)
+		--Game:update(timeStep)
 
 		time_acc = time_acc - timeStep
 		total_time = total_time + timeStep
 		total_frame = total_frame + 1
 	end
+
+	Game:update(dt)
 
 	-- update input
 	-- we always have to update this (maybe it should be done somewhere else?)
