@@ -33,7 +33,6 @@ function titleScreenState:updateThread(game, dt)
 	text1:addAnimation(BasicAnimation("position", Vector(20, 95), Vector(20, 105), 0.2, true), "move")
 	self.elements:push(text1)
 
-
 	local text2 = TextElement("It will start soon :)", Vector(20, 150))
 	self.elements:push(text2)
 
