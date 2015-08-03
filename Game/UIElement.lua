@@ -11,10 +11,6 @@ function UIElement.new()
 	return self
 end
 
-function UIElement.foo()
-	return "bar";
-end
-
 function UIElement:update(dt)
 	-- update animation
 	self:updateAnimations(dt)
@@ -80,6 +76,41 @@ setmetatable(TextElement, { __call = function(_, ...) return TextElement.new(...
 function TextElement:draw()
 	love.graphics.setColor(255, 255, 255, self.opacity)	
 	love.graphics.print(self.text, self.position.x, self.position.y)
+end
+
+TypeWritterTextElement = {}
+TypeWritterTextElement.__index = TypeWritterTextElement
+
+function TypeWritterTextElement.new(text, position)
+	local self = setmetatable({}, TypeWritterTextElement)
+	self.animations = {}
+
+	self.text = text or ""
+	self.position = position or Vector(0, 0)
+	self.printedLenTimer = 0
+
+	-- use add animation from UIElement
+	self.addAnimation = UIElement.addAnimation
+
+	return self
+end
+setmetatable(TypeWritterTextElement, { __call = function(_, ...) return TypeWritterTextElement.new(...) end })
+
+function TypeWritterTextElement:draw()
+	love.graphics.setColor(255, 255, 255, self.opacity)	
+
+	-- compute the number of character to print (one per 0.02 second)
+	local textLen = math.min(self.text:len(), self.printedLenTimer / 0.04)
+
+	-- print the sub string from 0 to textLen
+	love.graphics.print(self.text:sub(0, textLen), self.position.x, self.position.y)
+end
+
+function TypeWritterTextElement:update(dt)
+	-- update animation
+	UIElement.updateAnimations(self, dt)
+
+	self.printedLenTimer = self.printedLenTimer + dt
 end
 
 -- basic animation class

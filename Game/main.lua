@@ -33,7 +33,7 @@ function titleScreenState:updateThread(game, dt)
 	text1:addAnimation(BasicAnimation("position", Vector(20, 95), Vector(20, 105), 0.2, true), "move")
 	self.elements:push(text1)
 
-	local text2 = TextElement("It will start soon :)", Vector(20, 150))
+	local text2 = TypeWritterTextElement("It will start soon :)", Vector(20, 150))
 	self.elements:push(text2)
 
 	waitInput(game, "start")
@@ -84,7 +84,7 @@ local Game = {
 	font = nil,
 
 	level = nil,
-	levels = {  { map = "testSegment1",	music = "title5.xm"},
+	levels = {  { map = "testSegment1",	music = "main_title.xm"},
 				{ map = "testlevel8",	music = "title5.xm"},
 				{ map = "testlevel6", 	music = "main_title.xm"},
 				{ map = "testlevel2", 	music = "title1.xm"},
@@ -106,7 +106,7 @@ function Game:load()
     self.font:setFilter("nearest", "nearest")
     love.graphics.setFont(self.font)
 
-    self:pushState(inputConfigState)
+    self:pushState(titleScreenState)
 
 end
 
@@ -226,9 +226,6 @@ function love.load()
 
     crtShader = love.graphics.newShader(pixelcode, vertexcode)
 
-    -- test code
-    e = TextElement.new()
-    print(e.foo())
 end
 
 local time_acc = 0.0
