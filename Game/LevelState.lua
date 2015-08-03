@@ -2,7 +2,7 @@ Level = {}
 Level.__index = Level
 
 -- create a new level from a map
-function Level.new(mapName)
+function Level.new(mapName, screen_width, screen_height)
 	local self = setmetatable({score = 0}, Level)
 
 	self.playerEntity = nil
@@ -12,7 +12,10 @@ function Level.new(mapName)
 	mapFile = love.filesystem.load(mapName..".lua")
 	self.map = Map.new(mapFile(), self)
 	ww, wh = love.window.getDimensions()
-	self.map:setSize(ww / 4, wh / 4)
+	--self.map:setSize(ww / 4, wh / 4)
+
+	self.screenWidth = screen_width
+	self.screenHeight = screen_height
 
 	return self
 end
@@ -48,25 +51,22 @@ function Level:update(dt)
 	if self.playerEntity ~= nil then
 		-- update player
 		self.playerEntity:action(dt)
-
-		-- update scrolling to show the player
-		self.map:scrollTo(self.playerEntity)			
 	end
 end
 
 -- draw the level
-function Level:draw()
+function Level:draw(camera)
 	-- use white color
 	love.graphics.setColor(255, 255, 255, 255)	
+   	
+   	love.graphics.push()   	
+   	-- translate according to current world scrolling
+  	love.graphics.translate(-camera.x, -camera.y)
 
 	-- draw the map
-   	self.map:draw()
-   	
-   	love.graphics.push()
-   	-- draw the entities
-   	-- translate according to current world scrolling
-  	love.graphics.translate(-self.map.dx, -self.map.dy)
+   	self.map:draw(camera.x, camera.y, camera.width, camera.height)
 
+   	-- draw the entities
 	for entity in self.enemies:iterate() do
 		-- update entity
 		entity:draw()
@@ -164,6 +164,13 @@ levelState = { levelIndex = 1}
 function levelState:update(game, dt)
 	if game.level ~= nil then
 		game.level:update(dt)
+
+		-- update camera
+		self.camera.x = math.min(math.max(game.level.playerEntity.x + game.level.playerEntity.width * 0.5 - 128, 0), self.camera.x) -- lower x bound
+		self.camera.x = math.max(math.min(game.level.playerEntity.x + game.level.playerEntity.width * 0.5 + 128 - self.camera.width, game.level.map.width * game.level.map.tile_width - self.camera.width), self.camera.x) -- higher x bound
+
+		self.camera.y = math.min(math.max(game.level.playerEntity.y - game.level.playerEntity.height - 64, 0), self.camera.y) -- lower y bound
+		self.camera.y = math.max(math.min(game.level.playerEntity.y + 64 - self.camera.height, game.level.map.height * game.level.map.tile_height - self.camera.height), self.camera.y) -- higher x bound
 	end
 end
 
@@ -177,7 +184,7 @@ function levelState:draw(game)
 	-- draw the world
 	if game.level ~= nil then
 		-- Draw the Level
-		game.level:draw()
+		game.level:draw(self.camera)
 	
 		-- draw the UI
 	   	--printOutline("Current Level : "..game.levels[self.levelIndex].map, 5, 5)
@@ -190,8 +197,11 @@ end
 function levelState:load(game)
 	-- load test level
 	self.game = game
-	game.level = Level.new(game.levels[self.levelIndex].map)
+	game.level = Level.new(game.levels[self.levelIndex].map, game.screenWidth, game.screenHeight)
 
 	-- start the music	
 	game:playMusic("Music/" .. game.levels[self.levelIndex].music)
+
+	-- set camera
+	self.camera = {x = 0, y = 0, width = 320, height = 192}
 end

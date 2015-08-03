@@ -124,13 +124,6 @@ end
 function Map.new(mapData, entityFactory) 
 	local self = setmetatable({}, Map)
 
-	-- default values
-	self.screen_width = 256
-	self.screen_height = 192
-
-	self.dx = 0
-	self.dy = 0
-
 	self.width = mapData.width
 	self.height = mapData.height
 	self.tile_width = mapData.tilewidth
@@ -179,12 +172,11 @@ end
 -- draw the map
 -- x, y position on the screen 
 -- width, height size in pixels
--- dx, dy scrolling position
-function Map:draw()
-	tilex = math.floor(self.dx / self.tile_width)
-	tiley = math.floor(self.dy / self.tile_height)
-	tilew = math.min(self.screen_width / self.tile_width, self.width - 1 - tilex)
-	tileh = math.min(self.screen_height / self.tile_height, self.height-1 - tiley)
+function Map:draw(x, y , width, height)
+	tilex = math.max(math.floor(x / self.tile_width), 0)
+	tiley = math.max(math.floor(y / self.tile_height), 0)
+	tilew = math.min(width / self.tile_width, self.width - 1 - tilex)
+	tileh = math.min(height / self.tile_height, self.height - 1 - tiley)
 
 	-- draw background
 	for ty = 0, tileh do 
@@ -195,7 +187,7 @@ function Map:draw()
 				print(tilex, tiley, tilew, tileh)
 			end
 
-			love.graphics.draw(self.backgroundTiles.image, tile.quad, (tx + tilex) * self.tile_width - self.dx, (ty + tiley) * self.tile_height - self.dy, 0, 1.0, 1.0, 0.0, 0.0)
+			love.graphics.draw(self.backgroundTiles.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 		end
 	end
 
@@ -205,18 +197,14 @@ function Map:draw()
 			tile = self.objectTiles.tiles[self.objectsMap[(tx + tilex) + (ty + tiley) * self.width]]
 
 			if tile ~= nil then			
-				love.graphics.draw(self.objectTiles.image, tile.quad, (tx + tilex) * self.tile_width - self.dx, (ty + tiley) * self.tile_height - self.dy, 0, 1.0, 1.0, 0.0, 0.0)
+				love.graphics.draw(self.objectTiles.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 			end
 		end
 	end
 
 end
 
-function Map:setSize(width, height)
-	self.screen_width = width
-	self.screen_height = height
-end
-
+--[[
 function Map:scrollTo(object)
 	self.dx = math.min(math.max(object.x + object.width * 0.5 - 128, 0), self.dx) -- lower x bound
 	self.dx = math.max(math.min(object.x + object.width * 0.5 + 128 - self.screen_width, self.width * self.tile_width - self.screen_width), self.dx) -- higher x bound
@@ -224,6 +212,7 @@ function Map:scrollTo(object)
 	self.dy = math.min(math.max(object.y - object.height - 64, 0), self.dy) -- lower y bound
 	self.dy = math.max(math.min(object.y + 64 - self.screen_height, self.height * self.tile_height - self.screen_height), self.dy) -- higher x bound
 end
+]]
 
 -- return the type of tile (ladder, etc)
 function Map:tileType(x, y)

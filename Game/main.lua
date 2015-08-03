@@ -95,6 +95,11 @@ local Game = {
 	currentLevel = 0,
 
 	musicSource = nil,
+	musicVolume = 0.0,
+
+	screenWidth = 320,
+	screenHeight = 192,
+
 	states = list()
 }
 
@@ -118,7 +123,7 @@ function Game:playMusic(musicFilename)
 	if musicFilename ~= nil then
 		self.musicSource = love.audio.newSource(musicFilename)
 		self.musicSource:setLooping(true)
-		self.musicSource:setVolume(1.0)
+		self.musicSource:setVolume(self.musicVolume)
 		self.musicSource:play()
 	else
 		self.musicSource = nil
