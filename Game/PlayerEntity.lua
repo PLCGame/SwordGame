@@ -240,7 +240,7 @@ function PlayerEntity.attack(self, dt)
 			swordAABB.max[1] = self.y - 3  			
 		end
 
-		for enemy in self.level.enemies:iterate() do
+		for enemy in self.level.entities:iterate() do
   			if enemy ~= self then
   				-- do we hit something?
   				local enemyAABB = enemy:getAABB()

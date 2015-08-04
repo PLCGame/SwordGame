@@ -26,7 +26,7 @@ function SnakeEntity.snakeDying(self, dt)
 
 	if self.animationFrame == 2 then
 		-- remove the snake from the game
-		self.level.enemies:remove(self)
+		self.level.entities:remove(self)
 
 		-- increment score
 		self.level.score = self.level.score + 20

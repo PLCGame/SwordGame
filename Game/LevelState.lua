@@ -6,7 +6,7 @@ function Level.new(mapName, screen_width, screen_height)
 	local self = setmetatable({score = 0}, Level)
 
 	self.playerEntity = nil
-	self.enemies = list()
+	self.entities = list()
 
 	print("loading map : "..mapName)
 	self.map = Map.new("Levels/" .. mapName..".lua", self)
@@ -24,32 +24,27 @@ function Level:spawnEntity(entityType, x, y)
 	if entityType == "Player" then
 		self.playerEntity = PlayerEntity.new(self, x, y)
 		self.playerEntity.playerControl = PlayerControl.player1Control
+		self.entities:push(self.playerEntity)
 	end
 
 	if entityType == "Snake" then
 		local snakeEntity = SnakeEntity.new(self, x, y)
-		self.enemies:push(snakeEntity)
+		self.entities:push(snakeEntity)
 	end
 end
 
 -- update the level
 function Level:update(dt)
-	-- update enemies
+	-- update entities
 	-- they can be removed on their action function, 
 	-- so keep track of the next one in the list
-	local enemy = self.enemies.first
+	local enemy = self.entities.first
 	while enemy ~= nil do
 		local nextEnemy = enemy._next
 
 		enemy:action(dt)
 		
 		enemy = nextEnemy
-	end
-
-	-- update the player entity
-	if self.playerEntity ~= nil then
-		-- update player
-		self.playerEntity:action(dt)
 	end
 end
 
@@ -66,7 +61,7 @@ function Level:draw(camera)
    	self.map:draw(camera.x, camera.y, camera.width, camera.height)
 
    	-- draw the entities
-	for entity in self.enemies:iterate() do
+	for entity in self.entities:iterate() do
 		-- update entity
 		entity:draw()
 	end
