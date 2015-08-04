@@ -1,9 +1,9 @@
 inputConfigState = {}
 
-inputConfigState.keyboard_img = love.graphics.newImage("keyboard.png")
+inputConfigState.keyboard_img = love.graphics.newImage("UI/keyboard.png")
 inputConfigState.keyboard_img:setFilter("nearest", "nearest")
 
-inputConfigState.pad_img = love.graphics.newImage("xpad.png")
+inputConfigState.pad_img = love.graphics.newImage("UI/xpad.png")
 inputConfigState.pad_img:setFilter("nearest", "nearest")
 
 function inputConfigState:load(game)

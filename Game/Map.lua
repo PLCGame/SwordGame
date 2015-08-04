@@ -76,10 +76,10 @@ function AABBSweepTest(A, vA, B, vB)
 	return entryTime, n
 end
 
-function loadTileset(data)
+function loadTileset(data, path)
 	local tileset = {}
 
-	tileset.image = love.graphics.newImage(data.image)
+	tileset.image = love.graphics.newImage(path .. data.image)
 	tileset.image:setFilter("nearest", "nearest") 
 
 	-- create the quad
@@ -121,7 +121,21 @@ function loadTileset(data)
 	return tileset
 end
 
-function Map.new(mapData, entityFactory) 
+function Map.new(mapFilename, entityFactory) 
+	print(mapFilename)
+
+	local mapPath = ""
+	local separatorIndex =  mapFilename:find("/", -mapFilename:len())
+
+	if separatorIndex ~= nil then
+		mapPath = mapFilename:sub(0, separatorIndex)
+	end
+
+	print(mapPath)
+
+	local mapFile = love.filesystem.load(mapFilename)
+	local mapData = mapFile()
+
 	local self = setmetatable({}, Map)
 
 	self.width = mapData.width
@@ -130,7 +144,7 @@ function Map.new(mapData, entityFactory)
 	self.tile_height = mapData.tileheight
 
 	-- load tile set
-	self.backgroundTiles = loadTileset(mapData.tilesets[1])
+	self.backgroundTiles = loadTileset(mapData.tilesets[1], mapPath)
 
 	-- create background tile map
 	local backgroundLayer = mapData.layers[1]
@@ -141,7 +155,7 @@ function Map.new(mapData, entityFactory)
 	end
 
 	-- create object map
-	self.objectTiles = loadTileset(mapData.tilesets[2])
+	self.objectTiles = loadTileset(mapData.tilesets[2], mapPath)
 
 	local objectLayer = mapData.layers[2]
 	self.objectsMap = {}

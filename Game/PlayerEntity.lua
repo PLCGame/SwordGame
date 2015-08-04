@@ -1,14 +1,14 @@
 PlayerEntity = {}
 
 -- Sounds
-PlayerEntity.swordSound = love.audio.newSource("Sword.wav", "static")
-PlayerEntity.jumpSound = love.audio.newSource("Jump.wav", "static")
+PlayerEntity.swordSound = love.audio.newSource("Sounds/Sword.wav", "static")
+PlayerEntity.jumpSound = love.audio.newSource("Sounds/Jump.wav", "static")
 
 -- Sprites
-local spriteImage = love.graphics.newImage("Player Sprites.png")
+local spriteImage = love.graphics.newImage("Sprites/Player Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
 
-PlayerEntity.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Player Mask.png"), love.graphics.newImage("Player Mark.png"))
+PlayerEntity.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Player Mask.png"), love.graphics.newImage("Sprites/Player Mark.png"))
 PlayerEntity.sprites.runAnimation = { 10, 11, 10, 12 }
 PlayerEntity.sprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
 

@@ -9,8 +9,7 @@ function Level.new(mapName, screen_width, screen_height)
 	self.enemies = list()
 
 	print("loading map : "..mapName)
-	mapFile = love.filesystem.load(mapName..".lua")
-	self.map = Map.new(mapFile(), self)
+	self.map = Map.new("Levels/" .. mapName..".lua", self)
 	ww, wh = love.window.getDimensions()
 	--self.map:setSize(ww / 4, wh / 4)
 

@@ -1,14 +1,14 @@
 -- Sprites
-local spriteImage = love.graphics.newImage("Enemy Sprites.png")
+local spriteImage = love.graphics.newImage("Sprites/Enemy Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
-enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Enemy Mask.png"), love.graphics.newImage("Enemy Mark.png"))
+enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Enemy Mask.png"), love.graphics.newImage("Sprites/Enemy Mark.png"))
 
 -- define class
 SnakeEntity = { sprites = enemySprites }
 
 -- Sounds
-SnakeEntity.killSound = love.audio.newSource("Explosion.wav", "static")
-SnakeEntity.slideSound = love.audio.newSource("Slide.wav", "static")
+SnakeEntity.killSound = love.audio.newSource("Sounds/Explosion.wav", "static")
+SnakeEntity.slideSound = love.audio.newSource("Sounds/Slide.wav", "static")
 
 
 function SnakeEntity.new(level, x, y)
