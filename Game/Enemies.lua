@@ -16,7 +16,7 @@ function SnakeEntity.new(level, x, y)
 	self.x = x
 	self.y = y
 	self:changeAction(SnakeEntity.snakeGo)
-
+	self.message = SnakeEntity.message
 	return self
 end
 
@@ -51,7 +51,15 @@ function SnakeEntity.snakeRecover(self, dt)
 	self:MoveAndCollide(dt)		
 end
 
-function SnakeEntity.snakeHit(self, dt)
+function SnakeEntity:message(type, info)
+	if type == "hit" then
+		self.health = self.health - info.power
+		self.hit = true
+		self.hitDirection = info.direction
+	end
+end
+
+function SnakeEntity:snakeHit(dt)
 	-- move in the direction
 	if self.hitDirection == 0 then
 		self.speedX = 256.0

@@ -51,7 +51,10 @@ function Entity:draw()
 
 	-- draw the entity if it has a sprite component
 	if self.sprite ~= nil then
-		love.graphics.draw(self.sprite.image, self.sprite.quad, self.x, self.y, 0, 1.0, 1.0, -self.sprite.xoffset, -self.sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)
+		-- pixel perfect coordinate for drawing
+		local _x = math.floor(self.x)
+		local _y = math.floor(self.y)
+		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, 1.0, 1.0, -self.sprite.xoffset, -self.sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)
 	end
 end
 
@@ -143,10 +146,4 @@ function Entity:MoveAndCollide(dt)
 	end
 
 	--print("new position", self.x, self.y, self.speedX, self.speedY, xdisp, ydisp)
-end
-
-function Entity:Hit(power, direction)
-	self.health = self.health - power
-	self.hit = true
-	self.hitDirection = direction
 end

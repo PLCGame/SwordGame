@@ -26,7 +26,7 @@ end
 function PlayerEntity.begin_jump(self)
 	-- init basic 
 	PlayerEntity.jumpSound:play()
-	self.speedY = -170.0
+	self.speedY = -170.0 -- start impulse
 	self:changeAction(PlayerEntity.jump)
 end
 
@@ -224,30 +224,31 @@ function PlayerEntity.attack(self, dt)
   	self:MoveAndCollide(dt)
 
   	if self.animationFrame >= 3 then
+		local swordAABB = { min = {}, max = {}}
+
+		if self.direction == 0 then
+  			swordAABB.min[0] = self.x + 8
+  			swordAABB.max[0] = self.x + 18
+
+  			swordAABB.min[1] = self.y - 6
+  			swordAABB.max[1] = self.y - 3
+  		else
+  			swordAABB.min[0] = self.x - 18
+  			swordAABB.max[0] = self.x - 8
+
+			swordAABB.min[1] = self.y - 6
+			swordAABB.max[1] = self.y - 3  			
+		end
+
 		for enemy in self.level.enemies:iterate() do
   			if enemy ~= self then
   				-- do we hit something?
   				local enemyAABB = enemy:getAABB()
-  				local swordAABB = { min = {}, max = {}}
-
-  				if self.direction == 0 then
-  					swordAABB.min[0] = self.x + 8
-  					swordAABB.max[0] = self.x + 18
-
-  					swordAABB.min[1] = self.y - 6
-  					swordAABB.max[1] = self.y - 3
-  				else
-  					swordAABB.min[0] = self.x - 18
-  					swordAABB.max[0] = self.x - 8
-
-  					swordAABB.min[1] = self.y - 6
-  					swordAABB.max[1] = self.y - 3  			
-  				end
-
   				-- does it overlap?
   				if not enemy.hit and AABBOverlap(swordAABB, enemyAABB) then
   					-- kill the enemy!
-  					enemy:Hit(40, self.direction)
+  					--enemy:Hit(40, self.direction)
+  					enemy:message("hit", {power = 40, direction = self.direction})
   				end
   			end
   		end

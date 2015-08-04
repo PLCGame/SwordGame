@@ -78,7 +78,6 @@ function Level:draw(camera)
 
 	-- restore transform
 	love.graphics.pop()
-
 end
 
 levelLoadState = {timer = 0}
@@ -106,14 +105,14 @@ function levelLoadState:draw(game)
 	love.graphics.print("Loading level", 100, 80)
 end
 
-inGameMenuState = {index = 1}
-function inGameMenuState:load(game)
+levelSelectionState = {index = 1}
+function levelSelectionState:load(game)
 end
 
-function inGameMenuState:update(game, dt)
+function levelSelectionState:update(game, dt)
 end
 
-function inGameMenuState:actiontriggered(game, action)
+function levelSelectionState:actiontriggered(game, action)
 	if action == "back" then
 		game:popState()
 	end
@@ -142,7 +141,7 @@ function inGameMenuState:actiontriggered(game, action)
 end
 
 
-function inGameMenuState:draw(game)
+function levelSelectionState:draw(game)
 	love.graphics.setColor(255, 255, 255, 255)	
 	love.graphics.print("Select Level", 100, 80)
 
@@ -160,36 +159,109 @@ function inGameMenuState:draw(game)
 	end
 end
 
-levelState = { levelIndex = 1}
+inGameMenuState = {
+	index = 1,
+
+	entries = {"Quit"}
+}
+function inGameMenuState:load(game)
+	self.index = 1
+end
+
+function inGameMenuState:update(game, dt)
+end
+
+function inGameMenuState:actiontriggered(game, action)
+	if action == "back" then
+		game:popState()
+	end
+
+	if action == "up" and self.index > 1 then
+		self.index = self.index - 1
+		sound.menu_select:play()
+	end
+
+	if action == "down" and self.index < #self.entries then
+		self.index = self.index + 1
+		sound.menu_select:play()
+	end
+
+	if action =="attack" or action == "start" then
+		if self.index == 1 then
+			love.event.quit()
+		end
+		
+		sound.menu_valid:play()
+	end
+end
+
+
+function inGameMenuState:draw(game)
+	love.graphics.setColor(255, 255, 255, 255)	
+	love.graphics.print("Menu", 100, 80)
+
+	-- draw level name	
+	i = 0
+	for key, entry in pairs(self.entries) do
+		if key == self.index then
+			love.graphics.setColor(255, 0, 0, 255)	
+		else
+			love.graphics.setColor(255, 255, 255, 255)	
+		end
+
+		love.graphics.print(entry, 100, 100 + i)
+		i = i + 12
+	end
+end
+
+levelState = { 
+	levelIndex = 1, 
+	level = nil
+}
+
 function levelState:update(game, dt)
-	if game.level ~= nil then
-		game.level:update(dt)
+	if self.level ~= nil then
+		self.level:update(dt)
 
 		-- update camera
-		self.camera.x = math.min(math.max(game.level.playerEntity.x + game.level.playerEntity.width * 0.5 - 128, 0), self.camera.x) -- lower x bound
-		self.camera.x = math.max(math.min(game.level.playerEntity.x + game.level.playerEntity.width * 0.5 + 128 - self.camera.width, game.level.map.width * game.level.map.tile_width - self.camera.width), self.camera.x) -- higher x bound
+		local mapAABB = self.level.map:getAABB()
+		local entityAABB = self.level.playerEntity:getAABB()
 
-		self.camera.y = math.min(math.max(game.level.playerEntity.y - game.level.playerEntity.height - 64, 0), self.camera.y) -- lower y bound
-		self.camera.y = math.max(math.min(game.level.playerEntity.y + 64 - self.camera.height, game.level.map.height * game.level.map.tile_height - self.camera.height), self.camera.y) -- higher x bound
+		-- first "center" on entity AABB
+		self.camera.x = math.max(math.min(self.camera.x, entityAABB.min[0] - 128), entityAABB.max[0] + 128 - self.camera.width)
+		self.camera.y = math.max(math.min(self.camera.y, entityAABB.min[1] - 64), entityAABB.max[1] + 64 - self.camera.height)
+
+		-- clamp on level AABB
+		self.camera.x = math.max(math.min(self.camera.x, mapAABB.max[0] - self.camera.width), mapAABB.min[0])
+		self.camera.y = math.max(math.min(self.camera.y, mapAABB.max[1] - self.camera.height), mapAABB.min[1])
+
+		-- use pixel perfect scrolling
+		self.camera.x = math.floor(self.camera.x)
+		self.camera.y = math.floor(self.camera.y)
 	end
 end
 
 function levelState:actiontriggered(game, action)
+	if action == "start" then
+		game:pushState(levelSelectionState)
+	end
+
 	if action == "back" then
 		game:pushState(inGameMenuState)
 	end
+
 end
 
 function levelState:draw(game)
 	-- draw the world
-	if game.level ~= nil then
+	if self.level ~= nil then
 		-- Draw the Level
-		game.level:draw(self.camera)
+		self.level:draw(self.camera)
 	
 		-- draw the UI
-	   	--printOutline("Current Level : "..game.levels[self.levelIndex].map, 5, 5)
+	   	--printOutline("Current Level : "..self.levels[self.levelIndex].map, 5, 5)
 	   	--printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
-	   	printOutline("Score: ".. game.level.score, 5, 5)
+	   	printOutline("Score: ".. self.level.score, 5, 5)
 
 	end
 end
@@ -197,11 +269,11 @@ end
 function levelState:load(game)
 	-- load test level
 	self.game = game
-	game.level = Level.new(game.levels[self.levelIndex].map, game.screenWidth, game.screenHeight)
+	self.level = Level.new(game.levels[self.levelIndex].map, game.screenWidth, game.screenHeight)
 
 	-- start the music	
 	game:playMusic("Music/" .. game.levels[self.levelIndex].music)
 
 	-- set camera
-	self.camera = {x = 0, y = 0, width = 320, height = 192}
+	self.camera = {x = 0, y = 0, width = game.screenWidth, height = game.screenHeight}
 end

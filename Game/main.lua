@@ -83,7 +83,6 @@ end
 local Game = { 
 	font = nil,
 
-	level = nil,
 	levels = {  { map = "testSegment1",	music = "main_title.xm"},
 				{ map = "testlevel8",	music = "title5.xm"},
 				{ map = "testlevel6", 	music = "main_title.xm"},
@@ -97,8 +96,9 @@ local Game = {
 	musicSource = nil,
 	musicVolume = 0.0,
 
-	screenWidth = 320,
-	screenHeight = 192,
+	screenWidth = 480,
+	screenHeight = 270,
+	screenScale = 4,
 
 	states = list()
 }
@@ -112,7 +112,6 @@ function Game:load()
     love.graphics.setFont(self.font)
 
     self:pushState(titleScreenState)
-
 end
 
 function Game:playMusic(musicFilename)
@@ -181,12 +180,12 @@ local mainCanvas;
 
 function love.load()
 	-- change window mode
-	success = love.window.setMode(1280, 768, {resizable=false, vsync=true, fullscreen=false})
 	love.window.setTitle("Sword Game")
 
 	Game:load()
+	love.window.setMode(Game.screenWidth * Game.screenScale, Game.screenHeight * Game.screenScale, {resizable=false, vsync=true, fullscreen=true})
 
-	mainCanvas = love.graphics.newCanvas(320, 192)
+	mainCanvas = love.graphics.newCanvas(Game.screenWidth, Game.screenHeight)
 
 	local pixelcode = [[
         vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords )
@@ -271,6 +270,7 @@ function love.draw()
 	love.graphics.setShader()		
    	Game:draw()
 
+   	love.graphics.setColor(255, 255, 255, 255)
    	if crtEmulation then
    		mainCanvas:setFilter("linear", "linear")
    		love.graphics.setShader(crtShader)
@@ -279,5 +279,5 @@ function love.draw()
    	end
 
    	love.graphics.setCanvas()
-   	love.graphics.draw(mainCanvas, 0, 0, 0, 4, 4)
+   	love.graphics.draw(mainCanvas, 0, 0, 0, Game.screenScale, Game.screenScale)
 end

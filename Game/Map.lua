@@ -175,8 +175,8 @@ end
 function Map:draw(x, y , width, height)
 	tilex = math.max(math.floor(x / self.tile_width), 0)
 	tiley = math.max(math.floor(y / self.tile_height), 0)
-	tilew = math.min(width / self.tile_width, self.width - 1 - tilex)
-	tileh = math.min(height / self.tile_height, self.height - 1 - tiley)
+	tilew = math.min(math.ceil(width / self.tile_width), self.width - 1 - tilex)
+	tileh = math.min(math.ceil(height / self.tile_height), self.height - 1 - tiley)
 
 	-- draw background
 	for ty = 0, tileh do 
@@ -203,16 +203,6 @@ function Map:draw(x, y , width, height)
 	end
 
 end
-
---[[
-function Map:scrollTo(object)
-	self.dx = math.min(math.max(object.x + object.width * 0.5 - 128, 0), self.dx) -- lower x bound
-	self.dx = math.max(math.min(object.x + object.width * 0.5 + 128 - self.screen_width, self.width * self.tile_width - self.screen_width), self.dx) -- higher x bound
-
-	self.dy = math.min(math.max(object.y - object.height - 64, 0), self.dy) -- lower y bound
-	self.dy = math.max(math.min(object.y + 64 - self.screen_height, self.height * self.tile_height - self.screen_height), self.dy) -- higher x bound
-end
-]]
 
 -- return the type of tile (ladder, etc)
 function Map:tileType(x, y)
@@ -257,6 +247,17 @@ function Map:distanceToLadder(entity)
 
 	-- no ladder tile
 	return nil
+end
+
+-- return the whole level AABB
+function Map:getAABB()
+	local aabb = { min = {}, max = {} }
+	aabb.min[0] = 0
+	aabb.max[0] = self.tile_width * self.width
+	aabb.min[1] = 0
+	aabb.max[1] = self.tile_height * self.height
+
+	return aabb
 end
 
 -- return the AABB for the tile at x, y
