@@ -52,10 +52,11 @@ function SnakeEntity.snakeRecover(self, dt)
 end
 
 function SnakeEntity:message(type, info)
-	if type == "hit" then
+	if type == "hit" and self.action ~= SnakeEntity.snakeRecover then
+		print(self.health)
 		self.health = self.health - info.power
-		self.hit = true
 		self.hitDirection = info.direction
+		self:changeAction(SnakeEntity.snakeHit)
 	end
 end
 
@@ -135,10 +136,11 @@ function SnakeEntity.snakeGo(self, dt)
 		end
 	end
 
+--[[
 	if self.hit then
 		self:changeAction(SnakeEntity.snakeHit)
 	end
-
+]]
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)

@@ -33,18 +33,54 @@ function Level:spawnEntity(entityType, x, y)
 	end
 end
 
+-- return the list of entity intersecting the AABB
+function Level:intersectingEntities(aabb, firstEntity)
+	entity = self.entities.first
+	if firstEntity ~= nil then
+		entity = firstEntity
+	end
+
+	res = {}
+
+	while entity ~= nil do
+		local entityAABB = entity:getAABB()
+
+		if AABBOverlap(entityAABB, aabb) then
+			table.insert(res, entity)
+		end
+
+		entity = entity._next
+	end
+
+	return res
+end
+
 -- update the level
 function Level:update(dt)
 	-- update entities
 	-- they can be removed on their action function, 
 	-- so keep track of the next one in the list
-	local enemy = self.entities.first
-	while enemy ~= nil do
-		local nextEnemy = enemy._next
+	local entity = self.entities.first
+	while entity ~= nil do
+		local nextEntity = entity._next
 
-		enemy:action(dt)
+		entity:action(dt)
 		
-		enemy = nextEnemy
+		entity = nextEntity
+	end
+
+	-- test overlapp
+	-- not very good...
+	entity = self.entities.first
+	while entity ~= nil and entity._next ~= nil do -- check also next, as this is the first element we will check
+		local entityAABB = entity:getAABB()
+		local overlappingEntities = self:intersectingEntities(entityAABB, entity._next)
+
+		for _, otherEntity in ipairs(overlappingEntities) do
+			--print(entity, otherEntity)
+		end
+
+		entity = entity._next
 	end
 end
 
@@ -256,6 +292,7 @@ function levelState:draw(game)
 	   	--printOutline("Current Level : "..self.levels[self.levelIndex].map, 5, 5)
 	   	--printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	   	printOutline("Score: ".. self.level.score, 5, 5)
+	   	printOutline("Health: ".. self.level.playerEntity.health, 5, 15)
 
 	end
 end

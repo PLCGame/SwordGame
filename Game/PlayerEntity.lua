@@ -240,16 +240,13 @@ function PlayerEntity.attack(self, dt)
 			swordAABB.max[1] = self.y - 3  			
 		end
 
-		for enemy in self.level.entities:iterate() do
+		local enemies = self.level:intersectingEntities(swordAABB)
+
+		for _, enemy in ipairs(enemies) do
   			if enemy ~= self then
-  				-- do we hit something?
-  				local enemyAABB = enemy:getAABB()
-  				-- does it overlap?
-  				if not enemy.hit and AABBOverlap(swordAABB, enemyAABB) then
-  					-- kill the enemy!
-  					--enemy:Hit(40, self.direction)
-  					enemy:message("hit", {power = 40, direction = self.direction})
-  				end
+				-- kill the enemy!
+  				--enemy:Hit(40, self.direction)
+  				enemy:message("hit", {power = 40, direction = self.direction})
   			end
   		end
   	end
