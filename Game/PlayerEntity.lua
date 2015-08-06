@@ -20,6 +20,8 @@ function PlayerEntity.new(level, x, y)
 	self.maxSpeed = 96
 	self.acceleration = 1024
 
+	self.collideWith = PlayerEntity.collideWith
+
 	return self
 end
 
@@ -246,7 +248,7 @@ function PlayerEntity.attack(self, dt)
   			if enemy ~= self then
 				-- kill the enemy!
   				--enemy:Hit(40, self.direction)
-  				enemy:message("hit", {power = 40, direction = self.direction})
+  				enemy:message(self, "hit", {power = 40, direction = self.direction})
   			end
   		end
   	end
@@ -346,5 +348,11 @@ function PlayerEntity.ladder(self, dt)
 			self:changeAction(PlayerEntity.fall)
 	  	end
 
+	end
+end
+
+function PlayerEntity:collideWith(entity)
+	if entity.type == "powerup" then
+		entity:message(self, "pickup", nil)
 	end
 end

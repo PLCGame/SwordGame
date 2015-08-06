@@ -26,7 +26,7 @@ function SnakeEntity.snakeDying(self, dt)
 
 	if self.animationFrame == 2 then
 		-- remove the snake from the game
-		self.level.entities:remove(self)
+		self.level:removeEntity(self)
 
 		-- increment score
 		self.level.score = self.level.score + 20
@@ -51,7 +51,7 @@ function SnakeEntity.snakeRecover(self, dt)
 	self:MoveAndCollide(dt)		
 end
 
-function SnakeEntity:message(type, info)
+function SnakeEntity:message(from, type, info)
 	if type == "hit" and self.action ~= SnakeEntity.snakeRecover then
 		print(self.health)
 		self.health = self.health - info.power

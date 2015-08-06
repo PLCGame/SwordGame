@@ -31,6 +31,15 @@ function Level:spawnEntity(entityType, x, y)
 		local snakeEntity = SnakeEntity.new(self, x, y)
 		self.entities:push(snakeEntity)
 	end
+
+	if entityType == "PowerUp" then
+		local powerUp = PowerUp.new(self, x, y)
+		self.entities:push(powerUp)
+	end
+end
+
+function Level:removeEntity(entity)
+	self.entities:remove(entity)
 end
 
 -- return the list of entity intersecting the AABB
@@ -78,6 +87,8 @@ function Level:update(dt)
 
 		for _, otherEntity in ipairs(overlappingEntities) do
 			--print(entity, otherEntity)
+			entity:collideWith(otherEntity)
+			otherEntity:collideWith(entity)
 		end
 
 		entity = entity._next

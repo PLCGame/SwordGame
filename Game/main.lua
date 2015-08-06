@@ -6,10 +6,12 @@ require "PlayerControl"
 require "Entity"
 require "PlayerEntity"
 require "Enemies"
+require "PowerUp"
 require "Vector"
 require "UIElement"
 require "LevelState"
 require "InputConfigState"
+
 
 titleScreenState = { thread = nil, game = nil }
 
@@ -83,10 +85,10 @@ end
 local Game = { 
 	font = nil,
 
-	levels = {  { map = "testSegment1",	music = "main_title.xm"},
+	levels = {  { map = "testlevel2", 	music = "title1.xm"},
+				{ map = "testSegment1",	music = "main_title.xm"},
 				{ map = "testlevel8",	music = "title5.xm"},
 				{ map = "testlevel6", 	music = "main_title.xm"},
-				{ map = "testlevel2", 	music = "title1.xm"},
 				{ map = "testlevel3", 	music = "title2.xm"},
 				{ map = "testlevel", 	music = "title3.xm"},
 				{ map = "testlevel4", 	music = "title4.xm"},
