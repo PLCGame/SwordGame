@@ -104,8 +104,8 @@ function Level:draw(camera)
    	-- translate according to current world scrolling
   	love.graphics.translate(-camera.x, -camera.y)
 
-	-- draw the map
-   	self.map:draw(camera.x, camera.y, camera.width, camera.height)
+	-- draw the map background
+   	self.map:draw(camera.x, camera.y, camera.width, camera.height, false)
 
    	-- draw the entities
 	for entity in self.entities:iterate() do
@@ -116,6 +116,9 @@ function Level:draw(camera)
 	if self.playerEntity ~= nil then
 		self.playerEntity:draw()
 	end
+
+	-- draw the map foreground
+   	self.map:draw(camera.x, camera.y, camera.width, camera.height, true)
 
 	-- restore transform
 	love.graphics.pop()
