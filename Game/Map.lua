@@ -100,18 +100,21 @@ function Map.new(mapFilename, entityFactory)
 		self:loadTileset(tileset, mapPath)
 	end
 
-	-- create background tile map
-	self:createBackgroundLayer(mapData.layers[1])
+	-- load layers
+	self.activeLayers = {} -- contains only collidable layers
+	self.layers = {} -- contains ALL layers
+	self.backgroundLayers = {}
+	self.foregroundLayers = {}
 
-	local objectLayer = mapData.layers[2]
-	self.objectsMap = {}
+	for _, layer in ipairs(mapData.layers) do
+		if layer.type == "tilelayer" then
+			self:loadLayer(layer)
+		end
 
-	for i = 0, self.width * self.height - 1 do
-		self.objectsMap[i] = objectLayer.data[1 + i]
+		if layer.type == "objectgroup" then
+			self:createEntityLayer(layer, entityFactory)
+		end
 	end
-
-	-- parse object layers
-	self:createEntityLayer(mapData.layers[3], entityFactory)
 
 	return self
 end
@@ -162,12 +165,38 @@ function Map:loadTileset(data, path)
 	end
 end
 
-function Map:createBackgroundLayer(backgroundLayer)
-	self.backgroundMap = {}
+function Map:loadLayer(layer)
+	-- simply copy tile map
+	newLayer = {}
 
 	for i = 0, self.width * self.height - 1 do
-		self.backgroundMap[i] = backgroundLayer.data[1 + i]
+		newLayer[i] = layer.data[1 + i]
 	end
+
+	newLayer.active = false -- collision
+	newLayer.plane = 1 -- drawing plane
+	newLayer.ratio = 1.0 -- scrolling speed
+
+	-- handle properties
+	if layer.properties ~= nil then
+		newLayer.active = layer.properties.active == "1"
+		newLayer.plane = tonumber(layer.properties.plane) or 1
+		newLayer.ratio = tonumber(layer.properties.ratio) or 1.0
+	end
+
+	table.insert(self.layers, newLayer)
+
+	if newLayer.plane > 1 then
+		table.insert(self.foregroundLayers, newLayer)
+	else
+		table.insert(self.backgroundLayers, newLayer)
+	end
+
+	if newLayer.active then
+		table.insert(self.activeLayers, newLayer)
+	end
+
+	return newLayer
 end
 
 function Map:createEntityLayer(entityLayer, entityFactory)
@@ -185,45 +214,52 @@ function Map:createEntityLayer(entityLayer, entityFactory)
 	end
 end
 
--- draw the map
--- x, y position on the screen 
--- width, height size in pixels
-function Map:draw(x, y , width, height)
-	tilex = math.max(math.floor(x / self.tile_width), 0)
-	tiley = math.max(math.floor(y / self.tile_height), 0)
-	tilew = math.min(math.ceil(width / self.tile_width), self.width - 1 - tilex)
-	tileh = math.min(math.ceil(height / self.tile_height), self.height - 1 - tiley)
+function Map:drawLayer(layer, x, y, width, height, ratio)
+	local r = ratio or 1.0
+
+	local tilex = math.max(math.floor(r * x / self.tile_width), 0)
+	local tiley = math.max(math.floor(r * y / self.tile_height), 0)
+	local tilew = math.min(math.ceil(width / self.tile_width), self.width - 1 - tilex)
+	local tileh = math.min(math.ceil(height / self.tile_height), self.height - 1 - tiley)
+
+	-- compute dx and dy to translate the layer to match the current x,y
+	local dx = x - math.floor(x * r)
+	local dy = y - math.floor(y * r)
 
 	-- draw background
-	for ty = 0, tileh do 
-		for tx = 0, tilew do
-			local tile = self.tiles[self.backgroundMap[(tx + tilex) + (ty + tiley) * self.width]]
+	for ty = tiley, tiley + tileh do 
+		for tx = tilex, tilex + tilew do
+			local tile = self.tiles[layer[tx + ty * self.width]]
 
 			-- there can be hole in the map
 			if tile ~= nil then
-				love.graphics.draw(tile.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
+				love.graphics.draw(tile.image, tile.quad, dx + tx * self.tile_width, dy + ty * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 			end
 		end
 	end
+end
 
-	-- draw objects
-	for ty = 0, tileh do 
-		for tx = 0, tilew do
-			local tile = self.tiles[self.objectsMap[(tx + tilex) + (ty + tiley) * self.width]]
+-- draw the map
+-- x, y position on the screen 
+-- width, height size in pixels
+function Map:draw(x, y , width, height, foreground)
+	local drawForeground = foreground or false
 
-			if tile ~= nil then			
-				love.graphics.draw(tile.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
-			end
-		end
+	local layers = self.backgroundLayers
+	if drawForeground then
+		layers = self.foregroundLayers
 	end
 
+	for _, layer in ipairs(layers) do
+		self:drawLayer(layer, x, y, width, height, layer.ratio)
+	end
 end
 
 -- return the type of tile (ladder, etc)
-function Map:tileType(x, y)
+function Map:tileType(layer, x, y)
 	local clampX = math.max(0, math.min(self.width - 1, x))
 	local clampY = math.max(0, math.min(self.height - 1, y))
-	local tile = self.tiles[self.backgroundMap[clampX + clampY * self.width]]
+	local tile = self.tiles[layer[clampX + clampY * self.width]]
 
 	if tile ~= nil then
 		return tile.type
@@ -243,25 +279,27 @@ function Map:distanceToLadder(entity)
 
 	for y = ymin, ymax do
 		for x = xmin, xmax do
-			if self:tileType(x, y) == "ladder" then
-				-- we found a valid ladder tile
-				local distanceToCenter = (x + 0.5) * self.tile_width - entity.x
+			for _, layer in ipairs(self.activeLayers) do
+				if self:tileType(layer, x, y) == "ladder" then
+					-- we found a valid ladder tile
+					local distanceToCenter = (x + 0.5) * self.tile_width - entity.x
 
-				local distanceToBottom = (y + 1) * self.tile_height - entity.y
-				local _y = y + 1
-				while _y < self.height and self:tileType(x, _y) == "ladder" do
-					_y = _y + 1
-					distanceToBottom = distanceToBottom + self.tile_height
+					local distanceToBottom = (y + 1) * self.tile_height - entity.y
+					local _y = y + 1
+					while _y < self.height and self:tileType(layer, x, _y) == "ladder" do
+						_y = _y + 1
+						distanceToBottom = distanceToBottom + self.tile_height
+					end
+
+					local distanceToTop = entity.y - y * self.tile_height
+					_y = y - 1
+					while _y >= 0 and self:tileType(layer, x, _y) == "ladder" do
+						_y = _y - 1
+						distanceToTop = distanceToTop + self.tile_height
+					end
+
+					return distanceToCenter, distanceToTop, distanceToBottom
 				end
-
-				local distanceToTop = entity.y - y * self.tile_height
-				_y = y - 1
-				while _y >= 0 and self:tileType(x, _y) == "ladder" do
-					_y = _y - 1
-					distanceToTop = distanceToTop + self.tile_height
-				end
-
-				return distanceToCenter, distanceToTop, distanceToBottom
 			end
 		end
 	end
@@ -282,11 +320,11 @@ function Map:getAABB()
 end
 
 -- return the AABB for the tile at x, y
-function Map:AABBForTile(x, y)
+function Map:AABBForTile(layer, x, y)
 	local clampX = math.max(0, math.min(self.width - 1, x))
 	local clampY = math.max(0, math.min(self.height - 1, y))
 
-	local tile = self.tiles[self.backgroundMap[clampX + clampY * self.width]]
+	local tile = self.tiles[layer[clampX + clampY * self.width]]
 
 	if tile ~= nil then
 		local col_aabb = tile.collision
@@ -333,20 +371,23 @@ function Map:AABBCast(aabb, v, tileType)
 	-- iterate on the tile and do the cast for each of them
 	normal = 0
 	u = 1.0
-	for y = tile_min[1], tile_max[1] do
-		for x = tile_min[0], tile_max[0] do
-			if tileType == nil or self:tileType(x, y) ~= tileType then
-				tileAABB = self:AABBForTile(x, y)
 
-				if tileAABB ~= nil and AABBOverlap(tileAABB, tilesAABB) then
-					--print("tile : ", x, y, tileAABB.min[1], tileAABB.max[1])
+	for _, layer in ipairs(self.activeLayers) do
+		for y = tile_min[1], tile_max[1] do
+			for x = tile_min[0], tile_max[0] do
+				if tileType == nil or self:tileType(layer, x, y) ~= tileType then
+					tileAABB = self:AABBForTile(layer, x, y)
 
-					_u, _normal = AABBSweepTest(aabb, v, tileAABB, {[0] = 0, [1] = 0})
+					if tileAABB ~= nil and AABBOverlap(tileAABB, tilesAABB) then
+						--print("tile : ", x, y, tileAABB.min[1], tileAABB.max[1])
 
-					if _u < 1.0 then
-						if _u < u then
-							normal = _normal
-							u = _u
+						_u, _normal = AABBSweepTest(aabb, v, tileAABB, {[0] = 0, [1] = 0})
+
+						if _u < 1.0 then
+							if _u < u then
+								normal = _normal
+								u = _u
+							end
 						end
 					end
 				end

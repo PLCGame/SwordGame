@@ -28,6 +28,9 @@ function SnakeEntity.snakeDying(self, dt)
 		-- remove the snake from the game
 		self.level:removeEntity(self)
 
+		-- drop a power up
+		self.level:spawnEntity("PowerUp", self.x, self.y)
+
 		-- increment score
 		self.level.score = self.level.score + 20
 		return
@@ -53,7 +56,6 @@ end
 
 function SnakeEntity:message(from, type, info)
 	if type == "hit" and self.action ~= SnakeEntity.snakeRecover then
-		print(self.health)
 		self.health = self.health - info.power
 		self.hitDirection = info.direction
 		self:changeAction(SnakeEntity.snakeHit)
