@@ -24,6 +24,9 @@ end
 
 function PowerUp:update(dt)
 	-- nothing to do
+	self.animationTimer = self.animationTimer + dt
+	self.sprite.yoffset = math.floor(math.cos(self.animationTimer * 18.0 + self.x * 4.4) * -2) - 6
+
 end
 
 function PowerUp:message(from, type, info)

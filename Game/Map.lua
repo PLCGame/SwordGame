@@ -76,62 +76,13 @@ function AABBSweepTest(A, vA, B, vB)
 	return entryTime, n
 end
 
-function loadTileset(data, path)
-	local tileset = {}
-
-	tileset.image = love.graphics.newImage(path .. data.image)
-	tileset.image:setFilter("nearest", "nearest") 
-
-	-- create the quad
-	sw = tileset.image:getWidth() / data.tilewidth
-	sh = tileset.image:getHeight() / data.tileheight
-
-	tileset.tiles = {}
-	for y = 0, sh do 
-		for x = 0, sw do
-			tileset.tiles[x + y * sw] = {}
-			tileset.tiles[x + y * sw].quad = love.graphics.newQuad(x * 16, y * 16, 16, 16, tileset.image:getWidth(), tileset.image:getHeight())
-		end
-	end
-
-	-- loop trough properties
-	for i, tile in ipairs(data.tiles) do
-		--tileset.tiles[tile.id].collision = tonumber(tile.properties["collision"])
-
-		if tile.properties ~= nil then
-			tileset.tiles[tile.id].type = tile.properties["type"]
-		end
-
-		-- use Tiled tile editor
-		-- start with nil, no collision
-		tileset.tiles[tile.id].collision = nil
-
-		-- just use one object per tile by now
-		if tile.objectGroup ~= nil and #tile.objectGroup.objects > 0 and tile.objectGroup.objects[1].shape == "rectangle" then
-			local aabb = { min = {}, max = {} }
-			aabb.min[0] = tile.objectGroup.objects[1].x
-			aabb.max[0] = tile.objectGroup.objects[1].x + tile.objectGroup.objects[1].width
-			aabb.min[1] = tile.objectGroup.objects[1].y
-			aabb.max[1] = tile.objectGroup.objects[1].y + tile.objectGroup.objects[1].height
-
-			tileset.tiles[tile.id].collision = aabb
-		end
-	end
-
-	return tileset
-end
-
 function Map.new(mapFilename, entityFactory) 
-	print(mapFilename)
-
 	local mapPath = ""
 	local separatorIndex =  mapFilename:find("/", -mapFilename:len())
 
 	if separatorIndex ~= nil then
 		mapPath = mapFilename:sub(0, separatorIndex)
 	end
-
-	print(mapPath)
 
 	local mapFile = love.filesystem.load(mapFilename)
 	local mapData = mapFile()
@@ -143,33 +94,86 @@ function Map.new(mapFilename, entityFactory)
 	self.tile_width = mapData.tilewidth
 	self.tile_height = mapData.tileheight
 
-	-- load tile set
-	self.backgroundTiles = loadTileset(mapData.tilesets[1], mapPath)
-
-	-- create background tile map
-	local backgroundLayer = mapData.layers[1]
-	self.backgroundMap = {}
-
-	for i = 0, self.width * self.height - 1 do
-		self.backgroundMap[i] = backgroundLayer.data[1 + i] - 1
+	-- load tilesets
+	self.tiles = {}
+	for _, tileset in ipairs(mapData.tilesets) do
+		self:loadTileset(tileset, mapPath)
 	end
 
-	-- create object map
-	self.objectTiles = loadTileset(mapData.tilesets[2], mapPath)
+	-- create background tile map
+	self:createBackgroundLayer(mapData.layers[1])
 
 	local objectLayer = mapData.layers[2]
 	self.objectsMap = {}
 
 	for i = 0, self.width * self.height - 1 do
-		self.objectsMap[i] = objectLayer.data[1 + i] - mapData.tilesets[2].firstgid
+		self.objectsMap[i] = objectLayer.data[1 + i]
 	end
 
 	-- parse object layers
-	local spawnLayer = mapData.layers[3]
+	self:createEntityLayer(mapData.layers[3], entityFactory)
 
-	if spawnLayer ~= nil then
-		for i = 1, #spawnLayer.objects do
-			local obj = spawnLayer.objects[i]
+	return self
+end
+
+function Map:loadTileset(data, path)
+	local tilesetImage = love.graphics.newImage(path .. data.image)
+	tilesetImage:setFilter("nearest", "nearest") 
+
+	-- create the quad
+	sw = tilesetImage:getWidth() / data.tilewidth
+	sh = tilesetImage:getHeight() / data.tileheight
+
+	for y = 0, sh do 
+		for x = 0, sw do
+			local gid = x + y * sw + data.firstgid
+			local tile = {}
+
+			tile.image = tilesetImage
+			tile.quad = love.graphics.newQuad(x * data.tilewidth, y * data.tileheight, data.tilewidth, data.tileheight, tilesetImage:getWidth(), tilesetImage:getHeight())
+
+			-- insert in tiles
+			self.tiles[gid] = tile
+		end
+	end
+
+	-- loop trough tiles
+	for i, tile in ipairs(data.tiles) do
+		local gid = tile.id + data.firstgid
+
+		if tile.properties ~= nil then
+			self.tiles[gid].type = tile.properties["type"]
+		end
+
+		-- use Tiled tile editor
+		-- start with nil, no collision
+		self.tiles[gid].collision = nil
+
+		-- just use one object per tile by now
+		if tile.objectGroup ~= nil and #tile.objectGroup.objects > 0 and tile.objectGroup.objects[1].shape == "rectangle" then
+			local aabb = { min = {}, max = {} }
+			aabb.min[0] = tile.objectGroup.objects[1].x
+			aabb.max[0] = tile.objectGroup.objects[1].x + tile.objectGroup.objects[1].width
+			aabb.min[1] = tile.objectGroup.objects[1].y
+			aabb.max[1] = tile.objectGroup.objects[1].y + tile.objectGroup.objects[1].height
+
+			self.tiles[gid].collision = aabb
+		end
+	end
+end
+
+function Map:createBackgroundLayer(backgroundLayer)
+	self.backgroundMap = {}
+
+	for i = 0, self.width * self.height - 1 do
+		self.backgroundMap[i] = backgroundLayer.data[1 + i]
+	end
+end
+
+function Map:createEntityLayer(entityLayer, entityFactory)
+	if entityLayer ~= nil then
+		for i = 1, #entityLayer.objects do
+			local obj = entityLayer.objects[i]
 
 			--print(obj.type)
 
@@ -179,8 +183,6 @@ function Map.new(mapFilename, entityFactory)
 			entityFactory:spawnEntity(obj.type, x, y)
 		end
 	end
-
-	return self
 end
 
 -- draw the map
@@ -195,23 +197,22 @@ function Map:draw(x, y , width, height)
 	-- draw background
 	for ty = 0, tileh do 
 		for tx = 0, tilew do
-			tile = self.backgroundTiles.tiles[self.backgroundMap[(tx + tilex) + (ty + tiley) * self.width]]
+			local tile = self.tiles[self.backgroundMap[(tx + tilex) + (ty + tiley) * self.width]]
 
-			if tile == nil then
-				print(tilex, tiley, tilew, tileh)
+			-- there can be hole in the map
+			if tile ~= nil then
+				love.graphics.draw(tile.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 			end
-
-			love.graphics.draw(self.backgroundTiles.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 		end
 	end
 
 	-- draw objects
 	for ty = 0, tileh do 
 		for tx = 0, tilew do
-			tile = self.objectTiles.tiles[self.objectsMap[(tx + tilex) + (ty + tiley) * self.width]]
+			local tile = self.tiles[self.objectsMap[(tx + tilex) + (ty + tiley) * self.width]]
 
 			if tile ~= nil then			
-				love.graphics.draw(self.objectTiles.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
+				love.graphics.draw(tile.image, tile.quad, (tx + tilex) * self.tile_width, (ty + tiley) * self.tile_height, 0, 1.0, 1.0, 0.0, 0.0)
 			end
 		end
 	end
@@ -222,8 +223,14 @@ end
 function Map:tileType(x, y)
 	local clampX = math.max(0, math.min(self.width - 1, x))
 	local clampY = math.max(0, math.min(self.height - 1, y))
+	local tile = self.tiles[self.backgroundMap[clampX + clampY * self.width]]
 
-	return self.backgroundTiles.tiles[self.backgroundMap[clampX + clampY * self.width]].type
+	if tile ~= nil then
+		return tile.type
+	end
+
+	-- else
+	return nil
 end
 
 -- return distance to center, distance up, distance down
@@ -279,16 +286,20 @@ function Map:AABBForTile(x, y)
 	local clampX = math.max(0, math.min(self.width - 1, x))
 	local clampY = math.max(0, math.min(self.height - 1, y))
 
-	local col_aabb = self.backgroundTiles.tiles[self.backgroundMap[clampX + clampY * self.width]].collision
-	local aabb = { min = {}, max = {} }
+	local tile = self.tiles[self.backgroundMap[clampX + clampY * self.width]]
 
-	if col_aabb ~= nil then
-		aabb.min[0] = x * self.tile_width + col_aabb.min[0]
-		aabb.max[0] = x * self.tile_width + col_aabb.max[0]
-		aabb.min[1] = y * self.tile_height + col_aabb.min[1]
-		aabb.max[1] = y * self.tile_height + col_aabb.max[1]
+	if tile ~= nil then
+		local col_aabb = tile.collision
+		local aabb = { min = {}, max = {} }
 
-		return aabb
+		if col_aabb ~= nil then
+			aabb.min[0] = x * self.tile_width + col_aabb.min[0]
+			aabb.max[0] = x * self.tile_width + col_aabb.max[0]
+			aabb.min[1] = y * self.tile_height + col_aabb.min[1]
+			aabb.max[1] = y * self.tile_height + col_aabb.max[1]
+
+			return aabb
+		end
 	end
 
 	-- else
