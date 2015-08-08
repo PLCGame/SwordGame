@@ -1,3 +1,7 @@
+-- Entity factory contains entity constructor functions for entity name
+EntityFactory = {}
+
+
 Entity = {}
 Entity.__index = Entity
 

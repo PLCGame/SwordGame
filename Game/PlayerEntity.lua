@@ -22,6 +22,8 @@ function PlayerEntity.new(level, x, y)
 
 	self.collideWith = PlayerEntity.collideWith
 
+	self.type = "player"
+
 	return self
 end
 
@@ -36,6 +38,8 @@ function PlayerEntity.begin_attack(self)
 	PlayerEntity.swordSound:stop()
 	PlayerEntity.swordSound:play()
 	self:changeAction(PlayerEntity.attack)
+
+	self.level:spawnEntity("Bullet", self.x, self.y - 5)
 end
 
 
@@ -356,3 +360,5 @@ function PlayerEntity:collideWith(entity)
 		entity:message(self, "pickup", nil)
 	end
 end
+
+EntityFactory["Player"] = PlayerEntity.new

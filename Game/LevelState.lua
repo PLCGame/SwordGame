@@ -21,20 +21,19 @@ end
 
 -- crappy function use as an entity factory
 function Level:spawnEntity(entityType, x, y) 
-	if entityType == "Player" then
-		self.playerEntity = PlayerEntity.new(self, x, y)
-		self.playerEntity.playerControl = PlayerControl.player1Control
-		self.entities:push(self.playerEntity)
-	end
+	-- get entity constructor function 
+	local entityConstructor = EntityFactory[entityType]
+	if entityConstructor ~= nil then
+		-- create the entity
+		local newEntity = entityConstructor(self, x, y)
 
-	if entityType == "Snake" then
-		local snakeEntity = SnakeEntity.new(self, x, y)
-		self.entities:push(snakeEntity)
-	end
+		-- add it to entity list
+		self.entities:push(newEntity)
 
-	if entityType == "PowerUp" then
-		local powerUp = PowerUp.new(self, x, y)
-		self.entities:push(powerUp)
+		if entityType == "Player" then
+			self.playerEntity = newEntity
+			self.playerEntity.playerControl = PlayerControl.player1Control
+		end
 	end
 end
 

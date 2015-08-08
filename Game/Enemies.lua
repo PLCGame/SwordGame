@@ -17,6 +17,8 @@ function SnakeEntity.new(level, x, y)
 	self.y = y
 	self:changeAction(SnakeEntity.snakeGo)
 	self.message = SnakeEntity.message
+	self.type = "enemy"
+
 	return self
 end
 
@@ -149,4 +151,4 @@ function SnakeEntity.snakeGo(self, dt)
 	self.sprite = SnakeEntity.sprites.frames[7 + self.animationFrame + self.direction * 5]
 end
 
---return SnakeEntity
+EntityFactory["Snake"] = SnakeEntity.new
