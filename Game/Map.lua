@@ -1,6 +1,23 @@
 Map = {}
 Map.__index = Map
 
+-- return an extended AABB with v
+function AABBExtend(aabb, v)
+	local extendedAABB = { min = {}, max = {} }
+
+	for i = 0, 1 do
+		if v[i] < 0 then
+			extendedAABB.min[i] = aabb.min[i] + v[i]
+			extendedAABB.max[i] = aabb.max[i]
+		else
+			extendedAABB.min[i] = aabb.min[i]
+			extendedAABB.max[i] = aabb.max[i] + v[i]
+		end
+	end
+
+	return extendedAABB
+end
+
 function AABBOverlap(A, B)
 	local Tx = (A.min[0] + A.max[0]) * 0.5 - (B.min[0] + B.max[0]) * 0.5
 	local Ty = (A.min[1] + A.max[1]) * 0.5 - (B.min[1] + B.max[1]) * 0.5
@@ -105,6 +122,7 @@ function Map.new(mapFilename, entityFactory)
 	self.layers = {} -- contains ALL layers
 	self.backgroundLayers = {}
 	self.foregroundLayers = {}
+	self.staticObjects = {}
 
 	for _, layer in ipairs(mapData.layers) do
 		if layer.type == "tilelayer" then
@@ -205,11 +223,20 @@ function Map:createEntityLayer(entityLayer, entityFactory)
 			local obj = entityLayer.objects[i]
 
 			--print(obj.type)
+			if obj.gid ~= nil then
+				-- we got a gid, it's a static object?
+				local staticObject = {}
+				staticObject.gid = obj.gid
+				staticObject.x = obj.x
+				staticObject.y = obj.y - obj.height
 
-			-- create the entity
-			local x = obj.x + obj.width * 0.5
-			local y = obj.y + obj.height
-			entityFactory:spawnEntity(obj.type, x, y)
+				table.insert(self.staticObjects, staticObject)
+			else
+				-- create the entity
+				local x = obj.x + obj.width * 0.5
+				local y = obj.y + obj.height
+				entityFactory:spawnEntity(obj.type, x, y)
+			end
 		end
 	end
 end
@@ -252,6 +279,13 @@ function Map:draw(x, y , width, height, foreground)
 
 	for _, layer in ipairs(layers) do
 		self:drawLayer(layer, x, y, width, height, layer.ratio)
+	end
+
+	if not drawForeground then
+		for _, obj in ipairs(self.staticObjects) do
+			local tile = self.tiles[obj.gid]
+			love.graphics.draw(tile.image, tile.quad, obj.x, obj.y, 0, 1.0, 1.0, 0.0, 0.0)
+		end
 	end
 end
 
@@ -344,58 +378,129 @@ function Map:AABBForTile(layer, x, y)
 	return nil
 end
 
--- Cast an AABB in the map along v
--- type is the type of tile to ignore 
-function Map:AABBCast(aabb, v, tileType)
-	-- get the tiles
-	tilesAABB = { min = {}, max = {} }
+-- return the list of tiles AABB overlapping the aabb
+function Map:tilesAABBInsideAABB(aabb, filterType)
+	local tile_min = {}
+	local tile_max = {}
+	tile_min[0] = math.floor(aabb.min[0] / self.tile_width)
+	tile_max[0] = math.floor(aabb.max[0] / self.tile_width)
 
-	for i = 0, 1 do
-		if v[i] < 0 then
-			tilesAABB.min[i] = aabb.min[i] + v[i]
-			tilesAABB.max[i] = aabb.max[i]
-		else
-			tilesAABB.min[i] = aabb.min[i]
-			tilesAABB.max[i] = aabb.max[i] + v[i]
-		end
-	end
+	tile_min[1] = math.floor(aabb.min[1] / self.tile_height)
+	tile_max[1] = math.floor(aabb.max[1] / self.tile_height)
 
-	tile_min = {}
-	tile_max = {}
-	tile_min[0] = math.floor(tilesAABB.min[0] / self.tile_width)
-	tile_max[0] = math.floor(tilesAABB.max[0] / self.tile_width)
-
-	tile_min[1] = math.floor(tilesAABB.min[1] / self.tile_height)
-	tile_max[1] = math.floor(tilesAABB.max[1] / self.tile_height)
-
-	-- iterate on the tile and do the cast for each of them
-	normal = 0
-	u = 1.0
+	local res = {}
 
 	for _, layer in ipairs(self.activeLayers) do
 		for y = tile_min[1], tile_max[1] do
 			for x = tile_min[0], tile_max[0] do
-				if tileType == nil or self:tileType(layer, x, y) ~= tileType then
-					tileAABB = self:AABBForTile(layer, x, y)
+				if filterType == nil or self:tileType(layer, x, y) ~= filterType then
+					local tileAABB = self:AABBForTile(layer, x, y)
 
-					if tileAABB ~= nil and AABBOverlap(tileAABB, tilesAABB) then
-						--print("tile : ", x, y, tileAABB.min[1], tileAABB.max[1])
-
-						_u, _normal = AABBSweepTest(aabb, v, tileAABB, {[0] = 0, [1] = 0})
-
-						if _u < 1.0 then
-							if _u < u then
-								normal = _normal
-								u = _u
-							end
-						end
+					-- if there an overlap, add the tile to the result list
+					if tileAABB ~= nil and AABBOverlap(tileAABB, aabb) then
+						table.insert(res, tileAABB)
 					end
 				end
 			end
 		end
 	end
 
-	--print("cast result", u, v[0], v[1])
+	return res
+end
+
+function Map:AABBCastAgainstTile(aabb, v, filterType)
+	-- extend the AABB
+	local motionAABB = AABBExtend(aabb, v)
+
+	-- get list of tiles AABB
+	local aabbList = self:tilesAABBInsideAABB(motionAABB, filterType)
+
+	-- iterate on the tile and do the cast for each of them
+	local normal = 0
+	local u = 1.0
+	for _, tileAABB in ipairs(aabbList) do
+		local _u, _normal = AABBSweepTest(aabb, v, tileAABB, {[0] = 0, [1] = 0})
+
+		if _u < 1.0 then
+			if _u < u then
+				normal = _normal
+				u = _u
+			end
+		end
+	end
 
 	return u, normal
+end
+
+function Map:staticObjectsInsideAABB(aabb, filterType)
+	local res = {}
+
+	for _, obj in ipairs(self.staticObjects) do
+		local objTile = self.tiles[obj.gid]
+
+		if objTile.collision ~= nil then
+			local objAABB = { min = {}, max = {} }
+
+			objAABB.min[0] = obj.x + objTile.collision.min[0]
+			objAABB.max[0] = obj.x + objTile.collision.max[0]
+			objAABB.min[1] = obj.y + objTile.collision.min[1]
+			objAABB.max[1] = obj.y + objTile.collision.max[1]
+
+			if AABBOverlap(objAABB, aabb) then
+				print(objAABB.min[0], objAABB.max[0], objAABB.min[1], objAABB.max[1])
+
+				table.insert(res, objAABB)
+			end
+		end
+	end
+
+	return res
+end
+
+function Map:AABBCastAgainstStaticObjects(aabb, v, filterType)
+	-- extend the AABB
+	local motionAABB = AABBExtend(aabb, v)
+
+	-- get list of tiles AABB
+	local aabbList = self:staticObjectsInsideAABB(motionAABB, filterType)
+
+	-- iterate on the tile and do the cast for each of them
+	local normal = 0
+	local u = 1.0
+	for _, tileAABB in ipairs(aabbList) do
+		local _u, _normal = AABBSweepTest(aabb, v, tileAABB, {[0] = 0, [1] = 0})
+
+		if _u < 1.0 then
+			if _u < u then
+				normal = _normal
+				u = _u
+			end
+		end
+	end
+
+	return u, normal
+end
+
+-- Cast an AABB in the map along v
+-- type is the type of tile to ignore 
+function Map:AABBCast(aabb, v, filterType)
+	-- no collision
+	local n = 0
+	local u = 1.0
+
+	-- cast against tile first
+	u, n = self:AABBCastAgainstTile(aabb, v, filterType)
+
+	local ns = 0
+	local us = 1.0	
+	us, ns = self:AABBCastAgainstStaticObjects(aabb, v, filterType)
+
+	if us < u then
+		u = us
+		n = ns
+
+		print("collide with object : ", u)
+	end
+
+	return u, n
 end
