@@ -57,7 +57,7 @@ function SnakeEntity.snakeRecover(self, dt)
 end
 
 function SnakeEntity:message(from, type, info)
-	if type == "hit" and self.action ~= SnakeEntity.snakeRecover then
+	if type == "hit" and self.action == SnakeEntity.snakeGo then
 		self.health = self.health - info.power
 		self.hitDirection = info.direction
 		self:changeAction(SnakeEntity.snakeHit)
@@ -74,9 +74,11 @@ function SnakeEntity:snakeHit(dt)
 	self.speedY = -32.0
 
 	if self.health > 0 then
+		SnakeEntity.slideSound:stop()	
 		SnakeEntity.slideSound:play()
 		self:changeAction(SnakeEntity.snakeRecover)
 	else
+		SnakeEntity.killSound:stop()
 		SnakeEntity.killSound:play()
 		self:changeAction(SnakeEntity.snakeDying)
 	end

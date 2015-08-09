@@ -132,7 +132,15 @@ function Entity:MoveAndCollide(dt)
 
 		u, n = self.level.map:AABBCast(aabb, v)
 
+		if u < 0 then
+			-- we are stuck inside something, don't care and move all the way... (not very good)
+			-- this can happen on ladder tile
+			
+			u = 1
+		end
+
 		if u < 1.0 then
+			-- limit the displacement
 			xdisp = xdisp * u
 			ydisp = ydisp * u
 

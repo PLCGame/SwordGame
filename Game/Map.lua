@@ -35,9 +35,10 @@ end
 function AABBSweepTest(A, vA, B, vB)
 	local xInvEntry, yInvEntry
 	local xInvExit, yInvExit
+	local vDiff = {[0] = vA[0] - vB[0], [1] = vA[1] - vB[1]}
 
 	-- distance between object
-	if vA[0] > 0 then
+	if vDiff[0] > 0 then
 		xInvEntry = B.min[0] - A.max[0]
 		xInvExit = B.max[0] - A.min[0]
 	else
@@ -45,7 +46,7 @@ function AABBSweepTest(A, vA, B, vB)
 		xInvExit = B.min[0] - A.max[0]
 	end
 
-	if vA[1] > 0 then
+	if vDiff[1] > 0 then
 		yInvEntry = B.min[1] - A.max[1]
 		yInvExit = B.max[1] - A.min[1]
 	else
@@ -57,17 +58,33 @@ function AABBSweepTest(A, vA, B, vB)
 	local xEntry, yEntry
 	local xExit, yExit
 
-	if vA[0] == 0.0 then
-		xEntry = -1e6
-		xExit = 1e6
+	if vDiff[0] == 0.0 then
+		-- test if overlap
+		if math.abs((A.min[0] + A.max[0]) * 0.5 - (B.min[0] + B.max[0]) * 0.5) < (A.max[0] - A.min[0]) * 0.5 + (B.max[0] - B.min[0]) * 0.5 then
+			-- overlap on X axis
+			xEntry = -1e6
+			xExit = 1e6
+		else
+			-- does not overlap
+			-- no collision can occurs
+			return 1e6, 0
+		end
 	else
 		xEntry = xInvEntry / vA[0]
 		xExit = xInvExit / vA[0]
 	end
 
-	if vA[1] == 0.0 then
-		yEntry = -1e6
-		yExit = 1e6
+	if vDiff[1] == 0.0 then
+		-- test if overlap
+		if math.abs((A.min[1] + A.max[1]) * 0.5 - (B.min[1] + B.max[1]) * 0.5) < (A.max[1] - A.min[1]) * 0.5 + (B.max[1] - B.min[1]) * 0.5 then
+			-- overlap on Y axis
+			yEntry = -1e6
+			yExit = 1e6
+		else
+			-- does not overlap
+			-- no collision can occurs
+			return 1e6, 0
+		end
 	else
 		yEntry = yInvEntry / vA[1]
 		yExit = yInvExit / vA[1]
@@ -76,12 +93,6 @@ function AABBSweepTest(A, vA, B, vB)
 	local entryTime = math.max(xEntry, yEntry)
 	local exitTime = math.min(xExit, yExit)
 
-	-- if there's no collision
-	if entryTime > exitTime or xEntry < 0.0 and yEntry < 0.0 or xEntry > 1.0 or yEntry > 1.0 then
-		return 1.0, 0
-	end
-
-	-- else
 	local n = 0
 	-- collision
 	if xEntry > yEntry then
@@ -89,6 +100,19 @@ function AABBSweepTest(A, vA, B, vB)
 	else
 		n = 1
 	end
+
+	if entryTime < 0 and exitTime > 0 then
+		-- we are inside!
+
+		return entryTime, n
+	end
+
+	-- if there's no collision
+	if entryTime > exitTime or (xEntry < 0.0 and yEntry < 0.0) or xEntry > 1.0 or yEntry > 1.0 then
+		return 1.0, 0
+	end
+
+	-- else
 	
 	return entryTime, n
 end
@@ -446,11 +470,11 @@ function Map:staticObjectsInsideAABB(aabb, filterType)
 			objAABB.min[1] = obj.y + objTile.collision.min[1]
 			objAABB.max[1] = obj.y + objTile.collision.max[1]
 
-			if AABBOverlap(objAABB, aabb) then
-				print(objAABB.min[0], objAABB.max[0], objAABB.min[1], objAABB.max[1])
+			--if AABBOverlap(objAABB, aabb) then
+				--print(objAABB.min[0], objAABB.max[0], objAABB.min[1], objAABB.max[1])
 
 				table.insert(res, objAABB)
-			end
+			--end
 		end
 	end
 
@@ -499,7 +523,7 @@ function Map:AABBCast(aabb, v, filterType)
 		u = us
 		n = ns
 
-		print("collide with object : ", u)
+		--print("collide with object : ", u)
 	end
 
 	return u, n

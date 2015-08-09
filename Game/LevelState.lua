@@ -34,6 +34,8 @@ function Level:spawnEntity(entityType, x, y)
 			self.playerEntity = newEntity
 			self.playerEntity.playerControl = PlayerControl.player1Control
 		end
+
+		return newEntity
 	end
 end
 

@@ -39,7 +39,11 @@ function PlayerEntity.begin_attack(self)
 	PlayerEntity.swordSound:play()
 	self:changeAction(PlayerEntity.attack)
 
-	self.level:spawnEntity("Bullet", self.x, self.y - 5)
+	local bullet = self.level:spawnEntity("Bullet", self.x, self.y - 5)
+
+	if self.direction == 1 then
+		bullet.speedX = -bullet.speedX
+	end
 end
 
 
