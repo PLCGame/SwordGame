@@ -11,6 +11,7 @@ require "Vector"
 require "UIElement"
 require "LevelState"
 require "InputConfigState"
+require "MainMenu"
 
 
 titleScreenState = { thread = nil, game = nil }
@@ -113,7 +114,9 @@ function Game:load()
     self.font:setFilter("nearest", "nearest")
     love.graphics.setFont(self.font)
 
-    self:pushState(titleScreenState)
+    --self:pushState(titleScreenState)
+   	self:pushState(mainMenuState)
+     
 end
 
 function Game:playMusic(musicFilename)
