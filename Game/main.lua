@@ -115,7 +115,9 @@ function Game:load()
     love.graphics.setFont(self.font)
 
     --self:pushState(titleScreenState)
-   	self:pushState(mainMenuState)
+   	--self:pushState(mainMenuState)
+   	self:pushState(levelState)
+    
      
 end
 

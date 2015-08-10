@@ -1,9 +1,11 @@
 mainMenuState = {}
 
+--[[
 mainMenuState.background = love.graphics.newImage("UI/menu_background.png")
 mainMenuState.background:setFilter("nearest", "nearest")
 mainMenuState.background:setWrap("repeat", "repeat")
 mainMenuState.backgroundOffset = 0
+]]
 
 function mainMenuState:load(game)
 end

@@ -39,6 +39,9 @@ function PowerUp:message(from, type, info)
 
 		-- destroy self
 		self.level:removeEntity(self)
+
+		-- we handle the message
+		return true
 	end
 end
 

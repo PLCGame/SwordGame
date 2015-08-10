@@ -49,7 +49,7 @@ end
 
 -- falling state
 function PlayerEntity.fall(self, dt)
-	-- we can attach will in air
+	-- we can attack while in air
   	if self.playerControl:canAttack() then
   		-- change state
   		PlayerEntity.begin_attack(self)
@@ -106,6 +106,12 @@ function PlayerEntity.jump(self, dt)
   	if self.speedY >= 0 then
   		self:changeAction(PlayerEntity.fall)
   	end
+
+  	if self.playerControl:canAttack() then
+  		-- change state
+  		PlayerEntity.begin_attack(self)
+  	end
+
 end
 
 function PlayerEntity.run(self, dt)
