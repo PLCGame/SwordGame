@@ -21,6 +21,7 @@ function PlayerEntity.new(level, x, y)
 	self.acceleration = 1024
 
 	self.collideWith = PlayerEntity.collideWith
+	self.message = PlayerEntity.message
 
 	self.type = "player"
 
@@ -40,16 +41,18 @@ function PlayerEntity.begin_attack(self)
 	self:changeAction(PlayerEntity.attack)
 
 	local bullet = self.level:spawnEntity("Bullet", self.x, self.y - 5)
+	bullet.owner = self
 
 	if self.direction == 1 then
 		bullet.speedX = -bullet.speedX
 	end
+
 end
 
 
 -- falling state
 function PlayerEntity.fall(self, dt)
-	-- we can attach will in air
+	-- we can attack while in air
   	if self.playerControl:canAttack() then
   		-- change state
   		PlayerEntity.begin_attack(self)
@@ -106,6 +109,12 @@ function PlayerEntity.jump(self, dt)
   	if self.speedY >= 0 then
   		self:changeAction(PlayerEntity.fall)
   	end
+
+  	if self.playerControl:canAttack() then
+  		-- change state
+  		PlayerEntity.begin_attack(self)
+  	end
+
 end
 
 function PlayerEntity.run(self, dt)
@@ -364,5 +373,13 @@ function PlayerEntity:collideWith(entity)
 		entity:message(self, "pickup", nil)
 	end
 end
+
+function PlayerEntity:message(from, type, info)
+	if type == "hit" then
+		self.health = self.health - info.power
+	end
+
+end
+
 
 EntityFactory["Player"] = PlayerEntity.new

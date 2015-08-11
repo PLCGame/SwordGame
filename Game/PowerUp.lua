@@ -39,6 +39,9 @@ function PowerUp:message(from, type, info)
 
 		-- destroy self
 		self.level:removeEntity(self)
+
+		-- we handle the message
+		return true
 	end
 end
 
@@ -68,6 +71,8 @@ function Bullet.new(level, x, y)
 	self.speedY = 0
 
 	self.sprite = Bullet.sprites.frames[0]
+
+	self.owner = nil
 
 	return self
 end
@@ -102,7 +107,7 @@ function Bullet:message(from, type, info)
 end
 
 function Bullet:collideWith(entity)
-	if entity.type == "enemy" then
+	if entity.type == "enemy" or (entity.type == "player" and entity ~= self.owner) then
 		local dir = 0
 		if entity.x < self.x then
 			dir = 1
