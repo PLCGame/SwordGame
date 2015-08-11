@@ -102,7 +102,7 @@
   <object id="7" type="Snake" x="596" y="205" width="16" height="16"/>
   <object id="8" type="Snake" x="713" y="333" width="16" height="16"/>
   <object id="9" type="Snake" x="245" y="271" width="16" height="16"/>
-  <object id="10" type="Snake" x="306" y="349" width="16" height="16"/>
+  <object id="10" type="Snake" x="306" y="352" width="16" height="16"/>
   <object id="14" type="Snake" x="144" y="144" width="16" height="16"/>
   <object id="35" type="PowerUp" x="276" y="88" width="7" height="7"/>
   <object id="36" type="PowerUp" x="300" y="88" width="7" height="7"/>
