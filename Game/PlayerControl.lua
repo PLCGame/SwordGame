@@ -192,5 +192,5 @@ player2Event = { 	left 	= 	{"j",		"dpleft", 	"leftx", 	true},
 					start 	=	{"return",	"start", 	nil, 		nil}}
 
 
-PlayerControl.player1Control = PlayerControl.new(player1Event, player1Joystick)
-PlayerControl.player2Control = PlayerControl.new(player2Event, player2Joystick)
+PlayerControl.player1Control = PlayerControl.new(player1Event, player2Joystick)
+PlayerControl.player2Control = PlayerControl.new(player2Event, player1Joystick)
