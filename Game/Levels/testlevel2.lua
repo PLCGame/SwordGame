@@ -7,7 +7,7 @@ return {
   height = 24,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 137,
+  nextobjectid = 138,
   properties = {},
   tilesets = {
     {
@@ -420,7 +420,9 @@ return {
           height = 16,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            ["playerID"] = "1"
+          }
         },
         {
           id = 2,
@@ -531,8 +533,8 @@ return {
           name = "",
           type = "Snake",
           shape = "rectangle",
-          x = 140,
-          y = 136,
+          x = 144,
+          y = 144,
           width = 16,
           height = 16,
           rotation = 0,
@@ -1085,6 +1087,21 @@ return {
           gid = 346,
           visible = true,
           properties = {}
+        },
+        {
+          id = 137,
+          name = "Player",
+          type = "Player",
+          shape = "rectangle",
+          x = 128,
+          y = 80,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["playerID"] = "2"
+          }
         }
       }
     },

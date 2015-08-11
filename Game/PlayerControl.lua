@@ -1,7 +1,7 @@
 PlayerControl = {}
 PlayerControl.__index = PlayerControl
 
-function PlayerControl.new(joystick, eventTable) 
+function PlayerControl.new(eventTable, joystick) 
 	local self = setmetatable({}, PlayerControl)
 
 	if eventTable == nil then
@@ -19,11 +19,15 @@ function PlayerControl.new(joystick, eventTable)
 		self.event = eventTable
 	end
 
+	self.joystick = joystick
+
 	-- if there's a connected joystick
+	--[[
 	if love.joystick.getJoystickCount() > 0 then
 		local joysticks = love.joystick.getJoysticks()
 		self.joystick = joysticks[joystick or 1]
 	end
+	]]
 
 	self.eventValue = {}
 	self.eventTrigger = {}
@@ -154,5 +158,39 @@ function PlayerControl:menuCancel()
 end
 
 -- initialize default PlayerControl
-PlayerControl.player1Control = PlayerControl.new(1)
-PlayerControl.player2Control = PlayerControl.new(2)
+local joysticks = love.joystick.getJoysticks()
+
+local player1Joystick = nil
+if #joysticks > 0 then
+	player1Joystick = joysticks[1]
+end
+--		  						keyboard 	DPad        Axis     Invert Axis
+player1Event = { 	left 	= 	{"left", 	"dpleft", 	"leftx", 	true},
+	 				right 	=	{"right", 	"dpright", 	"leftx", 	false},
+					up	 	= 	{"up", 		"dpup", 	"lefty", 	true},
+					down	= 	{"down", 	"dpdown", 	"lefty", 	false},
+					jump	= 	{"z", 		"a", 		nil, 		nil},
+					attack 	= 	{"q", 		"x", 		nil,		nil},
+					defend 	= 	{"d", 		"b", 		nil, 		nil},
+					back 	=	{"escape",	"back",		nil, 		nil},
+					start 	=	{"return",	"start", 	nil, 		nil}}
+
+if #joysticks > 1 then
+	player1Joystick = joysticks[2]
+end
+
+local player2Joystick = nil
+--	    						keyboard 	DPad        Axis     Invert Axis
+player2Event = { 	left 	= 	{"j",		"dpleft", 	"leftx", 	true},
+	 				right 	=	{"l", 		"dpright", 	"leftx", 	false},
+					up	 	= 	{"i", 		"dpup", 	"lefty", 	true},
+					down	= 	{"k",	 	"dpdown", 	"lefty", 	false},
+					jump	= 	{"r", 		"a", 		nil, 		nil},
+					attack 	= 	{"t", 		"x", 		nil,		nil},
+					defend 	= 	{"y", 		"b", 		nil, 		nil},
+					back 	=	{"escape",	"back",		nil, 		nil},
+					start 	=	{"return",	"start", 	nil, 		nil}}
+
+
+PlayerControl.player1Control = PlayerControl.new(player1Event, player1Joystick)
+PlayerControl.player2Control = PlayerControl.new(player2Event, player2Joystick)

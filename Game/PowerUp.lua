@@ -72,6 +72,8 @@ function Bullet.new(level, x, y)
 
 	self.sprite = Bullet.sprites.frames[0]
 
+	self.owner = nil
+
 	return self
 end
 
@@ -105,7 +107,7 @@ function Bullet:message(from, type, info)
 end
 
 function Bullet:collideWith(entity)
-	if entity.type == "enemy" then
+	if entity.type == "enemy" or (entity.type == "player" and entity ~= self.owner) then
 		local dir = 0
 		if entity.x < self.x then
 			dir = 1

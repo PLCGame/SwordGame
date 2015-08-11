@@ -259,7 +259,7 @@ function Map:createEntityLayer(entityLayer, entityFactory)
 				-- create the entity
 				local x = obj.x + obj.width * 0.5
 				local y = obj.y + obj.height
-				entityFactory:spawnEntity(obj.type, x, y)
+				entityFactory:spawnEntity(obj.type, x, y, obj.properties)
 			end
 		end
 	end

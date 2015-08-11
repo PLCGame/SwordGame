@@ -2,7 +2,7 @@ Level = {}
 Level.__index = Level
 
 -- create a new level from a map
-function Level.new(mapName, screen_width, screen_height)
+function Level.new(mapName)
 	local self = setmetatable({score = 0}, Level)
 
 	self.playerEntity = nil
@@ -10,17 +10,12 @@ function Level.new(mapName, screen_width, screen_height)
 
 	print("loading map : "..mapName)
 	self.map = Map.new("Levels/" .. mapName..".lua", self)
-	ww, wh = love.window.getDimensions()
-	--self.map:setSize(ww / 4, wh / 4)
-
-	self.screenWidth = screen_width
-	self.screenHeight = screen_height
 
 	return self
 end
 
 -- crappy function use as an entity factory
-function Level:spawnEntity(entityType, x, y) 
+function Level:spawnEntity(entityType, x, y, entityProperties)
 	-- get entity constructor function 
 	local entityConstructor = EntityFactory[entityType]
 	if entityConstructor ~= nil then
@@ -31,8 +26,21 @@ function Level:spawnEntity(entityType, x, y)
 		self.entities:push(newEntity)
 
 		if entityType == "Player" then
-			self.playerEntity = newEntity
-			self.playerEntity.playerControl = PlayerControl.player1Control
+			local playerID = 1
+
+			if entityProperties and entityProperties.playerID then
+				playerID = tonumber(entityProperties.playerID)
+			end
+
+			if playerID == 1 then
+				self.playerEntity = newEntity
+				self.playerEntity.playerControl = PlayerControl.player1Control
+			end
+
+			if playerID == 2 then
+				newEntity.playerControl = PlayerControl.player2Control
+			end
+
 		end
 
 		return newEntity
@@ -315,7 +323,7 @@ end
 function levelState:load(game)
 	-- load test level
 	self.game = game
-	self.level = Level.new(game.levels[self.levelIndex].map, game.screenWidth, game.screenHeight)
+	self.level = Level.new(game.levels[self.levelIndex].map)
 
 	-- start the music	
 	game:playMusic("Music/" .. game.levels[self.levelIndex].music)
