@@ -367,6 +367,7 @@ function levelState:draw(game)
 	   	--printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	   	printOutline("Score: ".. self.level.score, 5, 5)
 	   	printOutline("Health: ".. self.player1.health, 5, 15)
+	   	printOutline("ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}", 0, 25)
 
 	end
 end

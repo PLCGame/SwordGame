@@ -109,7 +109,7 @@ local Game = {
 -- load the game
 function Game:load()
     -- load the default font
-	self.font = love.graphics.newImageFont("Fonts/classic_font.png",
+	self.font = love.graphics.newImageFont("Fonts/font claire 2.png",
     " !\"#$%&`()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}" )
     self.font:setFilter("nearest", "nearest")
     love.graphics.setFont(self.font)
