@@ -117,7 +117,7 @@ function AABBSweepTest(A, vA, B, vB)
 	return entryTime, n
 end
 
-function Map.new(mapFilename, entityFactory) 
+function Map.new(mapFilename) 
 	local mapPath = ""
 	local separatorIndex =  mapFilename:find("/", -mapFilename:len())
 
@@ -144,17 +144,18 @@ function Map.new(mapFilename, entityFactory)
 	-- load layers
 	self.activeLayers = {} -- contains only collidable layers
 	self.layers = {} -- contains ALL layers
-	self.backgroundLayers = {}
-	self.foregroundLayers = {}
-	self.staticObjects = {}
+	self.backgroundLayers = {} -- list of layer behind the player
+	self.foregroundLayers = {} -- list of layer in front of the player
+	self.staticObjects = {} --  renderable and collidable static object (free position, can't be a tile)
+	self.objects = {} -- list of object, unknown type
 
 	for _, layer in ipairs(mapData.layers) do
 		if layer.type == "tilelayer" then
-			self:loadLayer(layer)
+			self:loadTileLayer(layer)
 		end
 
 		if layer.type == "objectgroup" then
-			self:createEntityLayer(layer, entityFactory)
+			self:loadObjectLayer(layer)
 		end
 	end
 
@@ -207,7 +208,7 @@ function Map:loadTileset(data, path)
 	end
 end
 
-function Map:loadLayer(layer)
+function Map:loadTileLayer(layer)
 	-- simply copy tile map
 	newLayer = {}
 
@@ -241,7 +242,7 @@ function Map:loadLayer(layer)
 	return newLayer
 end
 
-function Map:createEntityLayer(entityLayer, entityFactory)
+function Map:loadObjectLayer(entityLayer)
 	if entityLayer ~= nil then
 		for i = 1, #entityLayer.objects do
 			local obj = entityLayer.objects[i]
@@ -256,10 +257,23 @@ function Map:createEntityLayer(entityLayer, entityFactory)
 
 				table.insert(self.staticObjects, staticObject)
 			else
-				-- create the entity
-				local x = obj.x + obj.width * 0.5
-				local y = obj.y + obj.height
-				entityFactory:spawnEntity(obj.type, x, y, obj.properties)
+				-- create a copy
+				local object = {}
+				object.x = obj.x
+				object.y = obj.y
+				object.width = obj.width
+				object.height = obj.height
+
+				object.properties = obj.properties
+				object.name = obj.name
+				object.type = obj.type
+
+				-- and add it to the list
+				table.insert(self.objects, object)
+
+				if object.name then
+					self.objects[object.name] = object
+				end
 			end
 		end
 	end

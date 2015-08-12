@@ -7,7 +7,7 @@ return {
   height = 24,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 138,
+  nextobjectid = 139,
   properties = {},
   tilesets = {
     {
@@ -411,7 +411,7 @@ return {
       objects = {
         {
           id = 1,
-          name = "Player",
+          name = "SpawnPlayer1",
           type = "Player",
           shape = "rectangle",
           x = 48,
@@ -521,7 +521,7 @@ return {
           type = "Snake",
           shape = "rectangle",
           x = 306,
-          y = 349,
+          y = 352,
           width = 16,
           height = 16,
           rotation = 0,
@@ -741,8 +741,8 @@ return {
           name = "",
           type = "PowerUp",
           shape = "rectangle",
-          x = 96,
-          y = 268,
+          x = 92,
+          y = 280,
           width = 7,
           height = 7,
           rotation = 0,
@@ -755,7 +755,7 @@ return {
           type = "PowerUp",
           shape = "rectangle",
           x = 80,
-          y = 268,
+          y = 280,
           width = 7,
           height = 7,
           rotation = 0,
@@ -781,7 +781,7 @@ return {
           type = "PowerUp",
           shape = "rectangle",
           x = 68,
-          y = 272,
+          y = 280,
           width = 7,
           height = 7,
           rotation = 0,
@@ -793,7 +793,7 @@ return {
           name = "",
           type = "PowerUp",
           shape = "rectangle",
-          x = 144,
+          x = 128,
           y = 280,
           width = 7,
           height = 7,
@@ -806,7 +806,7 @@ return {
           name = "",
           type = "PowerUp",
           shape = "rectangle",
-          x = 132,
+          x = 116,
           y = 280,
           width = 7,
           height = 7,
@@ -819,8 +819,8 @@ return {
           name = "",
           type = "PowerUp",
           shape = "rectangle",
-          x = 112,
-          y = 268,
+          x = 104,
+          y = 280,
           width = 7,
           height = 7,
           rotation = 0,
@@ -1090,7 +1090,7 @@ return {
         },
         {
           id = 137,
-          name = "Player",
+          name = "SpawnPlayer2",
           type = "Player",
           shape = "rectangle",
           x = 128,
@@ -1102,6 +1102,19 @@ return {
           properties = {
             ["playerID"] = "2"
           }
+        },
+        {
+          id = 138,
+          name = "LevelEnd",
+          type = "Trigger",
+          shape = "rectangle",
+          x = 272,
+          y = 52,
+          width = 88,
+          height = 44,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     },

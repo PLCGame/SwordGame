@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="24" tilewidth="16" tileheight="16" nextobjectid="138">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="24" tilewidth="16" tileheight="16" nextobjectid="139">
  <tileset firstgid="1" name="Level 1 Tileset" tilewidth="16" tileheight="16">
   <image source="Level 1 Tileset.png" width="80" height="80"/>
   <tile id="0">
@@ -90,7 +90,7 @@
   </data>
  </layer>
  <objectgroup name="Entities">
-  <object id="1" name="Player" type="Player" x="48" y="80" width="16" height="16">
+  <object id="1" name="SpawnPlayer1" type="Player" x="48" y="80" width="16" height="16">
    <properties>
     <property name="playerID" value="1"/>
    </properties>
@@ -119,13 +119,13 @@
   <object id="47" type="PowerUp" x="500" y="204" width="7" height="7"/>
   <object id="48" type="PowerUp" x="520" y="216" width="7" height="7"/>
   <object id="49" type="PowerUp" x="532" y="216" width="7" height="7"/>
-  <object id="50" type="PowerUp" x="96" y="268" width="7" height="7"/>
-  <object id="51" type="PowerUp" x="80" y="268" width="7" height="7"/>
+  <object id="50" type="PowerUp" x="92" y="280" width="7" height="7"/>
+  <object id="51" type="PowerUp" x="80" y="280" width="7" height="7"/>
   <object id="52" type="PowerUp" x="56" y="280" width="7" height="7"/>
-  <object id="53" type="PowerUp" x="68" y="272" width="7" height="7"/>
-  <object id="54" type="PowerUp" x="144" y="280" width="7" height="7"/>
-  <object id="55" type="PowerUp" x="132" y="280" width="7" height="7"/>
-  <object id="56" type="PowerUp" x="112" y="268" width="7" height="7"/>
+  <object id="53" type="PowerUp" x="68" y="280" width="7" height="7"/>
+  <object id="54" type="PowerUp" x="128" y="280" width="7" height="7"/>
+  <object id="55" type="PowerUp" x="116" y="280" width="7" height="7"/>
+  <object id="56" type="PowerUp" x="104" y="280" width="7" height="7"/>
   <object id="61" type="PowerUp" x="104" y="216" width="7" height="7"/>
   <object id="62" type="PowerUp" x="92" y="216" width="7" height="7"/>
   <object id="63" type="PowerUp" x="68" y="216" width="7" height="7"/>
@@ -146,11 +146,12 @@
   <object id="129" type="PowerUp" x="212" y="88" width="7" height="7"/>
   <object id="130" type="PowerUp" x="212" y="76" width="7" height="7"/>
   <object id="134" type="StaticObject" gid="346" x="80" y="96" width="32" height="32"/>
-  <object id="137" name="Player" type="Player" x="128" y="80" width="16" height="16">
+  <object id="137" name="SpawnPlayer2" type="Player" x="128" y="80" width="16" height="16">
    <properties>
     <property name="playerID" value="2"/>
    </properties>
   </object>
+  <object id="138" name="LevelEnd" type="Trigger" x="272" y="52" width="88" height="44"/>
  </objectgroup>
  <layer name="Foreground" width="64" height="24">
   <properties>

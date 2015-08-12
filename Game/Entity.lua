@@ -60,7 +60,7 @@ function Entity:draw()
 		local _y = math.floor(self.y)
 		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, 1.0, 1.0, -self.sprite.xoffset, -self.sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)
 	else
-		love.graphics.polygon("fill", self.x - self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y, self.x - self.width * 0.5, self.y)
+		--love.graphics.polygon("fill", self.x - self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y, self.x - self.width * 0.5, self.y)
 	end
 end
 

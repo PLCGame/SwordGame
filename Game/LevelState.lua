@@ -5,8 +5,8 @@ Level.__index = Level
 function Level.new(mapName)
 	local self = setmetatable({score = 0}, Level)
 
-	self.playerEntity = nil
 	self.entities = list()
+	self.collisionPairs = {}
 
 	print("loading map : "..mapName)
 	self.map = Map.new("Levels/" .. mapName..".lua", self)
@@ -47,6 +47,16 @@ function Level:spawnEntity(entityType, x, y, entityProperties)
 	end
 end
 
+function Level:addEntity(newEntity)
+	-- add it to entity list
+	self.entities:push(newEntity)
+
+	-- do post insertion init
+	if newEntity.inserted then
+		newEntity:inserted(self)
+	end
+end
+
 function Level:removeEntity(entity)
 	self.entities:remove(entity)
 end
@@ -73,34 +83,75 @@ function Level:intersectingEntities(aabb, firstEntity)
 	return res
 end
 
+function Level:handleCollision()
+	-- test overlapp
+	-- not very good...
+	local newCollisionPairs = {}
+	local entity = self.entities.first
+	while entity ~= nil and entity._next ~= nil do -- check also next, as this is the first element we will check
+		local entityAABB = entity:getAABB()
+		local overlappingEntities = self:intersectingEntities(entityAABB, entity._next)
+
+		for _, otherEntity in ipairs(overlappingEntities) do
+			-- handle collision pair
+			local key = string.format("%p - %p", entity, otherEntity)
+			newCollisionPairs[key] = {obj1 = entity, obj2 = otherEntity}
+		end
+
+		entity = entity._next
+	end
+
+	-- loop on new pair list
+	for key, pair in pairs(newCollisionPairs) do
+		-- is it a new pair?
+		local key2 = string.format("%p - %p", pair.obj2, pair.obj1)
+
+		if not self.collisionPairs[key] and not self.collisionPairs[key2] then
+			-- callback
+			if pair.obj1.entityDidEnter then
+				pair.obj1:entityDidEnter(pair.obj2)
+			end
+
+			if pair.obj2.entityDidEnter then
+				pair.obj2:entityDidEnter(pair.obj1)
+			end
+		end
+	end
+
+	-- loop on old list
+	for key, pair in pairs(self.collisionPairs) do
+		-- did the object are still in collision?
+		local key2 = string.format("%p - %p", pair.obj2, pair.obj1)
+
+		if not newCollisionPairs[key] and not newCollisionPairs[key2] then
+			-- callback
+			if pair.obj1.entityDidLeave then
+				pair.obj1:entityDidLeave(pair.obj2)
+			end
+
+			if pair.obj2.entityDidLeave then
+				pair.obj2:entityDidLeave(pair.obj1)
+			end
+		end
+	end
+
+	self.collisionPairs = newCollisionPairs
+end
+
 -- update the level
 function Level:update(dt)
+	self:handleCollision()
+
 	-- update entities
 	-- they can be removed on their action function, 
 	-- so keep track of the next one in the list
-	local entity = self.entities.first
+	entity = self.entities.first
 	while entity ~= nil do
 		local nextEntity = entity._next
 
 		entity:action(dt)
 		
 		entity = nextEntity
-	end
-
-	-- test overlapp
-	-- not very good...
-	entity = self.entities.first
-	while entity ~= nil and entity._next ~= nil do -- check also next, as this is the first element we will check
-		local entityAABB = entity:getAABB()
-		local overlappingEntities = self:intersectingEntities(entityAABB, entity._next)
-
-		for _, otherEntity in ipairs(overlappingEntities) do
-			--print(entity, otherEntity)
-			entity:collideWith(otherEntity)
-			otherEntity:collideWith(entity)
-		end
-
-		entity = entity._next
 	end
 end
 
@@ -278,7 +329,7 @@ function levelState:update(game, dt)
 
 		-- update camera
 		local mapAABB = self.level.map:getAABB()
-		local entityAABB = self.level.playerEntity:getAABB()
+		local entityAABB = self.player1:getAABB()
 
 		-- first "center" on entity AABB
 		self.camera.x = math.max(math.min(self.camera.x, entityAABB.min[0] - 128), entityAABB.max[0] + 128 - self.camera.width)
@@ -315,7 +366,7 @@ function levelState:draw(game)
 	   	--printOutline("Current Level : "..self.levels[self.levelIndex].map, 5, 5)
 	   	--printOutline("Current FPS: "..tostring(love.timer.getFPS( )), 5, 17)
 	   	printOutline("Score: ".. self.level.score, 5, 5)
-	   	printOutline("Health: ".. self.level.playerEntity.health, 5, 15)
+	   	printOutline("Health: ".. self.player1.health, 5, 15)
 
 	end
 end
@@ -325,9 +376,30 @@ function levelState:load(game)
 	self.game = game
 	self.level = Level.new(game.levels[self.levelIndex].map)
 
+	-- spawn the player
+	playerSpawn = self.level.map.objects["SpawnPlayer1"]
+	self.player1 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.x + playerSpawn.height)
+	self.player1.playerControl = PlayerControl.player1Control
+	self.level:addEntity(self.player1)
+
+	-- grab the end trigger
+	local obj = self.level.map.objects["LevelEnd"]
+	local levelEndTrigger = Trigger.new(self.level, obj.x, obj.y, obj.width, obj.height, self, levelState.endTriggerCallback)
+	self.level:addEntity(levelEndTrigger)
+
 	-- start the music	
-	game:playMusic("Music/" .. game.levels[self.levelIndex].music)
+	--game:playMusic("Music/title2.xm")
 
 	-- set camera
 	self.camera = {x = 0, y = 0, width = game.screenWidth, height = game.screenHeight}
+end
+
+function levelState:endTriggerCallback(sender, entity, entered)
+	if entity == self.player1 then
+		if entered then
+			self.game:playMusic("Music/title1.xm")
+		else
+			self.game:playMusic(nil)
+		end
+	end
 end

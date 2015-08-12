@@ -1,7 +1,8 @@
 TODO
 
+- Objects management from Tiled : entity (enemy mob, object?, trigger), marker(player spawn position, item spawn?)
 - Split screen system (centered on 2 entities)
-- Objects management from Tiled : entity (enemy mob, object?), marker(player spawn position, item spawn?)
+- Character inventory
 - Kinematic Object!
 - Fixed collision ambiguity! (falling from a ladder, the player can't collide with ladder tile)
 - Improve sprite loading (should be just one image)

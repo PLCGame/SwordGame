@@ -97,7 +97,7 @@ local Game = {
 	currentLevel = 0,
 
 	musicSource = nil,
-	musicVolume = 0.0,
+	musicVolume = 1.0,
 
 	screenWidth = 320,
 	screenHeight = 180,

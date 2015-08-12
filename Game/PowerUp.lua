@@ -119,3 +119,31 @@ function Bullet:collideWith(entity)
 end
 
 EntityFactory["Bullet"] = Bullet.new
+
+Trigger = {}
+function Trigger.new(level, x, y, width, height, target, callback) 
+	local self = Entity.new(width, height, level)
+	self.level = level
+	self.x = x + width * 0.5
+	self.y = y + height
+
+	self:changeAction(Trigger.update)
+	self.entityDidEnter = Trigger.entityDidEnter
+	self.entityDidLeave = Trigger.entityDidLeave
+
+	self.target = target
+	self.callback = callback
+	return self
+end
+
+function Trigger:update(dt)
+	-- do nothing
+end
+
+function Trigger:entityDidEnter(entity)
+	self.callback(self.target, self, entity, true)
+end
+
+function Trigger:entityDidLeave(entity)
+	self.callback(self.target, self, entity, false)
+end
