@@ -9,3 +9,5 @@ TODO
 - Input configuration Menu (FIFA style)
 - Choose font
 - Added title screen intro
+- refactor camera code
+- refactor AABB code?
