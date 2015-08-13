@@ -97,7 +97,7 @@
   </object>
   <object id="2" type="Snake" x="224" y="144" width="16" height="16"/>
   <object id="4" type="Snake" x="160" y="208" width="16" height="16"/>
-  <object id="5" type="Snake" x="184" y="144" width="16" height="16"/>
+  <object id="5" type="Snake" x="256" y="80" width="16" height="16"/>
   <object id="6" type="Snake" x="891" y="141" width="16" height="16"/>
   <object id="7" type="Snake" x="596" y="205" width="16" height="16"/>
   <object id="8" type="Snake" x="713" y="333" width="16" height="16"/>
@@ -139,12 +139,12 @@
   <object id="71" type="PowerUp" x="44" y="152" width="7" height="7"/>
   <object id="114" type="PowerUp" x="236" y="88" width="7" height="7"/>
   <object id="116" type="PowerUp" x="200" y="88" width="7" height="7"/>
-  <object id="119" type="PowerUp" x="224" y="76" width="7" height="7"/>
+  <object id="119" type="PowerUp" x="92" y="56" width="7" height="7"/>
   <object id="123" type="PowerUp" x="224" y="88" width="7" height="7"/>
   <object id="124" type="PowerUp" x="236" y="76" width="7" height="7"/>
-  <object id="126" type="PowerUp" x="200" y="76" width="7" height="7"/>
+  <object id="126" type="PowerUp" x="188" y="88" width="7" height="7"/>
   <object id="129" type="PowerUp" x="212" y="88" width="7" height="7"/>
-  <object id="130" type="PowerUp" x="212" y="76" width="7" height="7"/>
+  <object id="130" type="PowerUp" x="92" y="68" width="7" height="7"/>
   <object id="134" type="StaticObject" gid="346" x="80" y="96" width="32" height="32"/>
   <object id="137" name="SpawnPlayer2" type="Player" x="128" y="80" width="16" height="16">
    <properties>

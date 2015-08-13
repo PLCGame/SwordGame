@@ -1,6 +1,6 @@
 TODO
 
-- Objects management from Tiled : entity (enemy mob, object?, trigger), marker(player spawn position, item spawn?)
+* Objects management from Tiled : entity (enemy mob, object?, trigger), marker(player spawn position, item spawn?)
 - Split screen system (centered on 2 entities)
 - Character inventory
 - Kinematic Object!

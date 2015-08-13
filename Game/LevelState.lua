@@ -11,6 +11,11 @@ function Level.new(mapName)
 	print("loading map : "..mapName)
 	self.map = Map.new("Levels/" .. mapName..".lua", self)
 
+	-- spawn every register object in the factory
+	for _, obj in ipairs(self.map.objects) do
+		self:spawnEntity(obj.type, obj.x + obj.width * 0.5, obj.y + obj.height, obj.properties)
+	end
+
 	return self
 end
 
@@ -377,10 +382,15 @@ function levelState:load(game)
 	self.level = Level.new(game.levels[self.levelIndex].map)
 
 	-- spawn the player
-	playerSpawn = self.level.map.objects["SpawnPlayer1"]
-	self.player1 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.x + playerSpawn.height)
+	local playerSpawn = self.level.map.objects["SpawnPlayer1"]
+	self.player1 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
 	self.player1.playerControl = PlayerControl.player1Control
 	self.level:addEntity(self.player1)
+
+	playerSpawn = self.level.map.objects["SpawnPlayer2"]
+	self.player2 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
+	self.player2.playerControl = PlayerControl.player2Control
+	self.level:addEntity(self.player2)
 
 	-- grab the end trigger
 	local obj = self.level.map.objects["LevelEnd"]

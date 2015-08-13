@@ -20,7 +20,7 @@ function PlayerEntity.new(level, x, y)
 	self.maxSpeed = 96
 	self.acceleration = 1024
 
-	self.collideWith = PlayerEntity.collideWith
+	self.entityDidEnter = PlayerEntity.entityDidEnter
 	self.message = PlayerEntity.message
 
 	self.type = "player"
@@ -368,7 +368,7 @@ function PlayerEntity.ladder(self, dt)
 	end
 end
 
-function PlayerEntity:collideWith(entity)
+function PlayerEntity:entityDidEnter(entity)
 	if entity.type == "powerup" then
 		entity:message(self, "pickup", nil)
 	end
@@ -381,5 +381,6 @@ function PlayerEntity:message(from, type, info)
 
 end
 
-
-EntityFactory["Player"] = PlayerEntity.new
+-- this entity can't be spawned at map loading
+-- but it should be in the factory...
+--EntityFactory["Player"] = PlayerEntity.new

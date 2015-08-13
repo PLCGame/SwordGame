@@ -7,7 +7,7 @@ function PowerUp.new(level, x, y)
 	self.y = y
 	self:changeAction(PowerUp.update)
 	self.message = PowerUp.message
-	self.collideWith = PowerUp.collideWith
+	self.entityDidEnter = PowerUp.entityDidEnter
 
 	self.type = "powerup"
 
@@ -45,7 +45,7 @@ function PowerUp:message(from, type, info)
 	end
 end
 
-function PowerUp:collideWith(entity)
+function PowerUp:entityDidEnter(entity)
 end
 
 EntityFactory["PowerUp"] = PowerUp.new
@@ -65,7 +65,7 @@ function Bullet.new(level, x, y)
 
 	self:changeAction(Bullet.update)
 	self.message = Bullet.message
-	self.collideWith = Bullet.collideWith
+	self.entityDidEnter = Bullet.entityDidEnter
 
 	self.speedX = 256
 	self.speedY = 0
@@ -106,7 +106,7 @@ end
 function Bullet:message(from, type, info)
 end
 
-function Bullet:collideWith(entity)
+function Bullet:entityDidEnter(entity)
 	if entity.type == "enemy" or (entity.type == "player" and entity ~= self.owner) then
 		local dir = 0
 		if entity.x < self.x then
