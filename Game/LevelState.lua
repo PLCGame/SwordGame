@@ -386,12 +386,7 @@ function levelState:load(game)
 	self.player1 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
 	self.player1.playerControl = PlayerControl.player1Control
 	self.level:addEntity(self.player1)
-
-	playerSpawn = self.level.map.objects["SpawnPlayer2"]
-	self.player2 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
-	self.player2.playerControl = PlayerControl.player2Control
-	self.level:addEntity(self.player2)
-
+	
 	-- grab the end trigger
 	local obj = self.level.map.objects["LevelEnd"]
 	local levelEndTrigger = Trigger.new(self.level, obj.x, obj.y, obj.width, obj.height, self, levelState.endTriggerCallback)

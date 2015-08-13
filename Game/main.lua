@@ -12,6 +12,7 @@ require "UIElement"
 require "LevelState"
 require "InputConfigState"
 require "MainMenu"
+require "versusLevelState"
 
 
 titleScreenState = { thread = nil, game = nil }
@@ -101,7 +102,7 @@ local Game = {
 
 	screenWidth = 320,
 	screenHeight = 180,
-	screenScale = 4,
+	screenScale = 6,
 
 	states = list()
 }
@@ -116,7 +117,8 @@ function Game:load()
 
     --self:pushState(titleScreenState)
    	--self:pushState(mainMenuState)
-   	self:pushState(levelState)
+   	--self:pushState(levelState)
+   	self:pushState(versusLevelState)
     
      
 end
@@ -190,7 +192,7 @@ function love.load()
 	love.window.setTitle("Sword Game")
 
 	Game:load()
-	love.window.setMode(Game.screenWidth * Game.screenScale, Game.screenHeight * Game.screenScale, {resizable=false, vsync=true, fullscreen=false})
+	love.window.setMode(Game.screenWidth * Game.screenScale, Game.screenHeight * Game.screenScale, {resizable=false, vsync=true, fullscreen=true})
 
 	mainCanvas = love.graphics.newCanvas(Game.screenWidth, Game.screenHeight)
 
