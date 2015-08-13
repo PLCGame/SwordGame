@@ -102,7 +102,7 @@ local Game = {
 
 	screenWidth = 320,
 	screenHeight = 180,
-	screenScale = 6,
+	screenScale = 4,
 
 	states = list()
 }
@@ -192,7 +192,7 @@ function love.load()
 	love.window.setTitle("Sword Game")
 
 	Game:load()
-	love.window.setMode(Game.screenWidth * Game.screenScale, Game.screenHeight * Game.screenScale, {resizable=false, vsync=true, fullscreen=true})
+	love.window.setMode(Game.screenWidth * Game.screenScale, Game.screenHeight * Game.screenScale, {resizable=false, vsync=true, fullscreen=false})
 
 	mainCanvas = love.graphics.newCanvas(Game.screenWidth, Game.screenHeight)
 
