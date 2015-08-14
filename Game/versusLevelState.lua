@@ -125,10 +125,8 @@ function versusLevelState:draw(game)
    			-- restore shader
    			love.graphics.setShader(currentShader)
 
-
    			love.graphics.line(center.x, center.y, center.x + dy * 200, center.y - dx * 200)
-   			love.graphics.line(center.x, center.y, center.x - dy * 200, center.y +
-   			 dx * 200)
+   			love.graphics.line(center.x, center.y, center.x - dy * 200, center.y + dx * 200)
 
    		end
 
