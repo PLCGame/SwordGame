@@ -271,7 +271,10 @@ end
 inGameMenuState = {
 	index = 1,
 
-	entries = {"Quit"}
+	entries = {"Quit"},
+
+	width = 100,
+	height = 100
 }
 function inGameMenuState:load(game)
 	self.index = 1
@@ -306,19 +309,30 @@ end
 
 
 function inGameMenuState:draw(game)
+	local x = (game.screenWidth - self.width) * 0.5
+	local y = (game.screenHeight - self.height) * 0.5
+
+	love.graphics.setColor(0, 0, 0, 255)
+	love.graphics.rectangle("fill", x, y, self.width, self.height)
+
+	love.graphics.setLineStyle("rough")
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.rectangle("line", (game.screenWidth - self.width + 4 - 1) * 0.5, (game.screenHeight - self.height + 4 - 1) * 0.5, self.width - 4 + 1, self.height - 4 + 1)
+
 	love.graphics.setColor(255, 255, 255, 255)	
-	love.graphics.print("Menu", 100, 80)
+	love.graphics.print("Menu", x + 10, y + 10)
 
 	-- draw level name	
 	i = 0
+	local currentFont = love.graphics.getFont()
 	for key, entry in pairs(self.entries) do
 		if key == self.index then
 			love.graphics.setColor(255, 0, 0, 255)	
 		else
 			love.graphics.setColor(255, 255, 255, 255)	
 		end
-
-		love.graphics.print(entry, 100, 100 + i)
+		local textWidth = currentFont:getWidth(entry)
+		love.graphics.print(entry, x + math.floor((self.width - textWidth) * 0.5), y + 20 + i)
 		i = i + 12
 	end
 end

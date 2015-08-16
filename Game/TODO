@@ -2,6 +2,7 @@ TODO
 
 * Objects management from Tiled : entity (enemy mob, object?, trigger), marker(player spawn position, item spawn?)
 * Split screen system (centered on 2 entities)
+- entity attachement
 - Character inventory
 - Kinematic Object!
 - Fixed collision ambiguity! (falling from a ladder, the player can't collide with ladder tile)

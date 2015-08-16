@@ -15,8 +15,8 @@ function PowerUp.new(level, x, y)
 	local spriteFrame = {}
 	spriteFrame.image = love.graphics.newImage("Levels/testlevel_obj.png")
 	spriteFrame.quad = love.graphics.newQuad(72, 25, 7, 7, spriteFrame.image:getWidth(), spriteFrame.image:getHeight())
-	spriteFrame.xoffset = -4
-	spriteFrame.yoffset = -6
+	spriteFrame.xoffset = 4
+	spriteFrame.yoffset = 6
 	self.sprite = spriteFrame
 
 	return self
@@ -25,7 +25,7 @@ end
 function PowerUp:update(dt)
 	-- nothing to do
 	self.animationTimer = self.animationTimer + dt
-	self.sprite.yoffset = math.floor(math.cos(self.animationTimer * 18.0 + self.x * 4.4) * -2) - 6
+	self.sprite.yoffset = math.floor(math.cos(self.animationTimer * 18.0 + self.x * 4.4) * -2) + 6
 
 end
 

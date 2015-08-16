@@ -25,6 +25,8 @@ function PlayerEntity.new(level, x, y)
 
 	self.type = "player"
 
+	self.attachement = Chainsaw.new(level, 0, 0)
+
 	return self
 end
 

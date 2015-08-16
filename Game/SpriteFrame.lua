@@ -94,8 +94,8 @@ function extractMarkFromFrame(data, frame)
 		for x = frame.x, frame.x + frame.width do
 			r, g, b, a = data:getPixel(x, y)
 			if a == 255 then
-				frame.xoffset = frame.x - x
-				frame.yoffset = frame.y - y
+				frame.xoffset = x - frame.x
+				frame.yoffset = y - frame.y 
 			end
 		end
 	end
@@ -111,29 +111,52 @@ function extractMarksFromFrame(image, frames)
 	end
 end
 
-function SpriteFrame.new(spriteImage, maskImage, markImage)
+function SpriteFrame.new(spriteImage, argA, argB)
 	local self = setmetatable({}, SpriteFrame)
-
-	-- extract frame and mark
-	local frames = extractFramesFromImage(maskImage)
-	extractMarksFromFrame(markImage, frames)
-
-	-- create sprite
 	self.frames = {}
-	for i = 1, #frames do
-		--print("-------------------------------")
-		--print("Frame", i)
-		--print(frames[i].x, frames[i].y)
-		--print(frames[i].width, frames[i].height)
-		--print(frames[i].xoffset, frames[i].yoffset)	
 
-		local spriteFrame = {}
-		spriteFrame.image = spriteImage
-		spriteFrame.quad = love.graphics.newQuad(frames[i].x, frames[i].y, frames[i].width, frames[i].height, spriteImage:getWidth(), spriteImage:getHeight())
-		spriteFrame.xoffset = frames[i].xoffset
-		spriteFrame.yoffset = frames[i].yoffset	
+	if type(argA) == "number" then
+		local spriteWidth = argA
+		local spriteHeight = argA
 
-		table.insert(self.frames, i - 1, spriteFrame)
+		local columnCount = spriteImage:getWidth() / spriteWidth
+		local rowCount = spriteImage:getHeight() / spriteHeight
+
+		for y = 0, rowCount do
+			for x = 0, columnCount do
+				local spriteFrame = {}
+				spriteFrame.image = spriteImage
+				spriteFrame.quad = love.graphics.newQuad(x * spriteWidth,y * spriteHeight, spriteWidth, spriteHeight, spriteImage:getWidth(), spriteImage:getHeight())
+				spriteFrame.xoffset = spriteWidth * 0.5
+				spriteFrame.yoffset = spriteHeight * 0.5	
+
+				table.insert(self.frames, x + y * columnCount, spriteFrame)
+			end
+		end
+	else
+		local maskImage = argA
+		local markImage = argB
+
+		-- extract frame and mark
+		local frames = extractFramesFromImage(maskImage)
+		extractMarksFromFrame(markImage, frames)
+
+		-- create sprite
+		for i = 1, #frames do
+			--print("-------------------------------")
+			--print("Frame", i)
+			--print(frames[i].x, frames[i].y)
+			--print(frames[i].width, frames[i].height)
+			--print(frames[i].xoffset, frames[i].yoffset)	
+
+			local spriteFrame = {}
+			spriteFrame.image = spriteImage
+			spriteFrame.quad = love.graphics.newQuad(frames[i].x, frames[i].y, frames[i].width, frames[i].height, spriteImage:getWidth(), spriteImage:getHeight())
+			spriteFrame.xoffset = frames[i].xoffset
+			spriteFrame.yoffset = frames[i].yoffset	
+
+			table.insert(self.frames, i - 1, spriteFrame)
+		end
 	end
 
 	return self

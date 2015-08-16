@@ -13,7 +13,7 @@ require "LevelState"
 require "InputConfigState"
 require "MainMenu"
 require "versusLevelState"
-
+require "Weapons"
 
 titleScreenState = { thread = nil, game = nil }
 
@@ -159,6 +159,7 @@ end
 
 function Game:draw(dt)
 	-- draw every states!
+	love.graphics.setColor(255, 255, 255, 255)
 	for state in self.states:iterate() do
 		state:draw(self)
 	end
