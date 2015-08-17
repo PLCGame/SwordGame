@@ -111,54 +111,22 @@ function extractMarksFromFrame(image, frames)
 	end
 end
 
-function SpriteFrame.new(spriteImage, argA, argB)
+function SpriteFrame.new(spriteImage, spriteWidth, spriteHeight)
 	local self = setmetatable({}, SpriteFrame)
 	self.frames = {}
 
-	if type(argA) == "number" then
-		local spriteWidth = argA
-		local spriteHeight = argA
+	local columnCount = spriteImage:getWidth() / spriteWidth
+	local rowCount = spriteImage:getHeight() / spriteHeight
 
-		local columnCount = spriteImage:getWidth() / spriteWidth
-		local rowCount = spriteImage:getHeight() / spriteHeight
-
-		for y = 0, rowCount do
-			for x = 0, columnCount do
-				local spriteFrame = {}
-				spriteFrame.image = spriteImage
-				spriteFrame.quad = love.graphics.newQuad(x * spriteWidth,y * spriteHeight, spriteWidth, spriteHeight, spriteImage:getWidth(), spriteImage:getHeight())
-				spriteFrame.xoffset = spriteWidth * 0.5
-				spriteFrame.yoffset = spriteHeight * 0.5	
-
-				table.insert(self.frames, x + y * columnCount, spriteFrame)
-			end
-		end
-	else
-		assert(false, "can't use this anymore!!")
-
-		-- this is unused!
-		local maskImage = argA
-		local markImage = argB
-
-		-- extract frame and mark
-		local frames = extractFramesFromImage(maskImage)
-		extractMarksFromFrame(markImage, frames)
-
-		-- create sprite
-		for i = 1, #frames do
-			--print("-------------------------------")
-			--print("Frame", i)
-			--print(frames[i].x, frames[i].y)
-			--print(frames[i].width, frames[i].height)
-			--print(frames[i].xoffset, frames[i].yoffset)	
-
+	for y = 0, rowCount do
+		for x = 0, columnCount do
 			local spriteFrame = {}
 			spriteFrame.image = spriteImage
-			spriteFrame.quad = love.graphics.newQuad(frames[i].x, frames[i].y, frames[i].width, frames[i].height, spriteImage:getWidth(), spriteImage:getHeight())
-			spriteFrame.xoffset = frames[i].xoffset
-			spriteFrame.yoffset = frames[i].yoffset	
+			spriteFrame.quad = love.graphics.newQuad(x * spriteWidth,y * spriteHeight, spriteWidth, spriteHeight, spriteImage:getWidth(), spriteImage:getHeight())
+			spriteFrame.xoffset = spriteWidth * 0.5
+			spriteFrame.yoffset = spriteHeight * 0.5	
 
-			table.insert(self.frames, i - 1, spriteFrame)
+			table.insert(self.frames, x + y * columnCount, spriteFrame)
 		end
 	end
 

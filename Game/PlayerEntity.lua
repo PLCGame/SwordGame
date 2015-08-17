@@ -8,7 +8,6 @@ PlayerEntity.jumpSound = love.audio.newSource("Sounds/Jump.wav", "static")
 local spriteImage = love.graphics.newImage("Sprites/Player Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
 
---PlayerEntity.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Player Mask.png"), love.graphics.newImage("Sprites/Player Mark.png"))
 PlayerEntity.sprites = SpriteFrame.new(spriteImage, 32, 32)
 PlayerEntity.sprites.runAnimation = { 10, 11, 10, 12 }
 PlayerEntity.sprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
