@@ -1,10 +1,17 @@
 PowerUp = {}
 PowerUp.pickupSound = love.audio.newSource("Sounds/PowerUp.wav", "static")
 
+local spriteImage = love.graphics.newImage("Sprites/Objects.png")
+spriteImage:setFilter("nearest", "nearest")
+PowerUp.sprites = SpriteFrame.new(spriteImage, 32, 32, 8, 8)
+
 function PowerUp.new(level, x, y)
 	local self = Entity.new(level, BoundingBox.new(0, 0, 7, 7))
 	self.x = x
 	self.y = y
+
+	self.globalY = y;
+
 	self:changeAction(PowerUp.update)
 	self.message = PowerUp.message
 	self.entityDidEnter = PowerUp.entityDidEnter
@@ -13,11 +20,7 @@ function PowerUp.new(level, x, y)
 
 	-- sprite
 	local spriteFrame = {}
-	spriteFrame.image = love.graphics.newImage("Levels/testlevel_obj.png")
-	spriteFrame.quad = love.graphics.newQuad(72, 25, 7, 7, spriteFrame.image:getWidth(), spriteFrame.image:getHeight())
-	spriteFrame.xoffset = 4
-	spriteFrame.yoffset = 6
-	self.sprite = spriteFrame
+	self.sprite = PowerUp.sprites.frames[0]
 
 	return self
 end
@@ -25,8 +28,7 @@ end
 function PowerUp:update(dt)
 	-- nothing to do
 	self.animationTimer = self.animationTimer + dt
-	self.sprite.yoffset = math.floor(math.cos(self.animationTimer * 18.0 + self.x * 4.4) * -2) + 6
-
+	self.y = math.floor(math.cos(self.animationTimer * 12.0 + self.x * 0.12) * 3 - 3)  + self.globalY
 end
 
 function PowerUp:message(from, type, info)
@@ -51,12 +53,6 @@ end
 EntityFactory["PowerUp"] = PowerUp.new
 
 Bullet = {}
--- Sprites
-local spriteImage = love.graphics.newImage("Sprites/Bullets Sprites.png")
-spriteImage:setFilter("nearest", "nearest")
-
-Bullet.sprites = SpriteFrame.new(spriteImage, 32, 32)
-
 
 function Bullet.new(level, x, y) 
 	local self = Entity.new(level, BoundingBox.new(0, 0, 9, 8))
@@ -70,7 +66,7 @@ function Bullet.new(level, x, y)
 	self.speedX = 256
 	self.speedY = 0
 
-	self.sprite = Bullet.sprites.frames[0]
+	self.sprite = PowerUp.sprites.frames[8]
 
 	self.owner = nil
 
@@ -100,7 +96,7 @@ function Bullet:update(dt)
 	self.y = self.y + ydisp
 
 	self:updateAnimation(2, 1.0 / 20.0)
-	self.sprite = Bullet.sprites.frames[self.animationFrame]
+	self.sprite = PowerUp.sprites.frames[self.animationFrame + 8]
 end
 
 function Bullet:message(from, type, info)

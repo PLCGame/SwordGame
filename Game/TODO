@@ -4,6 +4,7 @@ TODO
 * Split screen system (centered on 2 entities)
 - entity attachement
 - Character inventory
+- rename action to update (seperate from state handling)
 - Kinematic Object!
 - Fixed collision ambiguity! (falling from a ladder, the player can't collide with ladder tile)
 - Improve sprite loading (should be just one image)

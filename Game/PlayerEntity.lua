@@ -25,7 +25,9 @@ function PlayerEntity.new(level, x, y)
 
 	self.type = "player"
 
-	self.attachement = Chainsaw.new(level, 0, 0)
+	local chainsaw = Chainsaw.new(level, 0, 0)
+	--self.children:push(chainsaw)
+
 
 	return self
 end

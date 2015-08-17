@@ -1,3 +1,5 @@
+-- https://gist.github.com/BlackBulletIV/4084042
+
 list = {}
 list.__index = list
 

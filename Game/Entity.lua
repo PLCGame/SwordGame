@@ -58,20 +58,16 @@ function Entity.new(level, boundingBox)
 
 	self.level = level
 
+	self.children = list()
+
 	return self
 end
 
 -- draw the entity
-function Entity:draw()
+function Entity:draw(x, y)
 	-- pixel perfect coordinate for drawing
-	local _x = math.floor(self.x)
-	local _y = math.floor(self.y)
-
-	if self.boundingBox ~= nil then
-		love.graphics.setColor(255, 0, 255, 64)	
-
-		love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)	
-	end
+	local _x = math.floor(x or self.x)
+	local _y = math.floor(y or self.y)
 
 	-- draw the entity if it has a sprite component
 	if self.sprite ~= nil then
@@ -87,15 +83,16 @@ function Entity:draw()
 
 		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, xScale, 1.0, xOffset, self.sprite.yoffset)
 	elseif self.boundingBox ~= nil then
-		love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)
+		--love.graphics.setColor(255, 0, 255, 64)	
+		--love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)
 	end
 
-	if self.attachement ~= nil then
-		-- pixel perfect coordinate for drawing
-		local _x = math.floor(self.x + self.attachement.x)
-		local _y = math.floor(self.y + self.attachement.y)
-		local sprite = self.attachement.sprite
-		love.graphics.draw(sprite.image, sprite.quad, _x, _y, 0, 1.0, 1.0, sprite.xoffset, sprite.yoffset)		
+	-- draw children
+	for child in self.children:iterate() do
+		local _x = self.x + child.x
+		local _y = self.y + child.y
+
+		child:draw(_x, _y)
 	end
 end
 

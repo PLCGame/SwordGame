@@ -31,7 +31,7 @@ function SnakeEntity.snakeDying(self, dt)
 		self.level:removeEntity(self)
 
 		-- drop a power up
-		self.level:spawnEntity("PowerUp", self.x, self.y)
+		self.level:spawnEntity("PowerUp", self.x, self.y + self.boundingBox.height - 7)
 
 		-- increment score
 		self.level.score = self.level.score + 20
@@ -144,11 +144,6 @@ function SnakeEntity.snakeGo(self, dt)
 		end
 	end
 
---[[
-	if self.hit then
-		self:changeAction(SnakeEntity.snakeHit)
-	end
-]]
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)
