@@ -1,7 +1,7 @@
 -- Sprites
 local spriteImage = love.graphics.newImage("Sprites/Enemy Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
-enemySprites = SpriteFrame.new(spriteImage, 32, 32)
+enemySprites = SpriteFrame.new(spriteImage, 32, 32, 10, 10)
 
 -- define class
 SnakeEntity = { sprites = enemySprites }
@@ -12,7 +12,7 @@ SnakeEntity.slideSound = love.audio.newSource("Sounds/Slide.wav", "static")
 
 
 function SnakeEntity.new(level, x, y)
-	local self = Entity.new(level, BoundingBox.new(0, 0, 8, 15))
+	local self = Entity.new(level, BoundingBox.new(0, 0, 10, 16))
 	self.x = x
 	self.y = y
 	self:changeAction(SnakeEntity.snakeGo)
@@ -38,7 +38,8 @@ function SnakeEntity.snakeDying(self, dt)
 		return
 	end
 
-	self.sprite = SnakeEntity.sprites.frames[7 + 3 + self.animationFrame + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[16 + 3 + self.animationFrame]
+	self.flipSprite = self.direction == 1
 end
 
 function SnakeEntity.snakeRecover(self, dt)
@@ -83,7 +84,8 @@ function SnakeEntity:snakeHit(dt)
 		self:changeAction(SnakeEntity.snakeDying)
 	end
 
-	self.sprite = SnakeEntity.sprites.frames[7 + 2 + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[16 + 2]
+	self.flipSprite = self.direction == 1
 
 	self:MoveAndCollide(dt)
 end
@@ -150,7 +152,8 @@ function SnakeEntity.snakeGo(self, dt)
   	self:MoveAndCollide(dt)
 
 	self:updateAnimation(2, 1.0 / 8.0)
-	self.sprite = SnakeEntity.sprites.frames[7 + self.animationFrame + self.direction * 5]
+	self.sprite = SnakeEntity.sprites.frames[16 + self.animationFrame]
+	self.flipSprite = self.direction == 1
 end
 
 EntityFactory["Snake"] = SnakeEntity.new

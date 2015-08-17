@@ -76,7 +76,16 @@ function Entity:draw()
 	-- draw the entity if it has a sprite component
 	if self.sprite ~= nil then
 		love.graphics.setColor(255, 255, 255, 255)	
-		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, 1.0, 1.0, self.sprite.xoffset, self.sprite.yoffset)
+
+		local xScale = 1.0
+		local xOffset = self.sprite.xoffset
+
+		if self.flipSprite then
+			xScale = -1.0
+			xOffset = xOffset + self.boundingBox.width
+		end
+
+		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, xScale, 1.0, xOffset, self.sprite.yoffset)
 	elseif self.boundingBox ~= nil then
 		love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)
 	end

@@ -111,20 +111,29 @@ function extractMarksFromFrame(image, frames)
 	end
 end
 
-function SpriteFrame.new(spriteImage, spriteWidth, spriteHeight)
+function SpriteFrame.new(spriteImage, spriteWidth, spriteHeight, xOffset, yOffset)
 	local self = setmetatable({}, SpriteFrame)
 	self.frames = {}
 
 	local columnCount = spriteImage:getWidth() / spriteWidth
 	local rowCount = spriteImage:getHeight() / spriteHeight
 
+	-- if no offset specified, used half of the sprite?
+	if xOffset == nil then
+		xOffset = spriteWidth * 0.5
+	end
+
+	if yOffset == nil then
+		yOffset = spriteHeight * 0.5
+	end
+
 	for y = 0, rowCount do
 		for x = 0, columnCount do
 			local spriteFrame = {}
 			spriteFrame.image = spriteImage
 			spriteFrame.quad = love.graphics.newQuad(x * spriteWidth,y * spriteHeight, spriteWidth, spriteHeight, spriteImage:getWidth(), spriteImage:getHeight())
-			spriteFrame.xoffset = spriteWidth * 0.5
-			spriteFrame.yoffset = spriteHeight * 0.5	
+			spriteFrame.xoffset = xOffset
+			spriteFrame.yoffset = yOffset	
 
 			table.insert(self.frames, x + y * columnCount, spriteFrame)
 		end
