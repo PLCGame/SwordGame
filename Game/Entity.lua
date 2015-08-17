@@ -1,12 +1,25 @@
 -- Entity factory contains entity constructor functions for entity name
 EntityFactory = {}
 
+BoundingBox = {}
+BoundingBox.__index = BoundingBox
+
+function BoundingBox.new(x, y, width, height)
+	self = setmetatable({}, BoundingBox)
+
+	self.x = x
+	self.y = y
+	self.width = width
+	self.height = height
+
+	return self
+end
 
 Entity = {}
 Entity.__index = Entity
 
 -- create a new entity instance, with default values
-function Entity.new(width, height, level)
+function Entity.new(level, boundingBox)
 	local self = setmetatable({}, Entity)
 
 	-- start position
@@ -32,8 +45,7 @@ function Entity.new(width, height, level)
 	self.sprite = nil
 
 	-- bounding box
-	self.width = width
-	self.height = height
+	self.boundingBox = boundingBox
 
 	-- no action
 	self.action = nil
@@ -51,16 +63,22 @@ end
 
 -- draw the entity
 function Entity:draw()
-	--love.graphics.polygon("fill", self.x - self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y, self.x - self.width * 0.5, self.y)
+	-- pixel perfect coordinate for drawing
+	local _x = math.floor(self.x)
+	local _y = math.floor(self.y)
+
+	if self.boundingBox ~= nil then
+		love.graphics.setColor(255, 0, 255, 64)	
+
+		love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)	
+	end
 
 	-- draw the entity if it has a sprite component
 	if self.sprite ~= nil then
-		-- pixel perfect coordinate for drawing
-		local _x = math.floor(self.x)
-		local _y = math.floor(self.y)
-		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, 1.0, 1.0, self.sprite.xoffset, self.sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)
-	else
-		--love.graphics.polygon("fill", self.x - self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y - self.height, self.x + self.width * 0.5, self.y, self.x - self.width * 0.5, self.y)
+		love.graphics.setColor(255, 255, 255, 255)	
+		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, 1.0, 1.0, self.sprite.xoffset, self.sprite.yoffset)
+	elseif self.boundingBox ~= nil then
+		love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)
 	end
 
 	if self.attachement ~= nil then
@@ -68,7 +86,7 @@ function Entity:draw()
 		local _x = math.floor(self.x + self.attachement.x)
 		local _y = math.floor(self.y + self.attachement.y)
 		local sprite = self.attachement.sprite
-		love.graphics.draw(sprite.image, sprite.quad, _x, _y, 0, 1.0, 1.0, sprite.xoffset, sprite.yoffset + 1) -- +1 because the character position is at the bottom (and the mark on the sprite is on the last row)		
+		love.graphics.draw(sprite.image, sprite.quad, _x, _y, 0, 1.0, 1.0, sprite.xoffset, sprite.yoffset)		
 	end
 end
 
@@ -97,10 +115,10 @@ end
 
 function Entity:getAABB()
 	local aabb = { min = {}, max = {} }
-	aabb.min[0] = self.x - self.width * 0.5
-	aabb.max[0] = self.x + self.width * 0.5
-	aabb.min[1] = self.y - self.height
-	aabb.max[1] = self.y
+	aabb.min[0] = self.x + self.boundingBox.x
+	aabb.max[0] = self.x + self.boundingBox.x + self.boundingBox.width
+	aabb.min[1] = self.y + self.boundingBox.y
+	aabb.max[1] = self.y + self.boundingBox.y + self.boundingBox.height
 
 	return aabb
 end

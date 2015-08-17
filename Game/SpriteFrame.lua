@@ -134,6 +134,9 @@ function SpriteFrame.new(spriteImage, argA, argB)
 			end
 		end
 	else
+		assert(false, "can't use this anymore!!")
+
+		-- this is unused!
 		local maskImage = argA
 		local markImage = argB
 

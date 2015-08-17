@@ -1,7 +1,7 @@
 -- Sprites
 local spriteImage = love.graphics.newImage("Sprites/Enemy Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
-enemySprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Enemy Mask.png"), love.graphics.newImage("Sprites/Enemy Mark.png"))
+enemySprites = SpriteFrame.new(spriteImage, 32, 32)
 
 -- define class
 SnakeEntity = { sprites = enemySprites }
@@ -12,7 +12,7 @@ SnakeEntity.slideSound = love.audio.newSource("Sounds/Slide.wav", "static")
 
 
 function SnakeEntity.new(level, x, y)
-	local self = Entity.new(8, 15, level)
+	local self = Entity.new(level, BoundingBox.new(0, 0, 8, 15))
 	self.x = x
 	self.y = y
 	self:changeAction(SnakeEntity.snakeGo)
@@ -110,9 +110,9 @@ function SnakeEntity.snakeGo(self, dt)
 				self.direction = 1
 			else
 				-- test the edge of the platform, go as far as half width
-				c = self.level.map:AABBCast(aabb, {[0] = -self.width, [1] = 0})
+				c = self.level.map:AABBCast(aabb, {[0] = -self.boundingBox.width, [1] = 0})
 
-				local dist = c * self.width
+				local dist = c * self.boundingBox.width
 				aabb.min[0] = aabb.min[0] - dist
 				aabb.max[0] = aabb.max[0] - dist
 
@@ -128,9 +128,9 @@ function SnakeEntity.snakeGo(self, dt)
 				self.direction = 0
 			else
 				-- test the edge of the platform, go as far as half width
-				c = self.level.map:AABBCast(aabb, {[0] = self.width, [1] = 0})
+				c = self.level.map:AABBCast(aabb, {[0] = self.boundingBox.width, [1] = 0})
 
-				local dist = c * self.width
+				local dist = c * self.boundingBox.width
 				aabb.min[0] = aabb.min[0] + dist
 				aabb.max[0] = aabb.max[0] + dist
 

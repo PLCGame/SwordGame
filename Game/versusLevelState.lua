@@ -102,6 +102,7 @@ function versusLevelState:draw(game)
 	   	love.graphics.setCanvas(currentCanvas)
 
 	   	-- and draw the composition
+	   	love.graphics.setColor(255, 255, 255, 255)
    		love.graphics.draw(self.player1Canvas)
 
    		local dx = self.player1Camera.x - self.player2Camera.x
@@ -144,12 +145,12 @@ function versusLevelState:load(game)
 
 	-- spawn the player
 	local playerSpawn = self.level.map.objects["SpawnPlayer1"]
-	self.player1 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
+	self.player1 = PlayerEntity.new(self.level, playerSpawn.x, playerSpawn.y)
 	self.player1.playerControl = PlayerControl.player1Control
 	self.level:addEntity(self.player1)
 
 	playerSpawn = self.level.map.objects["SpawnPlayer2"]
-	self.player2 = PlayerEntity.new(self.level, playerSpawn.x + playerSpawn.width * 0.5, playerSpawn.y + playerSpawn.height)
+	self.player2 = PlayerEntity.new(self.level, playerSpawn.x, playerSpawn.y)
 	self.player2.playerControl = PlayerControl.player2Control
 	self.level:addEntity(self.player2)
 

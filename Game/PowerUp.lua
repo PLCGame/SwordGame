@@ -2,7 +2,7 @@ PowerUp = {}
 PowerUp.pickupSound = love.audio.newSource("Sounds/PowerUp.wav", "static")
 
 function PowerUp.new(level, x, y)
-	local self = Entity.new(7, 7, level)
+	local self = Entity.new(level, BoundingBox.new(0, 0, 7, 7))
 	self.x = x
 	self.y = y
 	self:changeAction(PowerUp.update)
@@ -55,11 +55,11 @@ Bullet = {}
 local spriteImage = love.graphics.newImage("Sprites/Bullets Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
 
-Bullet.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Bullets Mask.png"), love.graphics.newImage("Sprites/Bullets Mark.png"))
+Bullet.sprites = SpriteFrame.new(spriteImage, 32, 32)
 
 
 function Bullet.new(level, x, y) 
-	local self = Entity.new(9, 8, level)
+	local self = Entity.new(level, BoundingBox.new(0, 0, 9, 8))
 	self.x = x
 	self.y = y
 
@@ -122,10 +122,10 @@ EntityFactory["Bullet"] = Bullet.new
 
 Trigger = {}
 function Trigger.new(level, x, y, width, height, target, callback) 
-	local self = Entity.new(width, height, level)
+	local self = Entity.new(level, BoundingBox.new(0, 0, width, height))
 	self.level = level
-	self.x = x + width * 0.5
-	self.y = y + height
+	self.x = x 
+	self.y = y
 
 	self:changeAction(Trigger.update)
 	self.entityDidEnter = Trigger.entityDidEnter

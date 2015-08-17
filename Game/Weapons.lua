@@ -1,4 +1,4 @@
-local weaponsSpriteImage = love.graphics.newImage("sprites/weapons.png")
+local weaponsSpriteImage = love.graphics.newImage("Sprites/weapons.png")
 weaponsSpriteImage:setFilter("nearest", "nearest")
 weaponsSprites = SpriteFrame.new(weaponsSpriteImage, 32, 32)
 
@@ -10,7 +10,7 @@ function Chainsaw.new(level, x, y)
 	self.y = y
 
 	self.sprite = weaponsSprites.frames[0]
-	print(self.sprite)
+	--print(self.sprite)
 
 	return self
 end

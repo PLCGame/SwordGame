@@ -1,6 +1,3 @@
-Map = {}
-Map.__index = Map
-
 -- return an extended AABB with v
 function AABBExtend(aabb, v)
 	local extendedAABB = { min = {}, max = {} }
@@ -116,6 +113,10 @@ function AABBSweepTest(A, vA, B, vB)
 	
 	return entryTime, n
 end
+
+
+Map = {}
+Map.__index = Map
 
 function Map.new(mapFilename) 
 	local mapPath = ""
@@ -291,6 +292,8 @@ function Map:drawLayer(layer, x, y, width, height, ratio)
 	local dx = x - math.floor(x * r)
 	local dy = y - math.floor(y * r)
 
+	love.graphics.setColor(255, 255, 255, 255)
+
 	-- draw background
 	for ty = tiley, tiley + tileh do 
 		for tx = tilex, tilex + tilew do
@@ -343,27 +346,28 @@ end
 
 -- return distance to center, distance up, distance down
 -- return nil if there's no ladder next to the entity
-function Map:distanceToLadder(entity)
-	local xmin = math.floor((entity.x - entity.width * 0.5) / self.tile_width)
-	local xmax = math.floor((entity.x + entity.width * 0.5-1) / self.tile_width)
-	local ymin = math.floor((entity.y - entity.height) / self.tile_height)
-	local ymax = math.floor(entity.y / self.tile_height)
+function Map:distanceToLadder(aabb)
+
+	local xmin = math.floor(aabb.min[0] / self.tile_width)
+	local xmax = math.floor(aabb.max[0] / self.tile_width)
+	local ymin = math.floor(aabb.min[1] / self.tile_height)
+	local ymax = math.floor(aabb.max[1] / self.tile_height)
 
 	for y = ymin, ymax do
 		for x = xmin, xmax do
 			for _, layer in ipairs(self.activeLayers) do
 				if self:tileType(layer, x, y) == "ladder" then
 					-- we found a valid ladder tile
-					local distanceToCenter = (x + 0.5) * self.tile_width - entity.x
+					local distanceToCenter = (x  * self.tile_width) - aabb.min[0] + (self.tile_width - (aabb.max[0] - aabb.min[0])) * 0.5
 
-					local distanceToBottom = (y + 1) * self.tile_height - entity.y
+					local distanceToBottom = (y + 1) * self.tile_height - aabb.max[1]
 					local _y = y + 1
 					while _y < self.height and self:tileType(layer, x, _y) == "ladder" do
 						_y = _y + 1
 						distanceToBottom = distanceToBottom + self.tile_height
 					end
 
-					local distanceToTop = entity.y - y * self.tile_height
+					local distanceToTop = aabb.max[1] - y * self.tile_height
 					_y = y - 1
 					while _y >= 0 and self:tileType(layer, x, _y) == "ladder" do
 						_y = _y - 1

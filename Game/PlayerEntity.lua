@@ -8,12 +8,13 @@ PlayerEntity.jumpSound = love.audio.newSource("Sounds/Jump.wav", "static")
 local spriteImage = love.graphics.newImage("Sprites/Player Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
 
-PlayerEntity.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Player Mask.png"), love.graphics.newImage("Sprites/Player Mark.png"))
+--PlayerEntity.sprites = SpriteFrame.new(spriteImage, love.graphics.newImage("Sprites/Player Mask.png"), love.graphics.newImage("Sprites/Player Mark.png"))
+PlayerEntity.sprites = SpriteFrame.new(spriteImage, 32, 32)
 PlayerEntity.sprites.runAnimation = { 10, 11, 10, 12 }
 PlayerEntity.sprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
 
 function PlayerEntity.new(level, x, y)
-	local self = Entity.new(8, 15, level)
+	local self = Entity.new(level, BoundingBox.new(0, 0, 8, 15))
 	self:changeAction(PlayerEntity.idle)
 	self.x = x
 	self.y = y
@@ -42,7 +43,7 @@ function PlayerEntity.begin_attack(self)
 	PlayerEntity.swordSound:play()
 	self:changeAction(PlayerEntity.attack)
 
-	local bullet = self.level:spawnEntity("Bullet", self.x, self.y - 5)
+	local bullet = self.level:spawnEntity("Bullet", self.x, self.y + 5)
 	bullet.owner = self
 
 	if self.direction == 1 then
@@ -78,7 +79,7 @@ function PlayerEntity.fall(self, dt)
   	end
 
   	-- if the user can grab a ladder, do that
-	if self.playerControl:canGoUp() and self.level.map:distanceToLadder(self) ~= nil then
+	if self.playerControl:canGoUp() and self.level.map:distanceToLadder(self:getAABB()) ~= nil then
 		self:changeAction(PlayerEntity.ladder)
 	end
 
@@ -210,7 +211,7 @@ function PlayerEntity.idle(self, dt)
 
   	-- if the user can grab a ladder, do that
 	if (self.playerControl:canGoDown() or self.playerControl:canGoUp()) then
-		x, t, b = self.level.map:distanceToLadder(self)
+		x, t, b = self.level.map:distanceToLadder(self:getAABB())
 		if x ~= nil and ((self.playerControl:canGoDown() and b > 0) or (self.playerControl:canGoUp() and t > 0))  then
 			self:changeAction(PlayerEntity.ladder)
 		end
@@ -304,7 +305,7 @@ end
 -- ladder state
 function PlayerEntity.ladder(self, dt)
 	-- move the sprite to the ladder
-	delta, distanceToTop, distanceToBottom = self.level.map:distanceToLadder(self) -- return the distance from center to center
+	delta, distanceToTop, distanceToBottom = self.level.map:distanceToLadder(self:getAABB()) -- return the distance from center to center
 
 	-- delta == nil means the character is no longer on a ladder tile
 	if delta == nil then

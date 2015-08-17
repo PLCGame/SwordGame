@@ -13,7 +13,7 @@ function Level.new(mapName)
 
 	-- spawn every register object in the factory
 	for _, obj in ipairs(self.map.objects) do
-		self:spawnEntity(obj.type, obj.x + obj.width * 0.5, obj.y + obj.height, obj.properties)
+		self:spawnEntity(obj.type, obj.x, obj.y, obj.properties)
 	end
 
 	return self
@@ -28,25 +28,7 @@ function Level:spawnEntity(entityType, x, y, entityProperties)
 		local newEntity = entityConstructor(self, x, y)
 
 		-- add it to entity list
-		self.entities:push(newEntity)
-
-		if entityType == "Player" then
-			local playerID = 1
-
-			if entityProperties and entityProperties.playerID then
-				playerID = tonumber(entityProperties.playerID)
-			end
-
-			if playerID == 1 then
-				self.playerEntity = newEntity
-				self.playerEntity.playerControl = PlayerControl.player1Control
-			end
-
-			if playerID == 2 then
-				newEntity.playerControl = PlayerControl.player2Control
-			end
-
-		end
+		self:addEntity(newEntity)
 
 		return newEntity
 	end
