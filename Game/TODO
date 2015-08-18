@@ -2,12 +2,13 @@ TODO
 
 * Objects management from Tiled : entity (enemy mob, object?, trigger), marker(player spawn position, item spawn?)
 * Split screen system (centered on 2 entities)
+- entity hierarchy!!!!! (update coordinate)
 - entity attachement
 - Character inventory
 - rename action to update (seperate from state handling)
 - Kinematic Object!
 - Fixed collision ambiguity! (falling from a ladder, the player can't collide with ladder tile)
-- Improve sprite loading (should be just one image)
+* Improve sprite loading (should be just one image)
 - Input configuration Menu (FIFA style)
 - Choose font
 - Added title screen intro

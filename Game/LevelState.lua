@@ -136,7 +136,7 @@ function Level:update(dt)
 	while entity ~= nil do
 		local nextEntity = entity._next
 
-		entity:action(dt)
+		entity:update(dt)
 		
 		entity = nextEntity
 	end

@@ -5,7 +5,7 @@ weaponsSprites = SpriteFrame.new(weaponsSpriteImage, 32, 32)
 Chainsaw = {}
 
 function Chainsaw.new(level, x, y)
-	local self = Entity.new(level, BoundingBox.new(0, 0, 8, 15))
+	local self = Entity.new(level, BoundingBox.new(-11, -2, 9, 5))
 	self.x = x
 	self.y = y
 
@@ -17,10 +17,8 @@ function Chainsaw.new(level, x, y)
 end
 
 function Chainsaw:update(dt)
-	self:updateAnimation(2, 1.0 / 20.0)
+	self:updateAnimation(2, 1.0 / 5.0)
 	self.sprite = weaponsSprites.frames[self.animationFrame]
-
-	print("yeah")
 end
 
 EntityFactory["Chainsaw"] = Chainsaw.new

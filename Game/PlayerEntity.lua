@@ -8,12 +8,12 @@ PlayerEntity.jumpSound = love.audio.newSource("Sounds/Jump.wav", "static")
 local spriteImage = love.graphics.newImage("Sprites/Player Sprites.png")
 spriteImage:setFilter("nearest", "nearest")
 
-PlayerEntity.sprites = SpriteFrame.new(spriteImage, 32, 32, 12, 10)
+PlayerEntity.sprites = SpriteFrame.new(spriteImage, 32, 32, 16, 10)
 PlayerEntity.sprites.runAnimation = { 10, 11, 10, 12 }
 PlayerEntity.sprites.attackAnimation = { 14, 15, 16, 17, 17, 10 }
 
 function PlayerEntity.new(level, x, y)
-	local self = Entity.new(level, BoundingBox.new(0, 0, 8, 15))
+	local self = Entity.new(level, BoundingBox.new(-4, 0, 8, 15))
 	self:changeAction(PlayerEntity.idle)
 	self.x = x
 	self.y = y
@@ -25,9 +25,10 @@ function PlayerEntity.new(level, x, y)
 
 	self.type = "player"
 
-	local chainsaw = Chainsaw.new(level, 0, 0)
-	--self.children:push(chainsaw)
+	self.weapon = Chainsaw.new(level, 0, 10)
+	self:addChild(self.weapon)
 
+	self.weapon.flipSprite = false
 
 	return self
 end

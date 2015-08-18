@@ -64,10 +64,15 @@ function Entity.new(level, boundingBox)
 end
 
 -- draw the entity
-function Entity:draw(x, y)
+-- parentX and parentY shouldn't be pixel perfect! (avoir round issues)
+function Entity:draw(parentX, parentY)
 	-- pixel perfect coordinate for drawing
-	local _x = math.floor(x or self.x)
-	local _y = math.floor(y or self.y)
+	local _x = math.floor((parentX or 0 ) + self.x)
+	local _y = math.floor((parentY or 0 ) + self.y)
+
+	love.graphics.setColor(255, 0, 255, 64)	
+	local aabb = self:getAABB()
+	love.graphics.rectangle("fill", _x + self.boundingBox.x, _y + self.boundingBox.y, self.boundingBox.width,self.boundingBox.height)
 
 	-- draw the entity if it has a sprite component
 	if self.sprite ~= nil then
@@ -78,7 +83,6 @@ function Entity:draw(x, y)
 
 		if self.flipSprite then
 			xScale = -1.0
-			xOffset = xOffset + self.boundingBox.width
 		end
 
 		love.graphics.draw(self.sprite.image, self.sprite.quad, _x, _y, 0, xScale, 1.0, xOffset, self.sprite.yoffset)
@@ -89,11 +93,30 @@ function Entity:draw(x, y)
 
 	-- draw children
 	for child in self.children:iterate() do
-		local _x = self.x + child.x
-		local _y = self.y + child.y
-
-		child:draw(_x, _y)
+		child:draw(parentX or 0 + self.x, parentY or 0 + self.y)
 	end
+end
+
+function Entity:update(dt)
+	-- execute the action
+	if self.action then
+		self:action(dt)
+	end
+
+	-- and do this for children
+	for child in self.children:iterate() do
+		child:update(dt)
+	end
+end
+
+function Entity:addChild(child)
+	self.children:push(child)
+	child.parent = self
+end
+
+function Entity:removeChild(child)
+	self.children:remove(child)
+	child.parent = nil
 end
 
 -- update animation timer and frame (based on animation frame count and frame rate)
@@ -119,12 +142,19 @@ function Entity:changeAction(newAction)
 	self.action = newAction
 end
 
+-- XXX this is wrong!! it doesn't use parent coordinate!
 function Entity:getAABB()
 	local aabb = { min = {}, max = {} }
 	aabb.min[0] = self.x + self.boundingBox.x
 	aabb.max[0] = self.x + self.boundingBox.x + self.boundingBox.width
 	aabb.min[1] = self.y + self.boundingBox.y
 	aabb.max[1] = self.y + self.boundingBox.y + self.boundingBox.height
+
+	if self.flipSprite then
+		local tmp = aabb.min[0]
+		aabb.min[0] = -aabb.max[0]
+		aabb.max[0] = -tmp
+	end
 
 	return aabb
 end
