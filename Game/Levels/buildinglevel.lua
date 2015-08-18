@@ -24,7 +24,224 @@ return {
         y = 0
       },
       properties = {},
-      tiles = {}
+      tiles = {
+        {
+          id = 53,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 5,
+                y = 0,
+                width = 5,
+                height = 16,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 80,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 81,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 82,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 83,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 84,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              },
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 6,
+                y = 4,
+                width = 10,
+                height = 7,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 85,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 4,
+                width = 16,
+                height = 12,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        },
+        {
+          id = 86,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 11,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              },
+              {
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 4,
+                width = 9,
+                height = 7,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
+        }
+      }
     },
     {
       name = "objets",
@@ -80,7 +297,9 @@ return {
       height = 30,
       visible = true,
       opacity = 1,
-      properties = {},
+      properties = {
+        ["active"] = "1"
+      },
       encoding = "lua",
       data = {
         81, 82, 83, 84, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 81, 81, 82, 83, 83, 83, 83, 83, 82, 83, 81, 82, 83, 84, 81, 82, 83, 84, 82, 83, 84, 81, 82, 83, 84, 83, 84, 81, 82, 83, 84, 82, 82, 83,
@@ -124,7 +343,9 @@ return {
       height = 30,
       visible = true,
       opacity = 1,
-      properties = {},
+      properties = {
+        ["active"] = "1"
+      },
       encoding = "lua",
       data = {
         0, 0, 81, 82, 83, 84, 82, 83, 84, 81, 82, 83, 84, 81, 82, 83, 84, 81, 82, 83, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -384,6 +605,30 @@ return {
           height = 0,
           rotation = 0,
           gid = 260,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "SpawnPlayer2",
+          type = "Player",
+          shape = "rectangle",
+          x = 771,
+          y = 59,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          name = "SpawnPlayer1",
+          type = "Player",
+          shape = "rectangle",
+          x = 752,
+          y = 59,
+          width = 16,
+          height = 16,
+          rotation = 0,
           visible = true,
           properties = {}
         }

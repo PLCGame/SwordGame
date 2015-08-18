@@ -2,6 +2,48 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="55" height="30" tilewidth="16" tileheight="16">
  <tileset firstgid="1" name="tiles immeubles" tilewidth="16" tileheight="16">
   <image source="tiles immeubles.png" trans="ff00ff" width="256" height="256"/>
+  <tile id="53">
+   <objectgroup draworder="index">
+    <object x="5" y="0" width="5" height="16"/>
+   </objectgroup>
+  </tile>
+  <tile id="80">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+   </objectgroup>
+  </tile>
+  <tile id="81">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+   </objectgroup>
+  </tile>
+  <tile id="82">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+   </objectgroup>
+  </tile>
+  <tile id="83">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+   </objectgroup>
+  </tile>
+  <tile id="84">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+    <object x="6" y="4" width="10" height="7"/>
+   </objectgroup>
+  </tile>
+  <tile id="85">
+   <objectgroup draworder="index">
+    <object x="0" y="4" width="16" height="12"/>
+   </objectgroup>
+  </tile>
+  <tile id="86">
+   <objectgroup draworder="index">
+    <object x="0" y="11" width="16" height="5"/>
+    <object x="0" y="4" width="9" height="7"/>
+   </objectgroup>
+  </tile>
  </tileset>
  <tileset firstgid="257" name="objets" tilewidth="32" tileheight="32">
   <image source="props.png" trans="ff00ff" width="256" height="256"/>
@@ -12,6 +54,9 @@
   </tile>
  </tileset>
  <layer name="Tile Layer 1" width="55" height="30">
+  <properties>
+   <property name="active" value="1"/>
+  </properties>
   <data>
    <tile gid="81"/>
    <tile gid="82"/>
@@ -1666,6 +1711,9 @@
   </data>
  </layer>
  <layer name="objets" width="55" height="30">
+  <properties>
+   <property name="active" value="1"/>
+  </properties>
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -3337,5 +3385,7 @@
   <object gid="265" x="57" y="267"/>
   <object gid="259" x="6" y="75"/>
   <object gid="260" x="38" y="75"/>
+  <object name="SpawnPlayer2" type="Player" x="771" y="59" width="16" height="16"/>
+  <object name="SpawnPlayer1" type="Player" x="752" y="59" width="16" height="16"/>
  </objectgroup>
 </map>

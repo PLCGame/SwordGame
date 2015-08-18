@@ -141,7 +141,7 @@ end
 function versusLevelState:load(game)
 	-- load test level
 	self.game = game
-	self.level = Level.new("testlevel2")
+	self.level = Level.new("buildinglevel")
 
 	-- spawn the player
 	local playerSpawn = self.level.map.objects["SpawnPlayer1"]
@@ -155,10 +155,11 @@ function versusLevelState:load(game)
 	self.level:addEntity(self.player2)
 
 	-- grab the end trigger
+	--[[
 	local obj = self.level.map.objects["LevelEnd"]
 	local levelEndTrigger = Trigger.new(self.level, obj.x, obj.y, obj.width, obj.height, self, versusLevelState.endTriggerCallback)
 	self.level:addEntity(levelEndTrigger)
-
+]]
 	-- start the music	
 	--game:playMusic("Music/title2.xm")
 
