@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="55" height="30" tilewidth="16" tileheight="16" nextobjectid="42">
- <tileset firstgid="1" name="tiles immeubles" tilewidth="16" tileheight="16" tilecount="256">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="55" height="30" tilewidth="16" tileheight="16" nextobjectid="43">
+ <tileset firstgid="1" name="tiles immeubles" tilewidth="16" tileheight="16">
   <image source="tiles immeubles.png" trans="ff00ff" width="256" height="256"/>
   <tile id="52">
    <objectgroup draworder="index">
@@ -31,12 +31,7 @@
    </properties>
   </tile>
   <tile id="68">
-   <properties>
-    <property name="type" value="ladder"/>
-   </properties>
-   <objectgroup draworder="index">
-    <object id="0" x="2" y="10" width="13" height="6"/>
-   </objectgroup>
+   <objectgroup draworder="index"/>
   </tile>
   <tile id="69">
    <properties>
@@ -70,8 +65,13 @@
     <object id="0" x="0" y="4" width="9" height="7"/>
    </objectgroup>
   </tile>
+  <tile id="96">
+   <objectgroup draworder="index">
+    <object id="0" x="0" y="0" width="16" height="5"/>
+   </objectgroup>
+  </tile>
  </tileset>
- <tileset firstgid="257" name="objets" tilewidth="32" tileheight="32" tilecount="64">
+ <tileset firstgid="257" name="objets" tilewidth="32" tileheight="32">
   <image source="props.png" trans="ff00ff" width="256" height="256"/>
   <tile id="0">
    <objectgroup draworder="index">
@@ -3426,5 +3426,10 @@
   <object id="39" gid="267" x="434" y="264" width="32" height="32"/>
   <object id="40" gid="267" x="445" y="264" width="32" height="32"/>
   <object id="41" gid="267" x="475" y="264" width="32" height="32"/>
+  <object id="42" name="SpawnPlayer2" type="Player" x="680" y="64" width="16" height="16">
+   <properties>
+    <property name="playerID" value="1"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

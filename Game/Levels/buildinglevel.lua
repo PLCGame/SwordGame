@@ -1,13 +1,13 @@
 return {
   version = "1.1",
   luaversion = "5.1",
-  tiledversion = "0.13.0",
+  tiledversion = "0.12.3",
   orientation = "orthogonal",
   width = 55,
   height = 30,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 42,
+  nextobjectid = 43,
   properties = {},
   tilesets = {
     {
@@ -27,7 +27,6 @@ return {
       },
       properties = {},
       terrains = {},
-      tilecount = 256,
       tiles = {
         {
           id = 52,
@@ -176,30 +175,13 @@ return {
         },
         {
           id = 68,
-          properties = {
-            ["type"] = "ladder"
-          },
           objectGroup = {
             type = "objectgroup",
             name = "",
             visible = true,
             opacity = 1,
             properties = {},
-            objects = {
-              {
-                id = 0,
-                name = "",
-                type = "",
-                shape = "rectangle",
-                x = 2,
-                y = 10,
-                width = 13,
-                height = 6,
-                rotation = 0,
-                visible = true,
-                properties = {}
-              }
-            }
+            objects = {}
           }
         },
         {
@@ -333,6 +315,31 @@ return {
               }
             }
           }
+        },
+        {
+          id = 96,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            properties = {},
+            objects = {
+              {
+                id = 0,
+                name = "",
+                type = "",
+                shape = "rectangle",
+                x = 0,
+                y = 0,
+                width = 16,
+                height = 5,
+                rotation = 0,
+                visible = true,
+                properties = {}
+              }
+            }
+          }
         }
       }
     },
@@ -353,7 +360,6 @@ return {
       },
       properties = {},
       terrains = {},
-      tilecount = 64,
       tiles = {
         {
           id = 0,
@@ -754,6 +760,21 @@ return {
           gid = 267,
           visible = true,
           properties = {}
+        },
+        {
+          id = 42,
+          name = "SpawnPlayer2",
+          type = "Player",
+          shape = "rectangle",
+          x = 680,
+          y = 64,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["playerID"] = "1"
+          }
         }
       }
     }

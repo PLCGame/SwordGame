@@ -26,7 +26,7 @@ function PlayerEntity.new(level, x, y)
 	self.type = "player"
 
 	self.weapon = Chainsaw.new(level, 0, 10)
-	self:addChild(self.weapon)
+	--self:addChild(self.weapon)
 
 	self.weapon.flipSprite = false
 
