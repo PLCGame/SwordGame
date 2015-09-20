@@ -131,6 +131,7 @@ function Entity:updateAnimation(frameCount, frameRate)
 	end
 end
 
+
 -- change the action of the entity
 -- this reset the animation timer & frame
 function Entity:changeAction(newAction)
