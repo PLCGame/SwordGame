@@ -276,7 +276,7 @@ crtEmulation = false
 
 function love.draw()
 	love.graphics.setCanvas(mainCanvas)
-	mainCanvas:clear()
+	love.graphics.clear()
 	love.graphics.setShader()		
    	Game:draw()
 
