@@ -389,7 +389,7 @@ function levelState:load(game)
 	self.level:addEntity(levelEndTrigger)
 
 	-- start the music	
-	--game:playMusic("Music/title2.xm")
+	game:playMusic("Music/title2.xm")
 
 	-- set camera
 	self.camera = {x = 0, y = 0, width = game.screenWidth, height = game.screenHeight}

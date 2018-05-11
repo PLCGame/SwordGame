@@ -21,14 +21,6 @@ function PlayerControl.new(eventTable, joystick)
 
 	self.joystick = joystick
 
-	-- if there's a connected joystick
-	--[[
-	if love.joystick.getJoystickCount() > 0 then
-		local joysticks = love.joystick.getJoysticks()
-		self.joystick = joysticks[joystick or 1]
-	end
-	]]
-
 	self.eventValue = {}
 	self.eventTrigger = {}
 
@@ -93,6 +85,7 @@ function PlayerControl:testInput(event)
 	return res	
 end
 
+-- return true if the event has been triggered since last update
 function PlayerControl:testTrigger(event)
 	local value = self.eventTrigger[event]
 

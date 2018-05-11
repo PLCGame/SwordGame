@@ -117,8 +117,8 @@ function Game:load()
 
     --self:pushState(titleScreenState)
    	--self:pushState(mainMenuState)
-   	--self:pushState(levelState)
-   	self:pushState(versusLevelState)
+   	self:pushState(levelState)
+   	--self:pushState(versusLevelState)
     
      
 end
@@ -129,7 +129,7 @@ function Game:playMusic(musicFilename)
 	end
 
 	if musicFilename ~= nil then
-		self.musicSource = love.audio.newSource(musicFilename)
+		self.musicSource = love.audio.newSource(musicFilename, "stream")
 		self.musicSource:setLooping(true)
 		self.musicSource:setVolume(self.musicVolume)
 		self.musicSource:play()

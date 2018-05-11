@@ -119,7 +119,7 @@ function versusLevelState:draw(game)
 
    			-- set super camera shader for splitting
    			love.graphics.setShader(versusLevelState.cameraShader)
-   			versusLevelState.cameraShader:send("splitPlane", {dx, dy})
+   			versusLevelState.cameraShader:send("splitPlane", {dx, -dy})
    			-- draw the second camera view
    			love.graphics.draw(self.player2Canvas)
 
